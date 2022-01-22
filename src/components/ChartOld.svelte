@@ -145,13 +145,13 @@
         let scaleYurb = d3.scaleLinear().domain([0, 285]).range([figHeight-margin.bottom, 0]); 
 
 
-        // normalize each variable to prevent svelte transition bug when scales change
+        // norm scales
         let normScaleXInc = d3.scaleLinear()
-                        .domain(d3.extent(hexes, d => d.income))
+                        .domain(d3.extent(hexes, d => d.mobilityWork))
                         .range([margin.left, figWidth - margin.right])
       
         let normScaleYMob = d3.scaleLinear()
-                        .domain(d3.extent(hexes, d => d.mobilityWork))
+                        .domain(d3.extent(hexes, d => d.income))
                         .range([margin.top, figWidth - margin.bottom])
 
         let normScaleXhex = d3.scaleLinear()
@@ -162,108 +162,137 @@
                         .domain(d3.extent(hexes, d => d.y))
                         .range([figWidth - margin.bottom, margin.top])
 
-        let normScaleCatRow = d3.scaleLinear()
-                        .domain([85, 0])
-                        .range([figWidth - margin.bottom, margin.top])
 
-        let normScaleCatX = d3.scaleBand()
-                        .domain(categoriesX)
-                        .range([margin.left, figWidth - margin.right])
-
-
-        let normScaleUrbRow = d3.scaleLinear()
-                        .domain([285, 0])
-                        .range([figWidth - margin.bottom, margin.top])
-
-        let normScaleCatXUrb = d3.scaleBand()
-                        .domain(urbCategoriesX)
-                        .range([margin.left, figWidth - margin.right])
-
-
-
-        let hexesNorm = hexes.map(d=>({...d, mobilityWorkNorm: normScaleYMob(d.mobilityWork),
-                                             incomeNorm: normScaleXInc(d.income),
+        let hexesNorm = hexes.map(d=>({...d, mobilityWorkNorm: normScaleYMob(d.income),
+                                             incomeNorm: normScaleXInc(d.mobilityWork),
                                              xNorm: normScaleXhex(d.x),
-                                             yNorm: normScaleYhex(d.y),
-                                             rowNorm: d.category!=="#ccc"? normScaleCatRow(clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row):null,
-                                             categoryNorm: normScaleCatX(d.category),
-                                             urbRowNorm: d.urbCategory!==null && 
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-                                                         normScaleUrbRow(ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row):null,
-                                            // urbRowNorm: ruralData.filter(c=>c.urbCategory===d.urbCategory)[0],//.data.filter(e=>e.key===d.key)[0]),
-                                             urbCategoryNorm: normScaleCatXUrb(d.urbCategory),
-                                             urbRow: d.urbCategory!==null && 
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:null,
-                                             catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:null,
-
-                                            }))
+                                             yNorm: normScaleYhex(d.y)}))
 
         console.log("normalized", hexesNorm)
 
+
+
+
+
+        // // axes
+        // $: xScaleInc = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d[xVar])).nice()
+        //                 .range([margin.left, scatterWidth - margin.right])
+      
+        // $: yScaleMob = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d[yVar])).nice()
+        //                 .range([figWidth - margin.bottom, margin.top])
+
+        // // axes
+        // $: scaleMap = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.x)).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+
+
+        // $: scaleX = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.x)).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+
+        // $: scaleY = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.x)).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+      
+        // $: xAccessor = d=>d.x   
+        // $: yAccessor = d=>d.y
+        
+        // function updateScales(view) {
+        //     if (view==="chart") {
+        //         console.log("new view", selectedView.value)
+        //         scaleX.domain(d3.extent(hexes, d => d[xVar])).nice()
+        //               .range([margin.left, figWidth - margin.right])
+
+        //         scaleY.domain(d3.extent(hexes, d => d[yVar])).nice()
+        //               .range([figWidth - margin.bottom, margin.top])
+        //         xAccessor = d=>d[xVar]
+        //         yAccessor = d=>d[yVar]
+
+        //     } else if (view==="map") {
+        //         console.log("new view:", selectedView.value)
+        //         scaleX.domain(d3.extent(hexes, d => d.x)).nice()
+        //               .range([0, figWidth - margin.right-margin.left])
+
+        //         scaleY.domain(d3.extent(hexes, d => d.x)).nice()
+        //               .range([0, figWidth - margin.right-margin.left])
+        //         xAccessor = d=>d.x
+        //         yAccessor = d=>d.y
+        //     }
+        // }
+
         // ////////////////////
+
+        // const reveal = (node, { duration }) => {
+        //     const radius = select(node).attr('r');
+        //     return {
+        //         duration,
+        //         tick: (t) => select(node).attr('r', t * radius)
+        //     };
+        // }
+        // const transition = (node, { duration }) => {
+        //     const cx = d3.select(node).attr('cx');
+        //     const cy = d3.select(node).attr('cy');
+        //     return {
+        //         duration,
+        //         tick: (t) => d3.select(node)
+        //                         .attr('cx', scaleX(xAccessor(node)))
+        //                         .attr('cy', scaleX(xAccessor(node)))
+                             
+                
+        //     };
+        // }
+        
+        // $: yScaleMap = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.y)).nice()
+        //                 .range([margin.top, figHeight - margin.bottom])
 
         let xShow = "xNorm";
         let yShow = "yNorm";
-        let padding=0
+
+        // const tweenOptions = {
+        //     delay: 0,
+        //     duration: 1000,
+        //     easing: easings.cubicOut,
+        // };
+
+        // $: tweenedX = tweened(
+        //     hexes.map((d) => d[xShow]),
+        //     tweenOptions
+        // );
+
+        // $: tweenedY = tweened(
+        //     hexes.map((d) => d[yShow]),
+        //     tweenOptions
+        // );
+
+        // $: tweenedData = hexes.map((d, index) => ({
+        //     x: $tweenedX[index],
+        //     y: $tweenedY[index],
+        //     data:hexes[index]
+        // }));
 
         let dataUpdated = hexesNorm.map((d, index) => ({
             xVar: +d[xShow],
             yVar: +d[yShow],
             income:d.income,
             mobilityWork:d.mobilityWork,
-            n:d.n,
-            category: d.category,
-            urbCategory: d.urbCategory,
-            catRow: d.catRow,
-            urbRow: d.urbRow,
-            padding: +padding
-            // padding: getPadding(xShow, d.row)
-            // paddingmobilityWorkNorm: 0,
-            // paddingxNorm: 0,
-            // paddingcategoryNormNorm: 100,
-            // paddingUrbcategoryNormNorm: -100,
-
+            n:d.n
         }));
 
-        function getPadding(x, catRow, urbRow) {
-
-            console.log("showing", x, "row", catRow, "urbRow", urbRow)
-
-            if (x === "categoryNorm") {
-
-              const numZeros = d3.range(0, 100, 3)
-              const numTwos = d3.range(1, 100, 3)
-              const numThrees = d3.range(2, 100, 3)
-
-              numThrees.includes(catRow)?padding=40:
-              numTwos.includes(catRow)?padding=20:
-              padding=0
-
-            } else if (x === "urbCategoryNorm") {
-
-              padding = 0
-
-            } else {
-
-              padding = 0
-            }
-
-            console.log("padding is", padding)
-
-            return padding
-        }
-
-        console.log("dataUpdated", dataUpdated)//.map(d=>d.category))
+        console.log("dataUpdated", dataUpdated)
 
         $: tweenedData = tweened(dataUpdated, {
             delay: 0,
-            duration: 800,
-            easing: easings.cubicOut
+            duration: 500,
+            easing: easings.linear
           });
 
+        // function setTween(dimension, key) {
+        //     dimension.set(hexes.map((d) => +d[key]));
+        // }
 
         function setTween(x, y) {
           tweenedData.set(hexesNorm.map((d, index) => ({
@@ -271,67 +300,76 @@
               yVar: +d[y],
               income:d.income,
               mobilityWork:d.mobilityWork,
-              n:d.n,
-              category: d.category,
-              urbCategory: d.urbCategory,
-              padding: +getPadding(x, d.catRow, d.urbRow)
-              // padding: +d.padding
+              n:d.n
             }))
           );
         }
 
        function updateScales(view) {
             if (view==="chart") {
-                // console.log("new view", selectedView.value)
+                console.log("new view", selectedView.value)
+                // scaleX.domain(d3.extent(hexes, d => d[xVar])).nice()
+                //       .range([margin.left, figWidth - margin.right])
+
+                // scaleY.domain(d3.extent(hexes, d => d[yVar])).nice()
+                //       .range([figWidth - margin.bottom, margin.top])
+                // xAccessor = d=>d[xVar]
+                // yAccessor = d=>d[yVar]
+
+                // setTween(tweenedX, xVar);
+                // setTween(tweenedY, yVar);
+
+                // xScale.domain([0, 66825]).nice()
+                // yScale.domain([0, -60]).nice()
+
                 xShow = xVar + "Norm";
                 yShow = yVar + "Norm";
-                setTween(xShow, yShow, view)
+                setTween(xShow, yShow)
                 console.log($tweenedData)
-
             } else if (view==="map") {
                 console.log("new view:", selectedView.value)
-                // console.log("before",$tweenedData)
+                // scaleX.domain(d3.extent(hexes, d => d.x)).nice()
+                //       .range([0, figWidth - margin.right-margin.left])
+
+                // scaleY.domain(d3.extent(hexes, d => d.x)).nice()
+                //       .range([0, figWidth - margin.right-margin.left])
+                // xAccessor = d=>d.x
+                // yAccessor = d=>d.y
+
+                // setTween(tweenedX, "x");
+                // setTween(tweenedY, "y");
+
+                // xScale.domain([20.17923270954032, 474.21196867419746]).nice()
+                // yScale.domain([11.650485436893204, 588.3495145631067]).nice()
+
+                console.log("before",$tweenedData)
                 xShow = "xNorm";
                 yShow = "yNorm";
-                setTween(xShow, yShow)
-                console.log("after",$tweenedData)
-
-            } else if (view==="bars") {
-                console.log("new view:", selectedView.value)
-                // console.log("before",$tweenedData)
-                xShow = "categoryNorm";
-                yShow = "rowNorm";
-                setTween(xShow, yShow)
-                console.log("after",$tweenedData)
-
-            } else if (view==="barsUrban") {
-                console.log("new view:", selectedView.value)
-                // console.log("before",$tweenedData)
-                xShow = "urbCategoryNorm";
-                yShow = "urbRowNorm";
                 setTween(xShow, yShow)
                 console.log("after",$tweenedData)
             }
         }
 
+        // $: scaleX = d3.scaleLinear()
+        //                 .domain(d3.extent($tweenedX, (d) => d)).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+
+        // $: scaleY = d3.scaleLinear()
+        //                 .domain(d3.extent($tweenedY, (d) => d)).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+
         $: extentX = d3.extent($tweenedData, (d) => d.xVar)
         $: extentY = d3.extent($tweenedData, (d) => d.yVar)
+        // $: extentX = d3.extent([50, 903], (d) => d.xVar)
+        // $: extentY = d3.extent([38.640776699029225, 961.3592233009708], (d) => d.yVar)
 
         $: console.log(extentY)
 
-        $: xScale = //selectedView.value!=="bars"?
-              d3.scaleLinear()
+        $: xScale = d3.scaleLinear()
                         .domain(extentX)
                         // .domain(selectedView.value==="map"? [20.17923270954032, 474.21196867419746]:[0, 66825]).nice()
                         // .range([0, figWidth - margin.right-margin.left])
                         .range(innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2])
-              //           :
-
-              // d3.scaleBand()
-              //           .domain(extentX)
-              //           // .domain(selectedView.value==="map"? [20.17923270954032, 474.21196867419746]:[0, 66825]).nice()
-              //           // .range([0, figWidth - margin.right-margin.left])
-              //           .range(innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2])
       
 
         $: yScale = d3.scaleLinear()
@@ -340,8 +378,25 @@
                         // .range([0, figWidth - margin.right-margin.left].reverse())
                         .range([figWidth - margin.bottom, margin.top])
 
+        // hexesx [20.17923270954032, 474.21196867419746]
+        // hexesy [11.650485436893204, 588.3495145631067]
+        // income [0, 66825]
+        // mob [-60, 0]
+
+        // $: xScale = d3.scaleLinear()
+        //                 .domain([20.17923270954032, 474.21196867419746]).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+
+        // $: yScale = d3.scaleLinear()
+        //                 .domain([11.650485436893204, 588.3495145631067]).nice()
+        //                 .range([0, figWidth - margin.right-margin.left])
+
 
         $: console.log("tweened", tweenedData)
+
+        
+        // $: updateScales(selectedView.value)
+
 
 
         // view reactivity
@@ -351,6 +406,14 @@
         $: outerHeight = 0
         $: innerHeight = 0
 
+
+      //   function resizeMargins() {
+      //     if (innerWidth < 400) {
+      //       margin = ({ top: 0.01*innerHeight, right: 0.01*innerWidth, bottom: 0.01*innerHeight, left: 0.01*innerWidth})
+      //     }
+      //   }
+
+      //  $: resizeMargins()
 
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight />
@@ -372,8 +435,8 @@
 			</option>
 		{/each}
 	</select>	
-    <!-- <p>selected {selectedCountry ? selectedCountry.value : '[waiting...]'}</p>
-    <p>selected {selectedView ? selectedView.value : '[waiting...]'}</p> -->
+    <p>selected {selectedCountry ? selectedCountry.value : '[waiting...]'}</p>
+    <p>selected {selectedView ? selectedView.value : '[waiting...]'}</p>
 </div>
 <br>
 <div id="staticTooltip"></div>
@@ -411,24 +474,17 @@
                 {/each} -->
                 {#each $tweenedData as d}
                     <g>
-                        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
                         <circle
                         class="laCircle"
                         cursor="pointer"
-                        cx={xScale(d.xVar)+d.padding}
+                        cx={xScale(d.xVar)}
                         cy={yScale(d.yVar)}
                         r={innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.88*radius}
                         stroke="#fffae7"
                         stroke-width=0.5
                         fill={colorBivar([d.mobilityWork, d.income])}
-                        on:mouseover={(event)=> {
-                            console.log(d)
-                        }}
                         
                         ></circle>
-                        <!-- opacity={d.xVar===NaN||d.yVar===NaN?0:1}-->
-                        <!-- cx={d.xVar===NaN||d.yVar===NaN?Math.random()*-200:xScale(d.xVar)}
-                        cy={d.xVar===NaN||d.yVar===NaN?Math.random()*-200:yScale(d.yVar)} -->
                         <!--  fill={colorBivar([d.data.mobilityWork, d.data.income])} -->
                         <!-- cx={xScale(d.xVar)}
                         cy={yScale(d.yVar)} -->
