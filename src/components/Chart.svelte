@@ -207,7 +207,7 @@
 
         let xShow = "xNorm";
         let yShow = "yNorm";
-        let padding=0
+        let padding={x:0, y:0}
 
         let dataUpdated = hexesNorm.map((d, index) => ({
             xVar: +d[xShow],
@@ -219,7 +219,7 @@
             urbCategory: d.urbCategory,
             catRow: d.catRow,
             urbRow: d.urbRow,
-            padding: +padding
+            padding: padding
             // padding: getPadding(xShow, d.row)
             // paddingmobilityWorkNorm: 0,
             // paddingxNorm: 0,
@@ -234,21 +234,23 @@
 
             if (x === "categoryNorm") {
 
-              const numZeros = d3.range(0, 100, 3)
-              const numTwos = d3.range(1, 100, 3)
-              const numThrees = d3.range(2, 100, 3)
+              let rowCheck = d3.range(1,3,1).map(d=>d3.range(d, 500))
+              console.log("rowcheck", rowCheck)
+              const numTwos = d3.range(1, 500, 3)
+              const numThrees = d3.range(2, 500, 3)
 
-              numThrees.includes(catRow)?padding=40:
-              numTwos.includes(catRow)?padding=20:
-              padding=0
+              numThrees.includes(catRow)?padding={x:40, y:normScaleCatRow(0)}:
+              numTwos.includes(catRow)?padding={x:20, y:normScaleCatRow(1)}:
+              padding={x:0, y:normScaleCatRow(2)}
 
             } else if (x === "urbCategoryNorm") {
 
-              padding = 0
+
+              padding = {x:0, y:normScaleCatRow(0)}
 
             } else {
 
-              padding = 0
+              padding = {x:0, y:normScaleCatRow(0)}
             }
 
             console.log("padding is", padding)
@@ -274,7 +276,7 @@
               n:d.n,
               category: d.category,
               urbCategory: d.urbCategory,
-              padding: +getPadding(x, d.catRow, d.urbRow)
+              padding: getPadding(x, d.catRow, d.urbRow)
               // padding: +d.padding
             }))
           );
@@ -415,8 +417,8 @@
                         <circle
                         class="laCircle"
                         cursor="pointer"
-                        cx={xScale(d.xVar)+d.padding}
-                        cy={yScale(d.yVar)}
+                        cx={xScale(d.xVar)+d.padding.x}
+                        cy={yScale(d.yVar+d.padding.y)}
                         r={innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.88*radius}
                         stroke="#fffae7"
                         stroke-width=0.5
@@ -439,8 +441,8 @@
                         cursor="pointer"
                         font-size={innerWidth>600?fontSize:fontSize*0.8}
                         text-anchor="middle"
-                        x={xScale(d.xVar)}
-                        y={yScale(d.yVar)}
+                        x={xScale(d.xVar)+d.padding.x}
+                        y={yScale(d.yVar+d.padding.y)}
                         fill="rgb(255,255,255)"
                         stroke-width=0.5
                         >{innerWidth>550?d.n.slice(0,3):""}
