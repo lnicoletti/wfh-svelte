@@ -6,6 +6,14 @@
     import {renderHexJSON} from "d3-hexjson"
 	import {annotationLabel} from "d3-svg-annotation"
     import {onlyUnique} from "../utils.js"
+
+    // view reactivity
+    $: view = "horizontal"  
+    $: outerWidth = 0
+    $: innerWidth = 0
+    $: outerHeight = 0
+    $: innerHeight = 0
+
     // export let vizTheme;
     export let colors;
     export let hex_la;
@@ -39,6 +47,7 @@
     // const figScale = 2.1
     // const figWidth = width
     // const figHeight = height*figScale
+    let svg;
     let width = 1850
     let height = width/2.9
     // responsive margins
@@ -185,19 +194,19 @@
                                              incomeNorm: normScaleXInc(d.income),
                                              xNorm: normScaleXhex(d.x),
                                              yNorm: normScaleYhex(d.y),
-                                             rowNorm: d.category!=="#ccc"? normScaleCatRow(clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row):null,
+                                             rowNorm: d.category!=="#ccc"? normScaleCatRow(clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row):1720,
                                              categoryNorm: normScaleCatX(d.category),
                                              urbRowNorm: d.urbCategory!==null && 
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-                                                         normScaleUrbRow(ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row):null,
+                                                         normScaleUrbRow(ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row):1500,
                                             // urbRowNorm: ruralData.filter(c=>c.urbCategory===d.urbCategory)[0],//.data.filter(e=>e.key===d.key)[0]),
                                              urbCategoryNorm: normScaleCatXUrb(d.urbCategory),
                                              urbRow: d.urbCategory!==null && 
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:null,
-                                             catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:null,
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:1500,
+                                             catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:1720,
 
                                             }))
 
@@ -228,25 +237,48 @@
 
         }));
 
+
         function getPadding(x, catRow, urbRow) {
 
-            console.log("showing", x, "row", catRow, "urbRow", urbRow)
 
             if (x === "categoryNorm") {
 
-              let rowCheck = d3.range(1,3,1).map(d=>d3.range(d, 500))
-              console.log("rowcheck", rowCheck)
-              const numTwos = d3.range(1, 500, 3)
-              const numThrees = d3.range(2, 500, 3)
+              console.log("showing", x, "row", catRow)
 
-              numThrees.includes(catRow)?padding={x:40, y:normScaleCatRow(0)}:
-              numTwos.includes(catRow)?padding={x:20, y:normScaleCatRow(1)}:
+              let rowCheck = d3.range(1,3,1).map(d=>{ return {
+                key:[`num${d+1}`],
+                val:d3.range(d, 500, 3)
+              }})
+              .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
+              
+              console.log("rowcheck", rowCheck)
+
+              rowCheck["num3"].includes(catRow)?padding={x:40, y:normScaleCatRow(0)}:
+              rowCheck["num2"].includes(catRow)?padding={x:20, y:normScaleCatRow(1)}:
               padding={x:0, y:normScaleCatRow(2)}
 
             } else if (x === "urbCategoryNorm") {
 
+              console.log("showing", x, "urbRow", urbRow)
 
-              padding = {x:0, y:normScaleCatRow(0)}
+              let rowCheck = d3.range(1,10,1).map(d=>{ return {
+                key:[`num${d+1}`],
+                val:d3.range(d, 1000, 10)
+              }})
+              .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
+
+              console.log("rowcheck", rowCheck)
+
+              rowCheck["num10"].includes(urbRow)?padding={x:180, y:normScaleUrbRow(0)}:
+              rowCheck["num9"].includes(urbRow)?padding={x:160, y:normScaleUrbRow(1)}:
+              rowCheck["num8"].includes(urbRow)?padding={x:140, y:normScaleUrbRow(2)}:
+              rowCheck["num7"].includes(urbRow)?padding={x:120, y:normScaleUrbRow(3)}:
+              rowCheck["num6"].includes(urbRow)?padding={x:100, y:normScaleUrbRow(4)}:
+              rowCheck["num5"].includes(urbRow)?padding={x:80, y:normScaleUrbRow(5)}:
+              rowCheck["num4"].includes(urbRow)?padding={x:60, y:normScaleUrbRow(6)}:
+              rowCheck["num3"].includes(urbRow)?padding={x:40, y:normScaleUrbRow(7)}:
+              rowCheck["num2"].includes(urbRow)?padding={x:20, y:normScaleUrbRow(8)}:
+              padding={x:0, y:normScaleUrbRow(9)}
 
             } else {
 
@@ -321,12 +353,32 @@
 
         $: console.log(extentY)
 
+      //   let rangeX;
+      //   // function getRangeX(view) {
+
+      //     if (view === "map") {
+      //       rangeX = innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2]
+          
+      //     } else if (view === "chart"||view === "bars"||view === "barsUrban") {
+      //       rangeX = innerWidth>520? [margin.left/3, figWidth - margin.right]: innerWidth<300? [margin.left/1.7/3, figWidth - margin.right/1.7]:[margin.left/1.2/3, figWidth - margin.right/1.2]
+
+      //   }
+      // //   return rangeX
+      // // }
+
+      // $: console.log("VIEW", selectedView.value)
+
+      $: rangeX = selectedView.value === "map"? innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2]:
+                                               innerWidth>520? [margin.left/3, figWidth - margin.right]: innerWidth<300? [margin.left/1.7/3, figWidth - margin.right/1.7]:[margin.left/1.2/3, figWidth - margin.right/1.2]
+
+
         $: xScale = //selectedView.value!=="bars"?
               d3.scaleLinear()
                         .domain(extentX)
                         // .domain(selectedView.value==="map"? [20.17923270954032, 474.21196867419746]:[0, 66825]).nice()
                         // .range([0, figWidth - margin.right-margin.left])
-                        .range(innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2])
+                        .range(rangeX)
+                        // .range(innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2])
               //           :
 
               // d3.scaleBand()
@@ -346,16 +398,9 @@
         $: console.log("tweened", tweenedData)
 
 
-        // view reactivity
-        $: view = "horizontal"  
-        $: outerWidth = 0
-        $: innerWidth = 0
-        $: outerHeight = 0
-        $: innerHeight = 0
-
 
 </script>
-<svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight />
+<svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight/>
 <!-- dropdowns -->
 <div style="text-align:center" class="custom-select">
     <span class="mapCredit">SELECT COUNTRY AND VIEW</span><br>
@@ -379,9 +424,9 @@
 </div>
 <br>
 <div id="staticTooltip"></div>
-<div id="chart" style="text-align:center" class="svg-container" bind:clientWidth={figWidth}>
+<div id="chart" style="text-align:center" class="svg-container" bind:clientWidth={figWidth}> <!-- bind:clientWidth={figWidth} -->
     <svg width={figWidth} height={figWidth} transform="translate({0},{-margin.bottom/2})">
-        <g >
+        <g class="vizElement">
             <!-- {#if selectedView.value==="map"} -->
                 <!-- {#each hexes as d, i}
                     <g>
@@ -525,10 +570,17 @@
 }
 
 .svg-container {
-    max-width:600px;
-    min-width:100px;
-    max-height:600px;
+    /* max-width:1000px; */
+    max-width:620px;
+    /* min-width:100px; */
+    /* max-height:600px; */
+    /* max-width: 80vw;
+    max-height:80vh; */
 }
+
+/* .vizElement {
+  max-width:400px;
+} */
 
 body, main {
     background-color: #fffae7;
