@@ -4,8 +4,9 @@
     import { tweened } from "svelte/motion";
     import * as easings from 'svelte/easing';
     import {renderHexJSON} from "d3-hexjson"
-	import {annotationLabel} from "d3-svg-annotation"
+	  import {annotationLabel} from "d3-svg-annotation"
     import {onlyUnique} from "../utils.js"
+    import { onMount } from "svelte";
 
     // view reactivity
     $: view = "horizontal"  
@@ -39,24 +40,15 @@
 
 	  let selectedCountry = countryOptions[0];
     $: selectedView = viewOptions[0];
-    // let selectedView;
     
-    $: marginTop = 5
-    $: marginBottom = 40
-    $: marginLeft = 100
-    // const figScale = 2.1
-    // const figWidth = width
-    // const figHeight = height*figScale
-    let svg;
-    let width = 1850
-    let height = width/2.9
+    let svg, hexmap, circles, annot;
+    let scale = 1
+    let width = 800
+    let height = 600
     // responsive margins
-    let margin = ({ top: 0.03*height, right: 0.04*width, bottom: 0.03*height, left: 0.04*width})
-    let figWidth = width - margin.left - margin.right
-    let figHeight = height - margin.top - margin.bottom
+    let margin = ({ top: 0.03*height, right: 0.04*width, bottom: 0.1*height, left: 0.1*width})
 
-    $: scatterWidth = figWidth-100
-    $: radius = figWidth/62//9.8
+    $: radius = width/80//9.8
     $: radiusHover = radius*2
     $: boundWidth = 4
     $: fontSize = 6.5
@@ -92,7 +84,7 @@
     const k = 63/n
 
     // Render the hexes
-    let hexes = renderHexJSON(hex_la, figWidth, figHeight).map(d=> ({ ...d, 
+    let hexes = renderHexJSON(hex_la, width, height).map(d=> ({ ...d, 
           income: 
                 (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
                 (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null)||
@@ -122,15 +114,12 @@
                                                                             
         }))
         
-        console.log("urb",ukUrbRural)
-        console.log("hex", hexes)
+        // console.log("urb",ukUrbRural)
+        // console.log("hex", hexes)
 
         // variables for dot clusters bars
         let clusterData = d3.groups(hexes, v=>v.category).map(d=> { return {category: d[0], data: d[1].map((c, i) =>({ ...c, row: i}))}}).filter(d=>d.category!=="#ccc")
-        console.log("cluster", clusterData)
-        let scaleXCategory = d3.scaleBand().domain(categoriesX).range([margin.left, scatterWidth - margin.right]).paddingInner([0.4]);  
-        let scaleXCategoryLabels = d3.scaleBand().domain(categoryLabels).range([margin.left, scatterWidth - margin.right]).paddingInner([0.4]);     
-        let scaleY = d3.scaleLinear().domain([0, 85]).range([figHeight- margin.bottom, 0]); 
+        // console.log("cluster", clusterData)
 
         //   variables for dot clusters bars urban rural
         let ruralData = d3.groups(
@@ -148,102 +137,284 @@
                 }
             })
 
-        console.log("urb rural", ruralData)
+        // console.log("urb rural", ruralData)
         let urbCategoriesX = ruralData.sort((a,b)=>b.data.length-a.data.length).map(d=>d.urbCategory)                               
-        let scaleXurbCategory = d3.scaleBand().domain(urbCategoriesX).range([margin.left, scatterWidth - margin.right]).paddingInner([0.4]);  
-        let scaleYurb = d3.scaleLinear().domain([0, 285]).range([figHeight-margin.bottom, 0]); 
-
-
-        // normalize each variable to prevent svelte transition bug when scales change
-        let normScaleXInc = d3.scaleLinear()
+       
+        $: normScaleXInc = d3.scaleLinear()
                         .domain(d3.extent(hexes, d => d.income))
-                        .range([margin.left, figWidth - margin.right])
+                        .range([margin.left, width - margin.right])
       
-        let normScaleYMob = d3.scaleLinear()
+        $: normScaleYMob = d3.scaleLinear()
                         .domain(d3.extent(hexes, d => d.mobilityWork))
-                        .range([margin.top, figWidth - margin.bottom])
+                        .range([height - margin.bottom, margin.top])
 
-        let normScaleXhex = d3.scaleLinear()
-                        .domain(d3.extent(hexes, d => d.x))
-                        .range([margin.left, figWidth - margin.right])
+        // let normScaleXhex = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.x))
+        //                 .range(margin.top, figWidth - margin.bottom)
       
-        let normScaleYhex = d3.scaleLinear()
-                        .domain(d3.extent(hexes, d => d.y))
-                        .range([figWidth - margin.bottom, margin.top])
+        // let normScaleYhex = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.y))
+        //                 .range([margin.top, figWidth - margin.bottom])
 
-        let normScaleCatRow = d3.scaleLinear()
-                        .domain([85, 0])
-                        .range([figWidth - margin.bottom, margin.top])
+        $: normScaleCatRow = d3.scaleLinear()
+                        .domain([0, 85])
+                        .range([height - margin.bottom, margin.top])
 
-        let normScaleCatX = d3.scaleBand()
+        $: normScaleCatX = d3.scaleBand()
                         .domain(categoriesX)
-                        .range([margin.left, figWidth - margin.right])
+                        .range([margin.left, width - margin.right])
 
 
-        let normScaleUrbRow = d3.scaleLinear()
-                        .domain([285, 0])
-                        .range([figWidth - margin.bottom, margin.top])
+        $: normScaleUrbRow = d3.scaleLinear()
+                        .domain([0, 285])
+                        .range([height - margin.bottom, margin.top])
 
-        let normScaleCatXUrb = d3.scaleBand()
+        $: normScaleCatXUrb = d3.scaleBand()
                         .domain(urbCategoriesX)
-                        .range([margin.left, figWidth - margin.right])
+                        .range([margin.left, width - margin.right])
 
 
 
-        let hexesNorm = hexes.map(d=>({...d, mobilityWorkNorm: normScaleYMob(d.mobilityWork),
-                                             incomeNorm: normScaleXInc(d.income),
-                                             xNorm: normScaleXhex(d.x),
-                                             yNorm: normScaleYhex(d.y),
-                                             rowNorm: d.category!=="#ccc"? normScaleCatRow(clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row):1720,
-                                             categoryNorm: normScaleCatX(d.category),
-                                             urbRowNorm: d.urbCategory!==null && 
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-                                                         normScaleUrbRow(ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row):1500,
-                                            // urbRowNorm: ruralData.filter(c=>c.urbCategory===d.urbCategory)[0],//.data.filter(e=>e.key===d.key)[0]),
-                                             urbCategoryNorm: normScaleCatXUrb(d.urbCategory),
+        // let hexesNorm = hexes.map(d=>({...d, mobilityWorkNorm: normScaleYMob(d.mobilityWork),
+        //                                      incomeNorm: normScaleXInc(d.income),
+        //                                      xNorm: normScaleXhex(d.x),
+        //                                      yNorm: normScaleYhex(d.y),
+        //                                      rowNorm: d.category!=="#ccc"? normScaleCatRow(clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row):1720,
+        //                                      categoryNorm: normScaleCatX(d.category),
+        //                                      urbRowNorm: d.urbCategory!==null && 
+        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
+        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
+        //                                                  normScaleUrbRow(ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row):1500,
+        //                                     // urbRowNorm: ruralData.filter(c=>c.urbCategory===d.urbCategory)[0],//.data.filter(e=>e.key===d.key)[0]),
+        //                                      urbCategoryNorm: normScaleCatXUrb(d.urbCategory),
+        //                                      urbRow: d.urbCategory!==null && 
+        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
+        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
+        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:1500,
+        //                                      catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:1720,
+
+        //                                     }))
+
+        let hexesClean = hexes.map(d=>({...d, mobilityWork: d.mobilityWork,
+                                             income: d.income,
+                                             x: d.x,
+                                             y: d.y,
+                                             category: d.category,
+                                             urbCategory: d.urbCategory,
                                              urbRow: d.urbCategory!==null && 
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:1500,
                                              catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:1720,
+                                             
 
                                             }))
+                                            .map(d=>({...d, 
 
-        console.log("normalized", hexesNorm)
+                                              paddingCat: {x:getPadding("category", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("category", d.catRow, d.urbRow, d.urbCategory).y},
+                                              paddingUrb: {x:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).y}
+                                              
+                                            }))
 
-        // ////////////////////
+        onMount(() => {
 
-        let xShow = "xNorm";
-        let yShow = "yNorm";
-        let padding={x:0, y:0}
+          console.log("innerwidth", innerWidth)
+         
+          hexmap = d3.select(svg)
+              .selectAll("g")
+              .data(hexesClean)
+              .join("g")
+              // .attr("transform", `translate(${margin.left},0)`)
 
-        let dataUpdated = hexesNorm.map((d, index) => ({
-            xVar: +d[xShow],
-            yVar: +d[yShow],
-            income:d.income,
-            mobilityWork:d.mobilityWork,
-            n:d.n,
-            category: d.category,
-            urbCategory: d.urbCategory,
-            catRow: d.catRow,
-            urbRow: d.urbRow,
-            padding: padding
-            // padding: getPadding(xShow, d.row)
-            // paddingmobilityWorkNorm: 0,
-            // paddingxNorm: 0,
-            // paddingcategoryNormNorm: 100,
-            // paddingUrbcategoryNormNorm: -100,
-
-        }));
-
-
-        function getPadding(x, catRow, urbRow) {
+          circles = hexmap
+                .append("circle")
+                .attr("cx", d=>d.x)
+                .attr("cy", d=>d.y)
+                .attr("r", radius)//innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius)
+                .attr("stroke", "#fffae7")
+                .attr("stroke-width", "0.5")
+                .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
+                .attr("class", "laCircle")
+                .attr("cursor", "pointer")
+                .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .on("mouseover", (event,d)=>console.log([normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX))
+                // .on("mouseover", (event, d)=>console.log(normScaleYhex(+d.y)))
 
 
-            if (x === "categoryNorm") {
+          annot = hexmap
+                .append("text")
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("text-anchor", "middle")
+                .attr('class', 'LStextUK')
+                .attr('font-size', fontSize)
+                .attr('fill', 'rgb(255,255,255)')
+                .attr("z-index", 10)
+                .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .text(d=>d.n.slice(0,3))
+                .on("mouseover", (event, d)=>console.log(innerWidth))
+                .attr("cursor", "pointer")
 
-              console.log("showing", x, "row", catRow)
+                resize()
+        })
+
+        $: console.log("normalized", selectedView.value)
+
+        $: if (hexmap && circles && annot && selectedView.value==="chart") {
+
+        // svg.selectAll(".AxisLAN").remove()
+        // d3.selectAll(".annotation-group").remove()
+
+          circles.filter(d=>d.category==="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          .attr("cx", 200)
+          .attr("cy", 1000)
+          // .attr("opacity", 0)
+
+          annot.filter(d=>d.category==="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          .attr("x", 200)
+          .attr("y", 1000)
+          // .attr("opacity", 0)
+          
+          circles.filter(d=>d.category!=="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          .attr("cx", d => normScaleXInc(d[xVar]))
+          .attr("cy", d=> normScaleYMob(d[yVar]))
+          .attr("opacity", d=>d.income!==null?1:0)
+          .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
+          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+      
+          annot.filter(d=>d.category!=="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          .attr("x", d => normScaleXInc(d[xVar]))
+          .attr("y", d=> normScaleYMob(d[yVar]))
+          .attr("opacity", d=>d.income!==null?1:0)
+          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+          } else if (hexmap && circles && annot && selectedView.value==="map") {
+
+            circles
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            .attr("cx", d=>d.x)
+            .attr("cy", d=>d.y)
+            .attr("opacity", 1)
+            .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
+            .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+        
+            annot
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            .attr("x", d=>d.x)
+            .attr("y", d=>d.y)
+            .attr("opacity", 1)
+            .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+          } else if (hexmap && circles && annot && selectedView.value==="bars") {
+
+            circles.filter(d=>d.category==="#ccc")
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            .attr("cx", 200)
+            .attr("cy", 1000)
+            // .attr("opacity", 0)
+
+            annot.filter(d=>d.category==="#ccc")
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            .attr("x", 200)
+            .attr("y", 1000)
+            // .attr("opacity", 0)
+            
+            circles.filter(d=>d.category!=="#ccc")
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("cx", d => normScaleCatX(d.category)+d.paddingCat.x)
+            .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
+            .attr("opacity", d=>d.income!==null?1:0)
+            .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
+            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+        
+            annot.filter(d=>d.category!=="#ccc")
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .ease(d3.easeLinear)
+            .attr("x", d => normScaleCatX(d.category)+d.paddingCat.x)
+            .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
+            .attr("opacity", d=>d.income!==null?1:0)
+            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+          } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
+
+          circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          .attr("cx", 200)
+          .attr("cy", 1000)
+          .attr("opacity", 0)
+    
+          annot.filter(d=>d.urbCategory===null||d.category==="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          .attr("x", 200)
+          .attr("y", 1000)
+          .attr("opacity", 0)
+          
+          circles.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+          .transition()
+          .delay((d, i) => {
+            return i * Math.random() * 1.5;
+            })
+          .duration(800)
+          .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
+          .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
+          .attr("opacity", d=>d.income!==null?1:0)
+          .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
+          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+      
+          annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+          .transition()
+          .delay((d, i) => {
+            return i * Math.random() * 1.5;
+            })
+          .duration(800)
+          .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
+          .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
+          .attr("opacity", d=>d.income!==null?1:0)
+          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+        } 
+
+
+        function getPadding(x, catRow, urbRow, urbCat) {
+
+
+            let padding={x:0, y:0}
+            if (x === "category") {
+
+              // console.log("showing", x, "row", catRow)
 
               let rowCheck = d3.range(1,3,1).map(d=>{ return {
                 key:[`num${d+1}`],
@@ -253,13 +424,13 @@
               
               console.log("rowcheck", rowCheck)
 
-              rowCheck["num3"].includes(catRow)?padding={x:40, y:normScaleCatRow(0)}:
-              rowCheck["num2"].includes(catRow)?padding={x:20, y:normScaleCatRow(1)}:
-              padding={x:0, y:normScaleCatRow(2)}
+              rowCheck["num3"].includes(catRow)?padding={x:40, y:0}:
+              rowCheck["num2"].includes(catRow)?padding={x:20, y:1}:
+              padding={x:0, y:2}
 
-            } else if (x === "urbCategoryNorm") {
+            } else if (x === "urbCategory") {
 
-              console.log("showing", x, "urbRow", urbRow)
+              // console.log("showing", x, "urbRow", urbRow)
 
               let rowCheck = d3.range(1,10,1).map(d=>{ return {
                 key:[`num${d+1}`],
@@ -269,150 +440,73 @@
 
               console.log("rowcheck", rowCheck)
 
-              rowCheck["num10"].includes(urbRow)?padding={x:180, y:normScaleUrbRow(0)}:
-              rowCheck["num9"].includes(urbRow)?padding={x:160, y:normScaleUrbRow(1)}:
-              rowCheck["num8"].includes(urbRow)?padding={x:140, y:normScaleUrbRow(2)}:
-              rowCheck["num7"].includes(urbRow)?padding={x:120, y:normScaleUrbRow(3)}:
-              rowCheck["num6"].includes(urbRow)?padding={x:100, y:normScaleUrbRow(4)}:
-              rowCheck["num5"].includes(urbRow)?padding={x:80, y:normScaleUrbRow(5)}:
-              rowCheck["num4"].includes(urbRow)?padding={x:60, y:normScaleUrbRow(6)}:
-              rowCheck["num3"].includes(urbRow)?padding={x:40, y:normScaleUrbRow(7)}:
-              rowCheck["num2"].includes(urbRow)?padding={x:20, y:normScaleUrbRow(8)}:
-              padding={x:0, y:normScaleUrbRow(9)}
+              if (urbCat==="Urban") {
 
-            } else {
+                rowCheck["num10"].includes(urbRow)?padding={x:180, y:0}:
+                rowCheck["num9"].includes(urbRow)?padding={x:160, y:1}:
+                rowCheck["num8"].includes(urbRow)?padding={x:140, y:2}:
+                rowCheck["num7"].includes(urbRow)?padding={x:120, y:3}:
+                rowCheck["num6"].includes(urbRow)?padding={x:100, y:4}:
+                rowCheck["num5"].includes(urbRow)?padding={x:80, y:5}:
+                rowCheck["num4"].includes(urbRow)?padding={x:60, y:6}:
+                rowCheck["num3"].includes(urbRow)?padding={x:40, y:7}:
+                rowCheck["num2"].includes(urbRow)?padding={x:20, y:8}:
+                padding={x:0, y:9}
+                
+              } else if (urbCat==="Rural") {
 
-              padding = {x:0, y:normScaleCatRow(0)}
-            }
+                rowCheck["num10"].includes(urbRow)?padding={x:180, y:0}:
+                rowCheck["num9"].includes(urbRow)?padding={x:160, y:1}:
+                rowCheck["num8"].includes(urbRow)?padding={x:140, y:2}:
+                rowCheck["num7"].includes(urbRow)?padding={x:120, y:3}:
+                rowCheck["num6"].includes(urbRow)?padding={x:100, y:4}:
+                rowCheck["num5"].includes(urbRow)?padding={x:80, y:5}:
+                rowCheck["num4"].includes(urbRow)?padding={x:60, y:6}:
+                rowCheck["num3"].includes(urbRow)?padding={x:40, y:7}:
+                rowCheck["num2"].includes(urbRow)?padding={x:20, y:8}:
+                padding={x:0, y:9}
+
+              }
+
+            } 
+            // else {
+
+            //   padding = {x:0, y:0}
+            // }
 
             console.log("padding is", padding)
 
             return padding
         }
+  
+        function resize() {
+          // ({ width, height } = svg.getBoundingClientRect());
 
-        console.log("dataUpdated", dataUpdated)//.map(d=>d.category))
+          scale = innerWidth/800
+          console.log("scale", scale)
+          // console.log(width, height)
+          // console.log(margin)
+          // console.log(normScaleXInc.range())
 
-        $: tweenedData = tweened(dataUpdated, {
-            delay: 0,
-            duration: 800,
-            easing: easings.cubicOut
-          });
+          // normScaleXInc.range([margin.left, width - margin.right])
 
-
-        function setTween(x, y) {
-          tweenedData.set(hexesNorm.map((d, index) => ({
-              xVar: +d[x],
-              yVar: +d[y],
-              income:d.income,
-              mobilityWork:d.mobilityWork,
-              n:d.n,
-              category: d.category,
-              urbCategory: d.urbCategory,
-              padding: getPadding(x, d.catRow, d.urbRow)
-              // padding: +d.padding
-            }))
-          );
+          // return [width, height]
         }
 
-       function updateScales(view) {
-            if (view==="chart") {
-                // console.log("new view", selectedView.value)
-                xShow = xVar + "Norm";
-                yShow = yVar + "Norm";
-                setTween(xShow, yShow, view)
-                console.log($tweenedData)
-
-            } else if (view==="map") {
-                console.log("new view:", selectedView.value)
-                // console.log("before",$tweenedData)
-                xShow = "xNorm";
-                yShow = "yNorm";
-                setTween(xShow, yShow)
-                console.log("after",$tweenedData)
-
-            } else if (view==="bars") {
-                console.log("new view:", selectedView.value)
-                // console.log("before",$tweenedData)
-                xShow = "categoryNorm";
-                yShow = "rowNorm";
-                setTween(xShow, yShow)
-                console.log("after",$tweenedData)
-
-            } else if (view==="barsUrban") {
-                console.log("new view:", selectedView.value)
-                // console.log("before",$tweenedData)
-                xShow = "urbCategoryNorm";
-                yShow = "urbRowNorm";
-                setTween(xShow, yShow)
-                console.log("after",$tweenedData)
-            }
+        $: if (annot && innerWidth<550) {
+          console.log(annot)
+          annot.lower()
+        } else if (annot && innerWidth>550) {
+          annot.raise()
+          // annot.attr('font-size', fontSize*2)
         }
-
-        $: extentX = d3.extent($tweenedData, (d) => d.xVar)
-        $: extentY = d3.extent($tweenedData, (d) => d.yVar)
-
-        $: console.log(extentY)
-
-      //   let rangeX;
-      //   // function getRangeX(view) {
-
-      //     if (view === "map") {
-      //       rangeX = innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2]
-          
-      //     } else if (view === "chart"||view === "bars"||view === "barsUrban") {
-      //       rangeX = innerWidth>520? [margin.left/3, figWidth - margin.right]: innerWidth<300? [margin.left/1.7/3, figWidth - margin.right/1.7]:[margin.left/1.2/3, figWidth - margin.right/1.2]
-
-      //   }
-      // //   return rangeX
-      // // }
-
-      // $: console.log("VIEW", selectedView.value)
-
-      $: rangeX = selectedView.value === "map"? innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2]:
-                                               innerWidth>520? [margin.left/3, figWidth - margin.right]: innerWidth<300? [margin.left/1.7/3, figWidth - margin.right/1.7]:[margin.left/1.2/3, figWidth - margin.right/1.2]
-
-
-        $: xScale = //selectedView.value!=="bars"?
-              d3.scaleLinear()
-                        .domain(extentX)
-                        // .domain(selectedView.value==="map"? [20.17923270954032, 474.21196867419746]:[0, 66825]).nice()
-                        // .range([0, figWidth - margin.right-margin.left])
-                        .range(rangeX)
-                        // .range(innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2])
-              //           :
-
-              // d3.scaleBand()
-              //           .domain(extentX)
-              //           // .domain(selectedView.value==="map"? [20.17923270954032, 474.21196867419746]:[0, 66825]).nice()
-              //           // .range([0, figWidth - margin.right-margin.left])
-              //           .range(innerWidth>520? [margin.left, figWidth - margin.right]: innerWidth<300? [margin.left/1.7, figWidth - margin.right/1.7]:[margin.left/1.2, figWidth - margin.right/1.2])
-      
-
-        $: yScale = d3.scaleLinear()
-                        .domain(extentY)
-                        // .domain(selectedView.value==="map"? [11.650485436893204, 588.3495145631067]:[0, -60]).nice()
-                        // .range([0, figWidth - margin.right-margin.left].reverse())
-                        .range([figWidth - margin.bottom, margin.top])
-
-
-        $: console.log("tweened", tweenedData)
-
-
 
 </script>
-<svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight/>
+<svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
 <!-- dropdowns -->
-<div style="text-align:center" class="custom-select">
-    <span class="mapCredit">SELECT COUNTRY AND VIEW</span><br>
-    <select id="chartCountry" bind:value={selectedCountry}>
-		{#each countryOptions as option}
-			<option value={option}>
-				{option.text}
-			</option>
-		{/each}
-	</select>
     <!-- <select id="chartView" bind:value={selectedView} on:change="{(e)=>updateScales(selectedView.value)}"> -->
-  <select id="chartView" bind:value={selectedView} on:change="{(e)=>updateScales(selectedView.value)}">
+  <!-- <select id="chartView" bind:value={selectedView} on:change="{(e)=>updateScales(selectedView.value)}"> -->
+  <select id="chartView" bind:value={selectedView}>
 		{#each viewOptions as option}
 			<option value={option}>
 				{option.text}
@@ -421,25 +515,53 @@
 	</select>	
     <!-- <p>selected {selectedCountry ? selectedCountry.value : '[waiting...]'}</p>
     <p>selected {selectedView ? selectedView.value : '[waiting...]'}</p> -->
-</div>
+<!-- </div> -->
 <br>
 <div id="staticTooltip"></div>
-<div id="chart" style="text-align:center" class="svg-container" bind:clientWidth={figWidth}> <!-- bind:clientWidth={figWidth} -->
-    <svg width={figWidth} height={figWidth} transform="translate({0},{-margin.bottom/2})">
-        <g class="vizElement">
-            <!-- {#if selectedView.value==="map"} -->
-                <!-- {#each hexes as d, i}
+<div display=flex justify-content=center>
+  <svg width={100} height={100} display=block margin=auto transform="translate({innerWidth/2-50},{0})">
+    <g class="legend" transform="translate({15},{15})">  <!-- transform="translate({innerWidth/2},{margin.top/2})"-->
+        <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
+            <path d="M0,0L6,3L0,6Z" />
+        </marker>
+        {#each legendData as [i, j], idx}
+            <circle 
+            r={10} 
+            cx={(i * k)+k/2} 
+            cy={((n - 1 - j) * k)+k/2} 
+            fill={colors[j * n + i]} 
+            class="legendCircle" 
+            value={colors[j * n + i]}
+            >
+                <title>
+                    {dataBivar.title[0]}{labels[j] && ` (${labels[j]})`}
+                    {dataBivar.title[1]}{labels[i] && ` (${labels[i]})`}
+                </title>
+            </circle>
+        {/each}
+        <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=black stroke-width=1.5 />
+        <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=black stroke-width=1.5 />
+        <text font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{dataBivar.title[0]}</text>
+        <text font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{dataBivar.title[1]}</text>
+    </g>
+  </svg>
+</div>
+<svg viewBox="0 0 800 600" bind:this={svg}></svg>
+<!-- <div id="chart" style="text-align:center" class="svg-container" bind:clientWidth={figWidth}> bind:clientWidth={figWidth} -->
+    <!-- <svg width={figWidth} height={figWidth} transform="translate({0},{-margin.bottom/2})"> -->
+        <!-- <g class="vizElement">
+                {#each hexesClean as d, i}
                     <g>
                         <circle
                         class="laCircle"
                         cursor="pointer"
-                        cx={scaleX(xAccessor(d))}
-                        cy={scaleY(yAccessor(d))}
+                        cx={normScaleXhex(d.x)}
+                        cy={normScaleYhex(d.y)}
                         r={innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius}
                         stroke="#fffae7"
                         stroke-width=0.5
                         fill={colorBivar([d.mobilityWork, d.income])}
-                        
+                        category={d.category}
                         ></circle>
                     </g>
                     <g>
@@ -448,17 +570,16 @@
                         cursor="pointer"
                         font-size={innerWidth>600?fontSize:fontSize*0.8}
                         text-anchor="middle"
-                        x={scaleX(xAccessor(d))}
-                        y={scaleY(yAccessor(d))}
+                        x={normScaleXhex(d.x)}
+                        y={normScaleYhex(d.y)}
                         fill="rgb(255,255,255)"
                         stroke-width=0.5
                         >{innerWidth>500?d.n.slice(0,3):""}
                         </text>
                     </g>
                 {/each} -->
-                {#each $tweenedData as d}
+                <!-- {#each $tweenedData as d}
                     <g>
-                        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
                         <circle
                         class="laCircle"
                         cursor="pointer"
@@ -473,12 +594,7 @@
                         }}
                         
                         ></circle>
-                        <!-- opacity={d.xVar===NaN||d.yVar===NaN?0:1}-->
-                        <!-- cx={d.xVar===NaN||d.yVar===NaN?Math.random()*-200:xScale(d.xVar)}
-                        cy={d.xVar===NaN||d.yVar===NaN?Math.random()*-200:yScale(d.yVar)} -->
-                        <!--  fill={colorBivar([d.data.mobilityWork, d.data.income])} -->
-                        <!-- cx={xScale(d.xVar)}
-                        cy={yScale(d.yVar)} -->
+
                     </g>
                     <g>
                         <text
@@ -493,7 +609,7 @@
                         >{innerWidth>550?d.n.slice(0,3):""}
                         </text>
                     </g>
-                {/each}
+                {/each} -->
 
                                     <!-- in:fly="{{x:scaleX(xAccessor(d)), y: scaleY(yAccessor(d)), opacity:1, duration: 500, delay: Math.random()*i}}"
                         out:fly="{{x:200, y:200, opacity:0, duration: 500, delay: Math.random()*i}}"
@@ -527,33 +643,8 @@
                 </g> -->
                 <!-- {/each} -->
             <!-- {/if} -->
-        </g>
-        <g class="legend" transform="translate({innerWidth>500? figWidth*0.85: figWidth*0.72},{margin.top})">
-            <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
-                <path d="M0,0L6,3L0,6Z" />
-            </marker>
-            {#each legendData as [i, j], idx}
-                <circle 
-                r={10} 
-                cx={(i * k)+k/2} 
-                cy={((n - 1 - j) * k)+k/2} 
-                fill={colors[j * n + i]} 
-                class="legendCircle" 
-                value={colors[j * n + i]}
-                >
-                    <title>
-                        {dataBivar.title[0]}{labels[j] && ` (${labels[j]})`}
-                        {dataBivar.title[1]}{labels[i] && ` (${labels[i]})`}
-                    </title>
-                </circle>
-            {/each}
-            <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=black stroke-width=1.5 />
-            <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=black stroke-width=1.5 />
-            <text font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{dataBivar.title[0]}</text>
-            <text font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{dataBivar.title[1]}</text>
-        </g>
-    </svg>
-</div>
+        <!-- </g>-->
+<!-- </div> -->
 <p>Outerwidth: {outerWidth}</p>
 <p>Innerwidth: {innerWidth}</p>
 <style>

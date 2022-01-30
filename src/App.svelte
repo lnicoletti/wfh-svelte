@@ -27,6 +27,13 @@
 
 	let colors = colorSchemes.get(vizTheme)
 
+  let countryOptions = [
+		{ id: 1, value: `UK`, text: `United Kingdom`},
+		{ id: 2, value: `US`, text: `United States`}
+	];
+
+  $: selectedCountry = countryOptions[0];
+
 	onMount( async () => {
 		await Promise.all([
 					// uk base data
@@ -75,7 +82,22 @@ $: innerHeight = 0
 		<div class="content">
 			<Title {vizTheme}/>
 			<br>
-			<Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us}/>
+      <div style="text-align:center" class="custom-select">
+        <span class="mapCredit">SELECT COUNTRY AND VIEW</span><br>
+        <select id="chartCountry" bind:value={selectedCountry}>
+          {#each countryOptions as option}
+            <option value={option}>
+              {option.text}
+            </option>
+          {/each}
+        </select>
+        {#if selectedCountry.value==="UK"}
+        <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/>
+        {:else if selectedCountry.value==="US"}
+        <h1>US Chart</h1>
+        <!-- <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/> -->
+        {/if}
+        </div>
 			<Footer {vizTheme}/>
 		</div>
 	</body>
@@ -392,7 +414,7 @@ font-family:'Lato', sans-serif;
   }
   
 
-  .custom-select {
+  .custom-select button {
     position: relative;
     font-family: 'Lato', sans-serif;
     text-transform: uppercase;
