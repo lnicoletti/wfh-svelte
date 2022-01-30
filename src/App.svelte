@@ -32,7 +32,7 @@
 		{ id: 2, value: `US`, text: `United States`}
 	];
 
-  $: selectedCountry = countryOptions[0];
+  $: selectedCountry = countryOptions[1];
 
 	onMount( async () => {
 		await Promise.all([
@@ -94,8 +94,8 @@ $: innerHeight = 0
         {#if selectedCountry.value==="UK"}
         <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/>
         {:else if selectedCountry.value==="US"}
-        <h1>US Chart</h1>
-        <!-- <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/> -->
+        <!-- <h1>US Chart</h1> -->
+        <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"US"}/>
         {/if}
         </div>
 			<Footer {vizTheme}/>

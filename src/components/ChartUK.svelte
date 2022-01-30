@@ -23,14 +23,13 @@
     export let ukUrbRural;
     export let uSuPd_tot;
     export let hex_us;
-    export let country;
 
     // console.log(hex_us)
 
-  //   let countryOptions = [
-	// 	{ id: 1, value: `UK`, text: `United Kingdom`},
-	// 	{ id: 2, value: `US`, text: `United States`}
-	// ];
+    let countryOptions = [
+		{ id: 1, value: `UK`, text: `United Kingdom`},
+		{ id: 2, value: `US`, text: `United States`}
+	];
 
     let viewOptions = [
 		{ id: 1, value: `map`, text: `Map`},
@@ -39,7 +38,7 @@
     { id: 4, value: `barsUrban`, text: `Bars Urban`}
 	];
 
-	  // let selectedCountry = countryOptions[0];
+	  let selectedCountry = countryOptions[0];
     $: selectedView = viewOptions[0];
     
     let svg, hexmap, circles, annot;
@@ -49,7 +48,7 @@
     // responsive margins
     let margin = ({ top: 0.03*height, right: 0.04*width, bottom: 0.1*height, left: 0.1*width})
 
-    $: radius = country==="UK"?width/80:width/220//9.8
+    $: radius = width/80//9.8
     $: radiusHover = radius*2
     $: boundWidth = 4
     $: fontSize = 6.5
@@ -62,30 +61,18 @@
 
 
     // color settings
-    let categoriesX = country==="UK"?[colors[6], colors[2], colors[4], colors[7], colors[5], colors[3], colors[1], colors[0], colors[8]]:
-                                     [colors[2], colors[6], colors[7], colors[4], colors[3], colors[5], colors[8], colors[1], colors[0]] ;
-    let categoryLabels = country==="UK"?["Low Income, High Travel", "High Income, Low Travel", "Mid. Income, Mid. Travel", "Mid. Income, High Travel", 
-                                         "High Income, Mid. Travel", "Low Income, Mid. Travel", "Mid. Income, Low Travel", "Low Income, Low Travel", "High Income, High Travel"]:
-                                        ["High Income, Low Travel", "Low Income, High Travel", "Mid. Income, High Travel", "Mid. Income, Mid. Travel", 
-                                         "Low Income, Mid. Travel", "High Income, Mid. Travel", "High Income, High Travel", "Mid. Income, Low Travel", "Low Income, Low Travel"];
+    let categoriesX = [colors[6], colors[2], colors[4], colors[7], colors[5], colors[3], colors[1], colors[0], colors[8]];
+    let categoryLabels = ["Low Income, High Travel", "High Income, Low Travel", "Mid. Income, Mid. Travel", "Mid. Income, High Travel", 
+                            "High Income, Mid. Travel", "Low Income, Mid. Travel", "Mid. Income, Low Travel", "Low Income, Low Travel", "High Income, High Travel"];
 
-    let sortOrder = country==="UK"?[categoriesX[1], categoriesX[0], categoriesX[4], categoriesX[2], categoriesX[7], categoriesX[5], categoriesX[6], categoriesX[3], categoriesX[8]]:
-                                   [categoriesX[0], categoriesX[1], categoriesX[5], categoriesX[3], categoriesX[8], categoriesX[4], categoriesX[7], categoriesX[2], categoriesX[6]];
-
+    let sortOrder = [categoriesX[1], categoriesX[0], categoriesX[4], categoriesX[2], categoriesX[7], categoriesX[5], categoriesX[6], categoriesX[3], categoriesX[8]] 
     // bivar settings
-    let dataBivar = country==="UK"?Object.assign(new Map(ukUpd_tot.map(d=>[d.area_code, [d["workplaces_percent_change_from_baseline"], d["Total annual income (£)"]]])), {title: ["Travel to Work", "Med. Income"]}):
-                                   Object.assign(new Map(uSuPd_tot.map(d=>[d.area_code, [d["workplaces_percent_change_from_baseline"], d["Total annual income (£)"]]])), {title: ["Travel to Work", "Med. Income"]})
+    let dataBivar = Object.assign(new Map(ukUpd_tot.map(d=>[d.area_code, [d["workplaces_percent_change_from_baseline"], d["Total annual income (£)"]]])), {title: ["Travel to Work", "Med. Income"]})
     let n = Math.floor(Math.sqrt(colors.length))
     let yBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[1]), d3.range(n))
     let xBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[0]), d3.range(n))
     let labels = ["low", "medium", "high"]
-    // let colorBivar = function(value) {
-    //         if (!value) return "lightgrey";
-    //           let [a, b] = value;
-    //           return colors[yBivar(b) + xBivar(a) * n];
-    //     }
-
-        let colorBivar = function(value) {
+    let colorBivar = function(value) {
             if (!value) return "lightgrey";
             let [a, b] = value;
             if (!b) return "lightgrey";
@@ -97,8 +84,7 @@
     const k = 63/n
 
     // Render the hexes
-    let hexes = country==="UK"?
-    renderHexJSON(hex_la, width, height).map(d=> ({ ...d, 
+    let hexes = renderHexJSON(hex_la, width, height).map(d=> ({ ...d, 
           income: 
                 (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
                 (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null)||
@@ -126,42 +112,17 @@
           ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === undefined ? null:        
           ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"],
                                                                             
-        })):
-        hex_us.map(d=> ({ ...d, 
-          income: 
-                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"],
-                
-          mobilityWork: 
-                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],
-                                                  
-          mobilityRes: 
-                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["residential_percent_change_from_baseline"],
-          
-          category: uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined? "#ccc": 
-          uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === null? "#ccc":
-          uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === undefined ? "#ccc":        
-          colorBivar([uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"]]),
-
-          urbCategory: 
-                  uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-                  uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["urbCategory"]
-
-                                                                            
         }))
         
         // console.log("urb",ukUrbRural)
-        console.log("hex us", hexes)
+        // console.log("hex", hexes)
 
         // variables for dot clusters bars
         let clusterData = d3.groups(hexes, v=>v.category).map(d=> { return {category: d[0], data: d[1].map((c, i) =>({ ...c, row: i}))}}).filter(d=>d.category!=="#ccc")
-        console.log("cluster", clusterData)
+        // console.log("cluster", clusterData)
 
         //   variables for dot clusters bars urban rural
-        let ruralData = country==="UK"?
-        d3.groups(
+        let ruralData = d3.groups(
             ukUrbRural
             .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
                                     hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
@@ -174,44 +135,11 @@
                 })//.sort((a,b)=> d3.descending(a.category,b.category))
                 .map((c, i) =>({ ...c, row: i}))
                 }
-            }):
-            d3.groups(
-              hexes,
-            //   .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
-            //                                       hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
-            //                                     }))
-                // .filter(d=>hexes.map(d=>d.fullName).filter(onlyUnique).includes(d.fullName)), 
-                v=>v.urbCategory
-                )
-                .filter(d=>d[0]!==null)
-                .map(d=> { 
-                  return {urbCategory: d[0], data: d[1]
-                    .filter(d=>d.urbCategory!==null&&colors.includes(d.category)&&d.mobilityWork!==null&&d.income!==null).sort(function(a, b) {
-                    return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
-                  })//.sort((a,b)=> d3.descending(a.category,b.category))
-                    .map((c, i) =>({ ...c, row: i}))
-                    }
-                })
+            })
 
-        console.log("urb rural", ruralData)
-        let urbCategoriesX = ruralData.sort((a,b)=>b.data.length-a.data.length).map(d=>d.urbCategory)   
-        
-        var featureCollection = country==="US"?
-        { type:"FeatureCollection", features: hexes.map(function(d) {
-                    return {     
-                      "type": "Feature",
-                      "geometry": {
-                         "type": "Point",
-                         "coordinates": [d.x, d.y]
-                      },
-                      "properties": { "name":d.county }
-                    }
-                }) }: {}
-
-        $: projection = country==="US"?
-                        d3.geoAlbersUsa()
-                          .fitSize([width-margin.right-margin.left, height-margin.top-margin.bottom], featureCollection):null;
-                
+        // console.log("urb rural", ruralData)
+        let urbCategoriesX = ruralData.sort((a,b)=>b.data.length-a.data.length).map(d=>d.urbCategory)                               
+       
         $: normScaleXInc = d3.scaleLinear()
                         .domain(d3.extent(hexes, d => d.income))
                         .range([margin.left, width - margin.right])
@@ -290,7 +218,7 @@
 
         onMount(() => {
 
-          // console.log("innerwidth", innerWidth)
+          console.log("innerwidth", innerWidth)
          
           hexmap = d3.select(svg)
               .selectAll("g")
@@ -300,42 +228,39 @@
 
           circles = hexmap
                 .append("circle")
-                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("cx", d=>d.x)
+                .attr("cy", d=>d.y)
                 .attr("r", radius)//innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius)
                 .attr("stroke", "#fffae7")
                 .attr("stroke-width", "0.5")
                 .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
                 .attr("class", "laCircle")
                 .attr("cursor", "pointer")
-                .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
                 .on("mouseover", (event,d)=>console.log([normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX))
                 // .on("mouseover", (event, d)=>console.log(normScaleYhex(+d.y)))
 
 
           annot = hexmap
                 .append("text")
-                .attr("x", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-                .attr("y", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
                 .attr("text-anchor", "middle")
                 .attr('class', 'LStextUK')
                 .attr('font-size', fontSize)
                 .attr('fill', 'rgb(255,255,255)')
                 .attr("z-index", 10)
                 .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-                .text(d=>country==="UK"?d.n.slice(0,3):"")
+                .text(d=>d.n.slice(0,3))
                 .on("mouseover", (event, d)=>console.log(innerWidth))
                 .attr("cursor", "pointer")
 
-          // annot = true
-
-                // resize()
+                resize()
         })
 
         $: console.log("normalized", selectedView.value)
 
-        $: if (hexmap && circles && annot && selectedView.value==="chart") { 
+        $: if (hexmap && circles && annot && selectedView.value==="chart") {
 
         // svg.selectAll(".AxisLAN").remove()
         // d3.selectAll(".annotation-group").remove()
@@ -354,7 +279,7 @@
           .ease(d3.easeLinear)
           .attr("x", 200)
           .attr("y", 1000)
-          .attr("opacity", 0)
+          // .attr("opacity", 0)
           
           circles.filter(d=>d.category!=="#ccc")
           .transition()
@@ -364,8 +289,7 @@
           .attr("cy", d=> normScaleYMob(d[yVar]))
           .attr("opacity", d=>d.income!==null?1:0)
           .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-          .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
       
           annot.filter(d=>d.category!=="#ccc")
           .transition()
@@ -382,12 +306,12 @@
             .transition()
             .duration(750)
             .ease(d3.easeLinear)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+            .attr("cx", d=>d.x)
+            .attr("cy", d=>d.y)
             .attr("opacity", 1)
             .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
         
             annot
             .transition()
@@ -414,7 +338,7 @@
             .ease(d3.easeLinear)
             .attr("x", 200)
             .attr("y", 1000)
-            .attr("opacity", 0)
+            // .attr("opacity", 0)
             
             circles.filter(d=>d.category!=="#ccc")
             .transition()
@@ -426,9 +350,8 @@
             .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
             .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            
+            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+        
             annot.filter(d=>d.category!=="#ccc")
             .transition()
             .delay((d, i) => {
@@ -469,8 +392,8 @@
           .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
           .attr("opacity", d=>d.income!==null?1:0)
           .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
-          .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+      
           annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
           .transition()
           .delay((d, i) => {
@@ -499,7 +422,7 @@
               }})
               .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
               
-              // console.log("rowcheck", rowCheck)
+              console.log("rowcheck", rowCheck)
 
               rowCheck["num3"].includes(catRow)?padding={x:40, y:0}:
               rowCheck["num2"].includes(catRow)?padding={x:20, y:1}:
@@ -515,7 +438,7 @@
               }})
               .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
 
-              // console.log("rowcheck", rowCheck)
+              console.log("rowcheck", rowCheck)
 
               if (urbCat==="Urban") {
 
@@ -551,7 +474,7 @@
             //   padding = {x:0, y:0}
             // }
 
-            // console.log("padding is", padding)
+            console.log("padding is", padding)
 
             return padding
         }
