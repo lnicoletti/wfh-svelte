@@ -32,7 +32,7 @@
 		{ id: 2, value: `US`, text: `United States`}
 	];
 
-  $: selectedCountry = countryOptions[1];
+  $: selectedCountry = countryOptions[0];
 
 	onMount( async () => {
 		await Promise.all([

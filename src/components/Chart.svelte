@@ -4,7 +4,7 @@
     import { tweened } from "svelte/motion";
     import * as easings from 'svelte/easing';
     import {renderHexJSON} from "d3-hexjson"
-	  import {annotationLabel} from "d3-svg-annotation"
+	  import {annotationLabel, annotation} from "d3-svg-annotation"
     import {onlyUnique} from "../utils.js"
     import { onMount } from "svelte";
 
@@ -47,7 +47,7 @@
     let width = 800
     let height = 600
     // responsive margins
-    let margin = ({ top: 0.03*height, right: 0.04*width, bottom: 0.1*height, left: 0.1*width})
+    let margin = ({ top: 0.03*height, right: 0.04*width, bottom: 0.04*height, left: 0.1*width})
 
     $: radius = country==="UK"?width/80:width/220//9.8
     $: radiusHover = radius*2
@@ -229,7 +229,7 @@
         //                 .range([margin.top, figWidth - margin.bottom])
 
         $: normScaleCatRow = d3.scaleLinear()
-                        .domain([0, 85])
+                        .domain(country==="UK"?[0, 82]:[0, 520])
                         .range([height - margin.bottom, margin.top])
 
         $: normScaleCatX = d3.scaleBand()
@@ -238,7 +238,7 @@
 
 
         $: normScaleUrbRow = d3.scaleLinear()
-                        .domain([0, 285])
+                        .domain(country==="UK"?[0, 255]:[0, 1550])
                         .range([height - margin.bottom, margin.top])
 
         $: normScaleCatXUrb = d3.scaleBand()
@@ -246,28 +246,8 @@
                         .range([margin.left, width - margin.right])
 
 
-
-        // let hexesNorm = hexes.map(d=>({...d, mobilityWorkNorm: normScaleYMob(d.mobilityWork),
-        //                                      incomeNorm: normScaleXInc(d.income),
-        //                                      xNorm: normScaleXhex(d.x),
-        //                                      yNorm: normScaleYhex(d.y),
-        //                                      rowNorm: d.category!=="#ccc"? normScaleCatRow(clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row):1720,
-        //                                      categoryNorm: normScaleCatX(d.category),
-        //                                      urbRowNorm: d.urbCategory!==null && 
-        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
-        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-        //                                                  normScaleUrbRow(ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row):1500,
-        //                                     // urbRowNorm: ruralData.filter(c=>c.urbCategory===d.urbCategory)[0],//.data.filter(e=>e.key===d.key)[0]),
-        //                                      urbCategoryNorm: normScaleCatXUrb(d.urbCategory),
-        //                                      urbRow: d.urbCategory!==null && 
-        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
-        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-        //                                                  ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:1500,
-        //                                      catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:1720,
-
-        //                                     }))
-
-        let hexesClean = hexes.map(d=>({...d, mobilityWork: d.mobilityWork,
+        let hexesClean = country==="UK"?
+                              hexes.map(d=>({...d, mobilityWork: d.mobilityWork,
                                              income: d.income,
                                              x: d.x,
                                              y: d.y,
@@ -276,8 +256,8 @@
                                              urbRow: d.urbCategory!==null && 
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
                                                          ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
-                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:1500,
-                                             catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:1720,
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:null,
+                                             catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:null,
                                              
 
                                             }))
@@ -286,7 +266,28 @@
                                               paddingCat: {x:getPadding("category", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("category", d.catRow, d.urbRow, d.urbCategory).y},
                                               paddingUrb: {x:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).y}
                                               
+                                            })):
+                              hexes.map(d=>({...d, mobilityWork: d.mobilityWork,
+                                             income: d.income,
+                                             x: d.x,
+                                             y: d.y,
+                                             category: d.category,
+                                             urbCategory: d.urbCategory,
+                                             urbRow: d.urbCategory!==null && 
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.fullName===d.fullName)[0]!==undefined?
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.fullName===d.fullName)[0].row:null,
+                                             catRow: d.category!=="#ccc"?clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.fullName===d.fullName)[0].row:null,
+                                          
                                             }))
+                                            .map(d=>({...d, 
+
+                                              paddingCat: {x:getPadding("category", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("category", d.catRow, d.urbRow, d.urbCategory).y},
+                                              paddingUrb: {x:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).y}
+                                              
+                                            }))
+
+        console.log(hexesClean)                                    
 
         onMount(() => {
 
@@ -338,27 +339,30 @@
         $: if (hexmap && circles && annot && selectedView.value==="chart") { 
 
         // svg.selectAll(".AxisLAN").remove()
-        // d3.selectAll(".annotation-group").remove()
+        d3.selectAll(".annotation-group").remove()
 
           circles.filter(d=>d.category==="#ccc")
           .transition()
           .duration(750)
           .ease(d3.easeLinear)
-          .attr("cx", 200)
-          .attr("cy", 1000)
-          // .attr("opacity", 0)
+          // .attr("cx", 200)
+          // .attr("cy", 1000)
+          .attr("opacity", 0)
 
           annot.filter(d=>d.category==="#ccc")
           .transition()
           .duration(750)
           .ease(d3.easeLinear)
-          .attr("x", 200)
-          .attr("y", 1000)
+          // .attr("x", 200)
+          // .attr("y", 1000)
           .attr("opacity", 0)
           
           circles.filter(d=>d.category!=="#ccc")
           .transition()
-          .duration(750)
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
           .ease(d3.easeLinear)
           .attr("cx", d => normScaleXInc(d[xVar]))
           .attr("cy", d=> normScaleYMob(d[yVar]))
@@ -369,7 +373,10 @@
       
           annot.filter(d=>d.category!=="#ccc")
           .transition()
-          .duration(750)
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
           .ease(d3.easeLinear)
           .attr("x", d => normScaleXInc(d[xVar]))
           .attr("y", d=> normScaleYMob(d[yVar]))
@@ -378,10 +385,14 @@
 
           } else if (hexmap && circles && annot && selectedView.value==="map") {
 
+            d3.selectAll(".annotation-group").remove()
+
             circles
             .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
             .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
             .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
             .attr("opacity", 1)
@@ -391,8 +402,10 @@
         
             annot
             .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
             .attr("x", d=>d.x)
             .attr("y", d=>d.y)
             .attr("opacity", 1)
@@ -400,20 +413,22 @@
 
           } else if (hexmap && circles && annot && selectedView.value==="bars") {
 
+            d3.selectAll(".annotation-group").remove()
+
             circles.filter(d=>d.category==="#ccc")
             .transition()
             .duration(750)
             .ease(d3.easeLinear)
-            .attr("cx", 200)
-            .attr("cy", 1000)
-            // .attr("opacity", 0)
+            // .attr("cx", 200)
+            // .attr("cy", 1000)
+            .attr("opacity", 0)
 
             annot.filter(d=>d.category==="#ccc")
             .transition()
             .duration(750)
             .ease(d3.easeLinear)
-            .attr("x", 200)
-            .attr("y", 1000)
+            // .attr("x", 200)
+            // .attr("y", 1000)
             .attr("opacity", 0)
             
             circles.filter(d=>d.category!=="#ccc")
@@ -441,46 +456,103 @@
             .attr("opacity", d=>d.income!==null?1:0)
             .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
 
+
+            if (country === "US") {
+              annotateBars(normScaleCatX, 
+              normScaleCatRow, 
+              categoriesX[0], 
+              460, 
+              svg, 
+              "30% of localities are either low income, high travel or high income, low travel", 
+              normScaleCatX.bandwidth()*1.75,
+              15,
+              170)
+            } else if (country==="UK") {
+              annotateBars(normScaleCatX, 
+              normScaleCatRow, 
+              categoriesX[0], 
+              78, 
+              svg, 
+              "50% of localities are either low income, high travel or high income, low travel", 
+              normScaleCatX.bandwidth()*1.3,
+              30,
+              162)
+            }
+
           } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
 
-          circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
-          .transition()
-          .duration(750)
-          .ease(d3.easeLinear)
-          .attr("cx", 200)
-          .attr("cy", 1000)
-          .attr("opacity", 0)
-    
-          annot.filter(d=>d.urbCategory===null||d.category==="#ccc")
-          .transition()
-          .duration(750)
-          .ease(d3.easeLinear)
-          .attr("x", 200)
-          .attr("y", 1000)
-          .attr("opacity", 0)
-          
-          circles.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
-          .transition()
-          .delay((d, i) => {
-            return i * Math.random() * 1.5;
-            })
-          .duration(800)
-          .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
-          .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
-          .attr("opacity", d=>d.income!==null?1:0)
-          .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
-          .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-          annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
-          .transition()
-          .delay((d, i) => {
-            return i * Math.random() * 1.5;
-            })
-          .duration(800)
-          .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
-          .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
-          .attr("opacity", d=>d.income!==null?1:0)
-          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            d3.selectAll(".annotation-group").remove()
+
+            circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            // .attr("cx", 200)
+            // .attr("cy", 1000)
+            .attr("opacity", 0)
+      
+            annot.filter(d=>d.urbCategory===null||d.category==="#ccc")
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            // .attr("x", 200)
+            // .attr("y", 1000)
+            .attr("opacity", 0)
+            
+            circles.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
+            .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
+            .attr("opacity", d=>d.income!==null?1:0)
+            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
+            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
+            .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
+            .attr("opacity", d=>d.income!==null?1:0)
+            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+            if (country==="US") {
+              annotateBars(normScaleCatXUrb, 
+                normScaleUrbRow, 
+                "Rural", 
+                400, 
+                svg, 
+                "Unlike the U.K., in the U.S. the majority of low income, high travel areas are rural...", 
+                normScaleCatXUrb.bandwidth()*0.63,
+                -40,
+                50)
+
+              annotateBars(normScaleCatXUrb, 
+                normScaleUrbRow, 
+                "Rural", 
+                350, 
+                svg, 
+                "...while the majority of high income, low travel localities are urban", 
+                normScaleCatXUrb.bandwidth()*0.95,
+                40,
+                -50)
+            } else if (country==="UK") {
+              annotateBars(normScaleCatXUrb, 
+                normScaleUrbRow, 
+                "Urban", 
+                78, 
+                svg, 
+                "The majority of low income, high travel and high income, low travel localities are located in urban areas", 
+                normScaleCatXUrb.bandwidth()*0.6,
+                -40,
+                60)
+            }
 
         } 
 
@@ -489,63 +561,117 @@
 
 
             let padding={x:0, y:0}
-            if (x === "category") {
 
-              // console.log("showing", x, "row", catRow)
+            if (country==="UK") {
 
-              let rowCheck = d3.range(1,3,1).map(d=>{ return {
-                key:[`num${d+1}`],
-                val:d3.range(d, 500, 3)
-              }})
-              .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
-              
-              // console.log("rowcheck", rowCheck)
+              if (x === "category") {
 
-              rowCheck["num3"].includes(catRow)?padding={x:40, y:0}:
-              rowCheck["num2"].includes(catRow)?padding={x:20, y:1}:
-              padding={x:0, y:2}
+                // console.log("showing", x, "row", catRow)
 
-            } else if (x === "urbCategory") {
-
-              // console.log("showing", x, "urbRow", urbRow)
-
-              let rowCheck = d3.range(1,10,1).map(d=>{ return {
-                key:[`num${d+1}`],
-                val:d3.range(d, 1000, 10)
-              }})
-              .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
-
-              // console.log("rowcheck", rowCheck)
-
-              if (urbCat==="Urban") {
-
-                rowCheck["num10"].includes(urbRow)?padding={x:180, y:0}:
-                rowCheck["num9"].includes(urbRow)?padding={x:160, y:1}:
-                rowCheck["num8"].includes(urbRow)?padding={x:140, y:2}:
-                rowCheck["num7"].includes(urbRow)?padding={x:120, y:3}:
-                rowCheck["num6"].includes(urbRow)?padding={x:100, y:4}:
-                rowCheck["num5"].includes(urbRow)?padding={x:80, y:5}:
-                rowCheck["num4"].includes(urbRow)?padding={x:60, y:6}:
-                rowCheck["num3"].includes(urbRow)?padding={x:40, y:7}:
-                rowCheck["num2"].includes(urbRow)?padding={x:20, y:8}:
-                padding={x:0, y:9}
+                let rowCheck = d3.range(1,3,1).map(d=>{ return {
+                  key:[`num${d+1}`],
+                  val:d3.range(d, 500, 3)
+                }})
+                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
                 
-              } else if (urbCat==="Rural") {
+                // console.log("rowcheck", rowCheck)
 
-                rowCheck["num10"].includes(urbRow)?padding={x:180, y:0}:
-                rowCheck["num9"].includes(urbRow)?padding={x:160, y:1}:
-                rowCheck["num8"].includes(urbRow)?padding={x:140, y:2}:
-                rowCheck["num7"].includes(urbRow)?padding={x:120, y:3}:
-                rowCheck["num6"].includes(urbRow)?padding={x:100, y:4}:
-                rowCheck["num5"].includes(urbRow)?padding={x:80, y:5}:
-                rowCheck["num4"].includes(urbRow)?padding={x:60, y:6}:
-                rowCheck["num3"].includes(urbRow)?padding={x:40, y:7}:
-                rowCheck["num2"].includes(urbRow)?padding={x:20, y:8}:
-                padding={x:0, y:9}
+                rowCheck["num3"].includes(catRow)?padding={x:40, y:0}:
+                rowCheck["num2"].includes(catRow)?padding={x:20, y:1}:
+                padding={x:0, y:2}
 
+              } else if (x === "urbCategory") {
+
+                // console.log("showing", x, "urbRow", urbRow)
+
+                let rowCheck = d3.range(1,10,1).map(d=>{ return {
+                  key:[`num${d+1}`],
+                  val:d3.range(d, 1000, 10)
+                }})
+                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
+
+                // console.log("rowcheck", rowCheck)
+
+                  rowCheck["num10"].includes(urbRow)?padding={x:180, y:0}:
+                  rowCheck["num9"].includes(urbRow)?padding={x:160, y:1}:
+                  rowCheck["num8"].includes(urbRow)?padding={x:140, y:2}:
+                  rowCheck["num7"].includes(urbRow)?padding={x:120, y:3}:
+                  rowCheck["num6"].includes(urbRow)?padding={x:100, y:4}:
+                  rowCheck["num5"].includes(urbRow)?padding={x:80, y:5}:
+                  rowCheck["num4"].includes(urbRow)?padding={x:60, y:6}:
+                  rowCheck["num3"].includes(urbRow)?padding={x:40, y:7}:
+                  rowCheck["num2"].includes(urbRow)?padding={x:20, y:8}:
+                  padding={x:0, y:9}
+                
+                }
+
+              } else if (country==="US") {
+                // padding={x:0, y:9}
+
+                 if (x === "category") {
+
+                // console.log("showing", x, "row", catRow)
+
+                let rowCheck = d3.range(1,8,1).map(d=>{ return {
+                  key:[`num${d+1}`],
+                  val:d3.range(d, 1000, 8)
+                }})
+                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
+                
+                // console.log("rowcheck", rowCheck)
+
+                rowCheck["num8"].includes(catRow)?padding={x:56, y:0}:
+                rowCheck["num7"].includes(catRow)?padding={x:48, y:1}:
+                rowCheck["num6"].includes(catRow)?padding={x:40, y:2}:
+                rowCheck["num5"].includes(catRow)?padding={x:32, y:3}:
+                rowCheck["num4"].includes(catRow)?padding={x:24, y:4}:
+                rowCheck["num3"].includes(catRow)?padding={x:16, y:5}:
+                rowCheck["num2"].includes(catRow)?padding={x:8, y:6}:
+                padding={x:0, y:7}
+
+              } else if (x === "urbCategory") {
+
+                // console.log("showing", x, "urbRow", urbRow)
+
+                let rowCheck = d3.range(1,26,1).map(d=>{ return {
+                  key:[`num${d+1}`],
+                  val:d3.range(d, 3000, 26)
+                }})
+                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
+
+                // console.log("rowcheck", rowCheck)
+
+                  rowCheck["num26"].includes(urbRow)?padding={x:200, y:0}:
+                  rowCheck["num25"].includes(urbRow)?padding={x:192, y:1}:
+                  rowCheck["num24"].includes(urbRow)?padding={x:184, y:2}:
+                  rowCheck["num23"].includes(urbRow)?padding={x:176, y:3}:
+                  rowCheck["num22"].includes(urbRow)?padding={x:168, y:4}:
+                  rowCheck["num21"].includes(urbRow)?padding={x:160, y:5}:
+                  rowCheck["num20"].includes(urbRow)?padding={x:152, y:6}:
+                  rowCheck["num19"].includes(urbRow)?padding={x:144, y:7}:
+                  rowCheck["num18"].includes(urbRow)?padding={x:136, y:8}:
+                  rowCheck["num17"].includes(urbRow)?padding={x:128, y:9}:
+                  rowCheck["num16"].includes(urbRow)?padding={x:120, y:10}:
+                  rowCheck["num15"].includes(urbRow)?padding={x:112, y:11}:
+                  rowCheck["num14"].includes(urbRow)?padding={x:104, y:12}:
+                  rowCheck["num13"].includes(urbRow)?padding={x:96, y:13}:
+                  rowCheck["num12"].includes(urbRow)?padding={x:88, y:14}:
+                  rowCheck["num11"].includes(urbRow)?padding={x:80, y:15}:
+                  rowCheck["num10"].includes(urbRow)?padding={x:72, y:16}:
+                  rowCheck["num9"].includes(urbRow)?padding={x:64, y:17}:
+                  rowCheck["num8"].includes(urbRow)?padding={x:56, y:18}:
+                  rowCheck["num7"].includes(urbRow)?padding={x:48, y:19}:
+                  rowCheck["num6"].includes(urbRow)?padding={x:40, y:20}:
+                  rowCheck["num5"].includes(urbRow)?padding={x:32, y:21}:
+                  rowCheck["num4"].includes(urbRow)?padding={x:24, y:22}:
+                  rowCheck["num3"].includes(urbRow)?padding={x:16, y:23}:
+                  rowCheck["num2"].includes(urbRow)?padding={x:8, y:24}:
+                  padding={x:0, y:25}
+                
               }
 
-            } 
+            }
+            
             // else {
 
             //   padding = {x:0, y:0}
@@ -554,6 +680,67 @@
             // console.log("padding is", padding)
 
             return padding
+        }
+
+        function annotateBars(x, y, category, row, svg, text, offset, yOffset, xOffset) {
+            // console.log(y)
+            const type = annotationLabel
+
+            const annotations = [{
+            note: {
+                label: text,
+                bgPadding: 10,
+                // title: text
+            },
+            connector: {
+              end: "dot",
+              // type: "curve",
+            },
+            //can use x, y directly instead of data
+            data: {category: category, row: row},
+            className: "show-bg",
+            dy: yOffset,
+            dx: xOffset
+            }]
+
+
+            const makeAnnotations = annotation()
+            // .editMode(true)
+            //also can set and override in the note.padding property
+            //of the annotation object
+            .notePadding(15)
+            .type(type)
+            //accessors & accessorsInverse not needed
+            //if using x, y in annotations JSON
+            .accessors({
+                x: d => x(d.category)+offset,
+                y: d => y(d.row)
+            })
+            // .accessorsInverse({
+            //     category: d => x.invert(d.x),
+            //     row: d => y.invert(d.y)
+            // })
+            .annotations(annotations)
+
+            // console.log(d3.annotation())
+
+            // const annotationData = [{ category: category, row: row, text: text}]
+
+            // // const annotations = 
+            // d3.select("#chart")//.select("svg")
+            // // .data(annotationData)
+            d3.select(svg).append("g")
+            .attr("class", "annotation-group")
+            .style("font-size", "15px")
+            // .append("text")
+            // .attr("x", d=>x(d.category))
+            // .attr("y", d=>y(d.row))
+            // .text(text)
+            .call(makeAnnotations)
+            // .transition().duration(1000)
+            // .attr("transform", `translate(${x.bandwidth()}, 0)`)
+
+            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 1)
         }
   
         function resize() {
@@ -577,6 +764,22 @@
           annot.raise()
           // annot.attr('font-size', fontSize*2)
         }
+
+        // legend interaction
+        // d3.selectAll(".legendCircle")
+        // .on("mouseover", function(event, d) { 
+        //   const selectedCat = this.attributes.value.value
+        //   d3.select(this).attr("cursor", "pointer").attr("stroke-width", "1.5")
+        //   d3.select(this.parentNode).raise()
+        //   d3.selectAll(".laCircle").filter(d=>d.category!==selectedCat).attr("opacity", 0.2)
+        //   console.log(selectedCat)
+        // })
+        // .on("mouseout", function(event, d) { 
+        //   const selectedCat = this.attributes.value.value
+        //   d3.select(this).attr("stroke-width", "0.5").moveToBack()
+        //   d3.selectAll(".laCircle").attr("opacity", 1) //.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+        //   console.log(selectedCat)
+        // })
 
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
