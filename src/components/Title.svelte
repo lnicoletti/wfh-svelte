@@ -1,5 +1,5 @@
 <script>
-	import TypeIt from "typeit";
+	  import TypeIt from "typeit";
     export let vizTheme;
     import { onMount } from "svelte";
 
@@ -38,7 +38,7 @@
         <details>
             <summary class="mapCredit" style="opacity:0.6">What does this visualization show?</summary>
         
-            <p class="FigSubtitle">In visualizing the relationship between mobility patterns and median household income, the UK's 374 local authorities and the US's 3,174 counties were explored on a national (i.e. US vs. UK) basis.  With a cartogram approach, each national spatial unit is represented by a <svg width=20 height=20><circle r=10 fill="lightgrey" style="transform:translate(10px, 10px)"></circle></svg>. The resulting color scheme of such circles is twofold.  Each circles' color tone is dependent on both 1) the median household income of the national spatial unit's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline. <br><br>
+            <p class="methodSection">In visualizing the relationship between mobility patterns and median household income, the UK's 374 local authorities and the US's 3,174 counties were explored on a national (i.e. US vs. UK) basis.  With a cartogram approach, each national spatial unit is represented by a <svg width=20 height=20><circle r=10 fill="lightgrey" style="transform:translate(10px, 10px)"></circle></svg>. The resulting color scheme of such circles is twofold.  Each circles' color tone is dependent on both 1) the median household income of the national spatial unit's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline. <br><br>
 
             As such, national spatial units colored in <span class="richtheNytimes">green</span> represent areas where residents are higher income and benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace).  Contrastingly, national spatial units colored in <span class="poortheNytimes">orange</span> represent areas where residents are lower income and did not benefit from WFH policies (i.e. these residents were not able to greatly reduce their mobility to the workplace).  National spatial units colored in <span class="richHightheNytimes">dark-green</span> represent areas where residents are higher income and continued to travel to the workplace during the COVID-19 pandemic.  Regardless of the wealthy status of these areas, residents did not benefit from WFH practices.  Finally, national spatial units colored in <span class="poorLowtheNytimes">light-grey</span> represent areas where residents are lower income and benefited from WFH policies.  Regardless of the poorer status of these areas, residents in these national spatial units were still able to benefit from WFH practices.<br><br>
 
@@ -264,7 +264,7 @@ font-family:'Lato', sans-serif;
     /* height:130px; */
     text-transform: uppercase;
     text-align: center;
-    /* margin-bottom: 10px; */
+    margin-bottom: 40px;
   }
 
   #FigTitle {
@@ -279,7 +279,16 @@ font-family:'Lato', sans-serif;
   
   .FigSubtitle {
     font-family:'Lato', sans-serif;
-    font-size: 14px;
+    /* font-size: 14px; */
+    font-size: calc(18px - 0.2vw);
+    font-weight: 200;
+    text-transform: None;
+  }
+
+  .methodSection {
+    font-family:'Lato', sans-serif;
+    /* font-size: 14px; */
+    font-size: calc(14px - 0.2vw);
     font-weight: 200;
     text-transform: None;
   }

@@ -7,6 +7,7 @@
 	  import {annotationLabel, annotation} from "d3-svg-annotation"
     import {onlyUnique} from "../utils.js"
     import { onMount } from "svelte";
+    import Scroll from "./Scrolly.svelte";
 
     // view reactivity
     $: view = "horizontal"  
@@ -367,7 +368,12 @@
 
         $: console.log("normalized", selectedView.value)
 
-        $: if (hexmap && circles && annot && selectedView.value==="chart") { 
+        $: 
+        
+        // if (hexmap && circles && annot && selectedView.value==="chart") { 
+
+        if (hexmap && circles && annot && currentStep===1) { 
+
 
         d3.selectAll(".annotation-group").remove()
 
@@ -398,8 +404,10 @@
           .attr("cy", d=> normScaleYMob(d[yVar]))
           .attr("opacity", d=>d.income!==null?1:0)
           .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-          .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+          // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+          //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+          .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
       
           annot.filter(d=>d.category!=="#ccc")
           .transition()
@@ -411,9 +419,12 @@
           .attr("x", d => normScaleXInc(d[xVar]))
           .attr("y", d=> normScaleYMob(d[yVar]))
           .attr("opacity", d=>d.income!==null?1:0)
-          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+          // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+          .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-          } else if (hexmap && circles && annot && selectedView.value==="map") {
+          // } else if (hexmap && circles && annot && selectedView.value==="map") {
+
+          } else if (hexmap && circles && annot && currentStep===0) {
 
             d3.selectAll(".annotation-group").remove()
 
@@ -427,8 +438,10 @@
             .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
             .attr("opacity", 1)
             .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
         
             annot
             .transition()
@@ -439,9 +452,11 @@
             .attr("x", d=>d.x)
             .attr("y", d=>d.y)
             .attr("opacity", 1)
-            .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${margin.left*2},0)`:`translate(0,0)`)
 
-          } else if (hexmap && circles && annot && selectedView.value==="bars") {
+          // } else if (hexmap && circles && annot && selectedView.value==="bars") {
+          } else if (hexmap && circles && annot && currentStep===2) {
 
             d3.selectAll(".annotation-group").remove()
 
@@ -471,8 +486,10 @@
             .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
             .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
             
             annot.filter(d=>d.category!=="#ccc")
             .transition()
@@ -484,7 +501,8 @@
             .attr("x", d => normScaleCatX(d.category)+d.paddingCat.x)
             .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
-            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
 
             if (country === "US") {
@@ -509,7 +527,9 @@
               162)
             }
 
-          } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
+          // } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
+
+          } else if (hexmap && circles && annot && currentStep===3) {
 
             d3.selectAll(".annotation-group").remove()
 
@@ -539,8 +559,11 @@
             .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
             .attr("opacity", d=>d.income!==null?1:0)
             .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
             annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
             .transition()
             .delay((d, i) => {
@@ -550,7 +573,8 @@
             .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
             .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
             .attr("opacity", d=>d.income!==null?1:0)
-            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
             if (country==="US") {
               annotateBars(normScaleCatXUrb, 
@@ -771,8 +795,8 @@
             // .attr("transform", `translate(${x.bandwidth()}, 0)`)
 
             d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
-            d3.selectAll(".annotation-note-label").attr("fill", "#72501a")
-            d3.selectAll(".annotation-connector path").attr("stroke", "#72501a").attr("fill", "#72501a")
+            d3.selectAll(".annotation-note-label").attr("fill", "#445312")
+            d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
         }
   
         function resize() {
@@ -817,6 +841,10 @@
         //   console.log(selectedCat)
         // })
 
+        // SCROLLYTELLING
+        let currentStep;
+        const steps = ["<p>Step 0!</p>", "<p>Step 1?</p>", "<p>Step 2.</p>", "<p>Step 3.</p>"];
+
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
 <!-- dropdowns -->
@@ -834,36 +862,9 @@
 <!-- </div> -->
 <br>
 <!-- <div id="staticTooltip"></div> -->
-<div display=flex justify-content=center>
-  <svg width={100} height={100} display=block margin=auto transform="translate({innerWidth/2-50},{0})">
-    <g class="legend" transform="translate({15},{15})">  <!-- transform="translate({innerWidth/2},{margin.top/2})"-->
-        <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
-            <path d="M0,0L6,3L0,6Z" fill=#72501a/>
-        </marker>
-        {#each legendData as [i, j], idx}
-            <circle 
-            r={10} 
-            cx={(i * k)+k/2} 
-            cy={((n - 1 - j) * k)+k/2} 
-            fill={colors[j * n + i]} 
-            class="legendCircle" 
-            value={colors[j * n + i]}
-            >
-                <title>
-                    {dataBivar.title[0]}{labels[j] && ` (${labels[j]})`}
-                    {dataBivar.title[1]}{labels[i] && ` (${labels[i]})`}
-                </title>
-            </circle>
-        {/each}
-        <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=#72501a stroke-width=1.5 />
-        <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=#72501a stroke-width=1.5 />
-        <text fill=#72501a font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{dataBivar.title[0]}</text>
-        <text fill=#72501a font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{dataBivar.title[1]}</text>
-    </g>
-  </svg>
-</div>
+<div class="chart">
 <svg viewBox="0 0 800 600" bind:this={svg}>
-{#if selectedView.value==="chart"}
+{#if selectedView.value==="chart"||currentStep==1}
   <!-- y axis -->
   <g class='axis y-axis'>
     {#each yTicksMob as tick}
@@ -888,7 +889,7 @@
   <g class='axisTitle' text-anchor=end transform='translate({country==="UK"?normScaleXInc(65000):normScaleXInc(140000)}, {height - margin.bottom})'>
     <text x={0} y="+35" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>MEDIAN HOUSEHOLD INCOME</text>
   </g>
-  {:else if selectedView.value === "bars"}
+  {:else if selectedView.value === "bars"||currentStep==2}
   <g class='axis x-axis'>
     {#each categoriesX as tick, i}
       <g class='axisTitle' transform='translate({normScaleCatX(tick)+margin.left/4},{0})' text-anchor=middle>
@@ -902,7 +903,7 @@
       </g>
     {/each}
   </g>
-  {:else if selectedView.value === "barsUrban"}
+  {:else if selectedView.value === "barsUrban"||currentStep==3}
   <g class='axis x-axis'>
     {#each urbCategoryLabels as tick}
       <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
@@ -912,106 +913,18 @@
   </g>
   {/if}
 </svg>
-<!-- <div id="chart" style="text-align:center" class="svg-container" bind:clientWidth={figWidth}> bind:clientWidth={figWidth} -->
-    <!-- <svg width={figWidth} height={figWidth} transform="translate({0},{-margin.bottom/2})"> -->
-        <!-- <g class="vizElement">
-                {#each hexesClean as d, i}
-                    <g>
-                        <circle
-                        class="laCircle"
-                        cursor="pointer"
-                        cx={normScaleXhex(d.x)}
-                        cy={normScaleYhex(d.y)}
-                        r={innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius}
-                        stroke="#fffae7"
-                        stroke-width=0.5
-                        fill={colorBivar([d.mobilityWork, d.income])}
-                        category={d.category}
-                        ></circle>
-                    </g>
-                    <g>
-                        <text
-                        class="LStextUK"
-                        cursor="pointer"
-                        font-size={innerWidth>600?fontSize:fontSize*0.8}
-                        text-anchor="middle"
-                        x={normScaleXhex(d.x)}
-                        y={normScaleYhex(d.y)}
-                        fill="rgb(255,255,255)"
-                        stroke-width=0.5
-                        >{innerWidth>500?d.n.slice(0,3):""}
-                        </text>
-                    </g>
-                {/each} -->
-                <!-- {#each $tweenedData as d}
-                    <g>
-                        <circle
-                        class="laCircle"
-                        cursor="pointer"
-                        cx={xScale(d.xVar)+d.padding.x}
-                        cy={yScale(d.yVar+d.padding.y)}
-                        r={innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.88*radius}
-                        stroke="#fffae7"
-                        stroke-width=0.5
-                        fill={colorBivar([d.mobilityWork, d.income])}
-                        on:mouseover={(event)=> {
-                            console.log(d)
-                        }}
-                        
-                        ></circle>
-
-                    </g>
-                    <g>
-                        <text
-                        class="LStextUK"
-                        cursor="pointer"
-                        font-size={innerWidth>600?fontSize:fontSize*0.8}
-                        text-anchor="middle"
-                        x={xScale(d.xVar)+d.padding.x}
-                        y={yScale(d.yVar+d.padding.y)}
-                        fill="rgb(255,255,255)"
-                        stroke-width=0.5
-                        >{innerWidth>550?d.n.slice(0,3):""}
-                        </text>
-                    </g>
-                {/each} -->
-
-                                    <!-- in:fly="{{x:scaleX(xAccessor(d)), y: scaleY(yAccessor(d)), opacity:1, duration: 500, delay: Math.random()*i}}"
-                        out:fly="{{x:200, y:200, opacity:0, duration: 500, delay: Math.random()*i}}"
-                        in:transition={{ duration: 1000 }} -->
-
-            <!-- {:else if selectedView.value==="chart"}
-                {#each hexes as d, i}
-                <g>
-                    <circle
-                    class="laCircle"
-                    cursor="pointer"
-                    cx={xScaleInc(+d[xVar])} 
-                    cy={yScaleMob(+d[yVar])}
-                    r={innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius}
-                    stroke="#fffae7"
-                    stroke-width=0.5
-                    fill={colorBivar([d.mobilityWork, d.income])}
-                    ></circle>
-                </g> -->
-                <!-- <g>
-                    <text
-                    class="LStextUK"
-                    cursor="pointer"
-                    font-size={innerWidth>600?fontSize:fontSize*0.8}
-                    text-anchor="middle"
-                    transition:fly="{{ x: xScaleInc(d[xVar]), y: yScaleMob(d[yVar]), duration: 2000 }}"
-                    fill="rgb(255,255,255)"
-                    stroke-width=0.5
-                    >{innerWidth>500?d.n.slice(0,3):""}
-                    </text>
-                </g> -->
-                <!-- {/each} -->
-            <!-- {/if} -->
-        <!-- </g>-->
-<!-- </div> -->
-<p>Outerwidth: {outerWidth}</p>
-<p>Innerwidth: {innerWidth}</p>
+</div>
+<Scroll bind:value={currentStep}>
+  {#each steps as text, i}
+    <div class="step" class:active={currentStep === i}>
+      <div class="step-content">
+        {@html text}
+      </div>
+    </div>
+  {/each}
+</Scroll>
+<!-- <p>Outerwidth: {outerWidth}</p>
+<p>Innerwidth: {innerWidth}</p> -->
 <style>
     @font-face {
     font-family: 'Lato', sans-serif;
@@ -1024,6 +937,44 @@
     font-weight: normal;
     font-style: normal;
 }
+
+.chart {
+    /* background: whitesmoke; */
+    /* width: 400px;
+    height: 400px; */
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 10%;
+    margin: auto;
+  }
+
+  /* Scrollytelling CSS */
+  .step {
+    height: 80vh;
+    display: flex;
+    place-items: center;
+    justify-content: center;
+  }
+
+  .step-content {
+    background: whitesmoke;
+    color: #ccc;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: background 500ms ease;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+
+  .step.active .step-content {
+    background: white;
+    color: black;
+  }
+
+  /* SCROLLY END */
 
 .svg-container {
     /* max-width:1000px; */
@@ -1043,7 +994,7 @@ body, main {
 }
 
 .tick line {
-		stroke: #72501a;
+		stroke: #445312;
     opacity:0.3;
 		stroke-dasharray: 2;
     z-index: -100
@@ -1054,7 +1005,7 @@ body, main {
     font-family:'Lato', sans-serif;
 		/* font-size: 10px; */
     /* font-size:11px; */
-		fill: #72501a;
+		fill: #445312;
 	}
 
 	.x-axis text {
@@ -1069,10 +1020,15 @@ body, main {
     font-family:'Lato', sans-serif;
     /* font-size: 10px; */
     /* font-size:11px; */
-		fill: #72501a;
+		fill: #445312;
     font-weight: 700;
     text-transform: uppercase
 	}
+
+  .axisText {
+    background: #445312;
+    color: #fffae7;
+  }
 
 
 .legendTitle {
@@ -1080,7 +1036,7 @@ body, main {
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
-  fill: #72501a;
+  fill: #445312;
 }
 
 .regionAnnot {

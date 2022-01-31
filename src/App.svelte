@@ -4,6 +4,7 @@
 	import Title from "./components/Title.svelte";
 	import Chart from "./components/Chart.svelte";
 	import Footer from "./components/Footer.svelte";
+  import Legend from "./components/Legend.svelte";
 
 	let isLoading = true;
 
@@ -82,6 +83,7 @@ $: innerHeight = 0
 		<div class="content">
 			<Title {vizTheme}/>
 			<br>
+      <Legend {colors}></Legend>
       <div style="text-align:center" class="custom-select">
         <span class="mapCredit">SELECT COUNTRY AND VIEW</span><br>
         <select id="chartCountry" bind:value={selectedCountry}>

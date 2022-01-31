@@ -1,23 +1,50 @@
 <script>
-export let vizTheme;
+import {cross, range} from "d3";
+export let colors;
+
+$: outerWidth = 0
+$: innerWidth = 0
+$: outerHeight = 0
+$: innerHeight = 0
+
+let title = ["Travel to Work", "Med. Income"]
+let n = Math.floor(Math.sqrt(colors.length))
+let legendData = cross(range(n), range(n))
+const k = 63/n
+let labels = ["low", "medium", "high"]
 
 </script>
+<svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> 
+<div class="legendContainer"> <!-- width={100} height={100} display=flex justify-content=center -->
+    <svg width={100} height={100} display=block margin=auto > <!-- transform="translate({innerWidth/2-50},{0})" -->
+      <g class="legend" transform="translate({15},{15})">  <!-- transform="translate({innerWidth/2},{margin.top/2})"-->
+          <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
+              <path d="M0,0L6,3L0,6Z" fill=#445312/>
+          </marker>
+          {#each legendData as [i, j], idx}
+              <circle 
+              r={10} 
+              cx={(i * k)+k/2} 
+              cy={((n - 1 - j) * k)+k/2} 
+              fill={colors[j * n + i]} 
+              class="legendCircle" 
+              value={colors[j * n + i]}
+              >
+                  <title>
+                      {title[0]}{labels[j] && ` (${labels[j]})`}
+                      {title[1]}{labels[i] && ` (${labels[i]})`}
+                  </title>
+              </circle>
+          {/each}
+          <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=#445312 stroke-width=1.5 />
+          <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=#445312 stroke-width=1.5 />
+          <text fill=#445312 font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{title[0]}</text>
+          <text fill=#445312 font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{title[1]}</text>
+      </g>
+    </svg>
+  </div>
 
-<div class="content">
-    <details>
-        <summary class="mapCredit" style="opacity:0.6">Learn more about how this visual was created</summary>
-    
-        <p class="methodSection">
-            This visualization was created using aggregated mobility data for the United Kingdom and the United States from <a href="https://www.google.com/covid19/mobility/?hl=en" target="__blank">Google's COVID-19 Community Mobility Reports</a>, household income data from the <a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofresidencebylocalauthorityashetable8" target="__blank">Office for National Statistics</a> and the <a href="https://www.census.gov/data.html" target="__blank">U.S. Census</a>, and rural population data from the United States's <a href="https://www.census.gov/programs-surveys/geography/guidance/geo-areas/urban-rural.html" target="__blank">2020 Census Urban and Rural Classification</a> and the United Kingdom's <a href="https://www.ons.gov.uk/methodology/geography/geographicalproducts/ruralurbanclassifications/2011ruralurbanclassification" target="__blank">2011 Rural Urban Classification</a>.<br><br>
-        
-            For each administrative area in both the United Kingdom and the United States, temporal data on mobility to work-places was aggregated spatially by computing the median change in mobility over the course of the pandemic (February 2020-Today) relative to Google's 2019 baseline. By using rural population data, each area with a rural population greater than 50% was classified as "Rural" and each area with a rural population lower than 50% was classified as "Urban".<br><br>
-
-            Raw data was cleaned and processed with Javascript inside an <a href="https://observablehq.com" target="__blank">Observable</a> notebook. The visualizations themselves were created using the <a href="https://d3js.org/" target="__blank">D3.js</a> Javascript framework. U.K. level tiles were created using the <a href="https://github.com/olihawkins/d3-hexjson" target="__blank">d3-hexjson plugin</a> developed by <a href="https://olihawkins.com/" target="__blank">Oli Hawkins</a> and the Leeds <a href="https://open-innovations.org/about/" target="__blank">Open Innovations</a> team, and U.S. level tiles were created using the <a href="https://github.com/kaerosen/tilemaps">tilemaps</a> R library developed by <a href="https://github.com/kaerosen">Kaelyn Rosenberg</a>.
-    </p>
-    </details>
-</div>
-
-<style>
+  <style>
     @font-face {
     font-family: 'Lato', sans-serif;
     src: url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
@@ -30,22 +57,68 @@ export let vizTheme;
     font-style: normal;
 }
 
+.svg-container {
+    /* max-width:1000px; */
+    max-width:620px;
+    /* min-width:100px; */
+    /* max-height:600px; */
+    /* max-width: 80vw;
+    max-height:80vh; */
+}
+
+.legendContainer {
+    width:100px;
+    height:100px;
+    margin:auto;
+}
+
+/* .vizElement {
+  max-width:400px;
+} */
+
 body, main {
     background-color: #fffae7;
 }
 
-.methodSection {
+.tick line {
+		stroke: #445312;
+    opacity:0.3;
+		stroke-dasharray: 2;
+    z-index: -100
+	}
+
+
+  .tick text {
     font-family:'Lato', sans-serif;
-    /* font-size: 14px; */
-    font-size: calc(14px - 0.2vw);
-    font-weight: 200;
-    text-transform: None;
-  }
+		/* font-size: 10px; */
+    /* font-size:11px; */
+		fill: #445312;
+	}
+
+	.x-axis text {
+		text-anchor: middle;
+	}
+
+	.y-axis text {
+		text-anchor: end;
+	}
+
+  .axisTitle text {
+    font-family:'Lato', sans-serif;
+    /* font-size: 10px; */
+    /* font-size:11px; */
+		fill: #445312;
+    font-weight: 700;
+    text-transform: uppercase
+	}
+
+
 .legendTitle {
   font-family:'Lato', sans-serif;
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
+  fill: #445312;
 }
 
 .regionAnnot {
@@ -345,14 +418,20 @@ font-family:'Lato', sans-serif;
       margin-top:10px;
       font-family: 'Lato', sans-serif;
   }
-/* 
+
   .annotation-group {
     font-family: 'Lato', sans-serif;
-    font-size: 15px;
-  } */
+    /* font-size: 15px; */
+    opacity:0.5
+  }
 
   .annotation-note-label {
     font-family: 'Lato', sans-serif;
     font-size: 10px;
   }
+
+
+  /* .annotation-connector {
+
+  } */
 </style>
