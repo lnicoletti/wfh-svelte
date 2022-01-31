@@ -47,7 +47,7 @@
     let width = 800
     let height = 600
     // responsive margins
-    let margin = ({ top: 0.03*height, right: 0.04*width, bottom: 0.04*height, left: 0.1*width})
+    let margin = ({ top: 0.05*height, right: 0.04*width, bottom: 0.1*height, left: 0.1*width})
 
     $: radius = country==="UK"?width/80:width/220//9.8
     $: radiusHover = radius*2
@@ -195,7 +195,8 @@
 
         console.log("urb rural", ruralData)
         let urbCategoriesX = ruralData.sort((a,b)=>b.data.length-a.data.length).map(d=>d.urbCategory)   
-        
+        let urbCategoryLabels = ["Urban", "Rural"]
+
         var featureCollection = country==="US"?
         { type:"FeatureCollection", features: hexes.map(function(d) {
                     return {     
@@ -229,7 +230,7 @@
         //                 .range([margin.top, figWidth - margin.bottom])
 
         $: normScaleCatRow = d3.scaleLinear()
-                        .domain(country==="UK"?[0, 82]:[0, 520])
+                        .domain(country==="UK"?[0, 76]:[0, 520])
                         .range([height - margin.bottom, margin.top])
 
         $: normScaleCatX = d3.scaleBand()
@@ -242,8 +243,37 @@
                         .range([height - margin.bottom, margin.top])
 
         $: normScaleCatXUrb = d3.scaleBand()
-                        .domain(urbCategoriesX)
+                        .domain(urbCategoryLabels)
                         .range([margin.left, width - margin.right])
+
+
+        // ticks
+        let xTicksIncome;
+        $: if (country==="UK"){
+          xTicksIncome = innerWidth > 500 ?
+          d3.range(15000, 70000, 5000) :
+          d3.range(15000, 70000, 10000);
+        } 
+        
+        $: if (country==="US") {
+          xTicksIncome = innerWidth > 500 ?
+          d3.range(20000, 140000, 10000) :
+          d3.range(20000, 140000, 20000);
+          
+        }
+
+        let yTicksMob;
+        $: if (country==="UK"){
+          yTicksMob = innerHeight > 500 ?
+          d3.range(-60, -10, 5) :
+          d3.range(-60, -10, 15) ;
+        } 
+        
+        $: if (country==="US") {
+          yTicksMob = innerHeight > 500 ?
+          d3.range(-60, 5, 5) :
+          d3.range(-60, 5, 15) ;
+        }
 
 
         let hexesClean = country==="UK"?
@@ -309,9 +339,10 @@
                 .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
                 .attr("class", "laCircle")
                 .attr("cursor", "pointer")
+                // .style("z-index", 100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .on("mouseover", (event,d)=>console.log([normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX))
+                .on("mouseover", (event,d)=>console.log(d))//[normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX)
                 // .on("mouseover", (event, d)=>console.log(normScaleYhex(+d.y)))
 
 
@@ -338,7 +369,6 @@
 
         $: if (hexmap && circles && annot && selectedView.value==="chart") { 
 
-        // svg.selectAll(".AxisLAN").remove()
         d3.selectAll(".annotation-group").remove()
 
           circles.filter(d=>d.category==="#ccc")
@@ -526,22 +556,22 @@
               annotateBars(normScaleCatXUrb, 
                 normScaleUrbRow, 
                 "Rural", 
-                400, 
+                450, 
                 svg, 
                 "Unlike the U.K., in the U.S. the majority of low income, high travel areas are rural...", 
-                normScaleCatXUrb.bandwidth()*0.63,
-                -40,
-                50)
+                -15,
+                -15,
+                -60)
 
               annotateBars(normScaleCatXUrb, 
                 normScaleUrbRow, 
-                "Rural", 
-                350, 
+                "Urban", 
+                363, 
                 svg, 
                 "...while the majority of high income, low travel localities are urban", 
-                normScaleCatXUrb.bandwidth()*0.95,
-                40,
-                -50)
+                normScaleCatXUrb.bandwidth()*0.615,
+                15,
+                60)
             } else if (country==="UK") {
               annotateBars(normScaleCatXUrb, 
                 normScaleUrbRow, 
@@ -740,7 +770,9 @@
             // .transition().duration(1000)
             // .attr("transform", `translate(${x.bandwidth()}, 0)`)
 
-            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 1)
+            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
+            d3.selectAll(".annotation-note-label").attr("fill", "#72501a")
+            d3.selectAll(".annotation-connector path").attr("stroke", "#72501a").attr("fill", "#72501a")
         }
   
         function resize() {
@@ -760,8 +792,12 @@
         $: if (annot && innerWidth<550) {
           console.log(annot)
           annot.lower()
+          // d3.select(".tick").attr("font-size", "8")
+          // d3.select(".axisTitle").attr("font-size", "8")
         } else if (annot && innerWidth>550) {
           annot.raise()
+          // d3.select(".tick").attr("font-size", "11")
+          // d3.select(".axisTitle").attr("font-size", "11")
           // annot.attr('font-size', fontSize*2)
         }
 
@@ -797,12 +833,12 @@
     <p>selected {selectedView ? selectedView.value : '[waiting...]'}</p> -->
 <!-- </div> -->
 <br>
-<div id="staticTooltip"></div>
+<!-- <div id="staticTooltip"></div> -->
 <div display=flex justify-content=center>
   <svg width={100} height={100} display=block margin=auto transform="translate({innerWidth/2-50},{0})">
     <g class="legend" transform="translate({15},{15})">  <!-- transform="translate({innerWidth/2},{margin.top/2})"-->
         <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
-            <path d="M0,0L6,3L0,6Z" />
+            <path d="M0,0L6,3L0,6Z" fill=#72501a/>
         </marker>
         {#each legendData as [i, j], idx}
             <circle 
@@ -819,14 +855,63 @@
                 </title>
             </circle>
         {/each}
-        <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=black stroke-width=1.5 />
-        <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=black stroke-width=1.5 />
-        <text font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{dataBivar.title[0]}</text>
-        <text font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{dataBivar.title[1]}</text>
+        <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=#72501a stroke-width=1.5 />
+        <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=#72501a stroke-width=1.5 />
+        <text fill=#72501a font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{dataBivar.title[0]}</text>
+        <text fill=#72501a font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{dataBivar.title[1]}</text>
     </g>
   </svg>
 </div>
-<svg viewBox="0 0 800 600" bind:this={svg}></svg>
+<svg viewBox="0 0 800 600" bind:this={svg}>
+{#if selectedView.value==="chart"}
+  <!-- y axis -->
+  <g class='axis y-axis'>
+    {#each yTicksMob as tick}
+      <g class='tick tick-{tick}' transform='translate(0, {normScaleYMob(tick)})'>
+        <line x1='{margin.left}' x2='{width-margin.right}'/>
+        <text x='{margin.left - 8}' y='+4' font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>{tick}</text>
+      </g>
+    {/each}
+  </g>
+  <g class='axisTitle' text-anchor=start transform='translate(0, {country==="UK"?normScaleYMob(-12):normScaleYMob(1)})'>
+    <text x={margin.left} y="+0" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>AVERAGE CHANGE IN PEOPLE GOING TO WORKPLACES SINCE FEB. 2020 (%)</text>
+  </g>
+  <!-- x axis -->
+  <g class='axis x-axis'>
+    {#each xTicksIncome as tick}
+      <g class='tick' transform='translate({normScaleXInc(tick)},0)'>
+        <line y1='{normScaleYMob(0)}' y2='{normScaleYMob(d3.min(yTicksMob))}'/>
+        <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>{tick}</text>
+      </g>
+    {/each}
+  </g>
+  <g class='axisTitle' text-anchor=end transform='translate({country==="UK"?normScaleXInc(65000):normScaleXInc(140000)}, {height - margin.bottom})'>
+    <text x={0} y="+35" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>MEDIAN HOUSEHOLD INCOME</text>
+  </g>
+  {:else if selectedView.value === "bars"}
+  <g class='axis x-axis'>
+    {#each categoriesX as tick, i}
+      <g class='axisTitle' transform='translate({normScaleCatX(tick)+margin.left/4},{0})' text-anchor=middle>
+        {#each categoryLabels[i].split(",") as words, m}
+          <text 
+          y='{height - margin.bottom + 20}' 
+          font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}
+          transform="translate(0, {(m-1)*12})"
+          >{words}</text>
+        {/each}
+      </g>
+    {/each}
+  </g>
+  {:else if selectedView.value === "barsUrban"}
+  <g class='axis x-axis'>
+    {#each urbCategoryLabels as tick}
+      <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
+        <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{tick}</text>
+      </g>
+    {/each}
+  </g>
+  {/if}
+</svg>
 <!-- <div id="chart" style="text-align:center" class="svg-container" bind:clientWidth={figWidth}> bind:clientWidth={figWidth} -->
     <!-- <svg width={figWidth} height={figWidth} transform="translate({0},{-margin.bottom/2})"> -->
         <!-- <g class="vizElement">
@@ -957,12 +1042,45 @@ body, main {
     background-color: #fffae7;
 }
 
+.tick line {
+		stroke: #72501a;
+    opacity:0.3;
+		stroke-dasharray: 2;
+    z-index: -100
+	}
+
+
+  .tick text {
+    font-family:'Lato', sans-serif;
+		/* font-size: 10px; */
+    /* font-size:11px; */
+		fill: #72501a;
+	}
+
+	.x-axis text {
+		text-anchor: middle;
+	}
+
+	.y-axis text {
+		text-anchor: end;
+	}
+
+  .axisTitle text {
+    font-family:'Lato', sans-serif;
+    /* font-size: 10px; */
+    /* font-size:11px; */
+		fill: #72501a;
+    font-weight: 700;
+    text-transform: uppercase
+	}
+
 
 .legendTitle {
   font-family:'Lato', sans-serif;
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
+  fill: #72501a;
 }
 
 .regionAnnot {
@@ -1262,14 +1380,20 @@ font-family:'Lato', sans-serif;
       margin-top:10px;
       font-family: 'Lato', sans-serif;
   }
-/* 
+
   .annotation-group {
     font-family: 'Lato', sans-serif;
-    font-size: 15px;
-  } */
+    /* font-size: 15px; */
+    opacity:0.5
+  }
 
   .annotation-note-label {
     font-family: 'Lato', sans-serif;
     font-size: 10px;
   }
+
+
+  /* .annotation-connector {
+
+  } */
 </style>
