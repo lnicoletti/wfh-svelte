@@ -22,6 +22,7 @@
     "d3-hexjson": "^1.1.1",
     "d3-svg-annotation": "^2.5.1",
     "sirv-cli": "^2.0.0",
+    "svelecte": "^3.5.6",
     "typeit": "^8.2.0"
   }
 }

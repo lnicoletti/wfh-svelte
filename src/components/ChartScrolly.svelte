@@ -8,6 +8,7 @@
     import {onlyUnique} from "../utils.js"
     import { onMount } from "svelte";
     import Scroll from "./Scrolly.svelte";
+    import Svelecte from 'svelecte';
 
     // view reactivity
     $: view = "horizontal"  
@@ -318,7 +319,7 @@
                                               
                                             }))
 
-        console.log(hexesClean)                                    
+        console.log("clean", hexesClean)                                    
 
         onMount(() => {
 
@@ -339,6 +340,7 @@
                 .attr("stroke-width", "0.5")
                 .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
                 .attr("class", "laCircle")
+                .attr("id", d=> country==="UK"?d.key:d.GEOID)
                 .attr("cursor", "pointer")
                 // .style("z-index", 100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
@@ -353,6 +355,7 @@
                 .attr("y", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("text-anchor", "middle")
                 .attr('class', 'LStextUK')
+                .attr("id", d=> country==="UK"?"label"+d.key:"label"+d.GEOID)
                 .attr('font-size', fontSize)
                 .attr('fill', 'rgb(255,255,255)')
                 .attr("z-index", 10)
@@ -843,7 +846,7 @@
         } else if (innerWidth<550) {
           d3.selectAll(".chart").style("top", "200%")
         } else {
-          d3.selectAll(".chart").style("top", "10%")
+          d3.selectAll(".chart").style("top", "2%")
         }
 
         // legend interaction
@@ -874,10 +877,75 @@
                        "<p>US Step 2.</p>", 
                        "<p>US Step 3.</p>"]
 
+
+        // raise and lower functions
+        d3.selection.prototype.moveToFront = function() {
+        return this.each(function(){
+          this.parentNode.appendChild(this);
+            });
+        };
+
+      d3.selection.prototype.moveToBack = function() {
+        return this.each(function() {
+            var firstChild = this.parentNode.firstChild;
+            if (firstChild) {
+                this.parentNode.insertBefore(this, firstChild);
+            }
+          });
+      };
+
+        // search bar
+        let options = country==="UK"?hexesClean.map(d=>{return{value:d.key, text:d.n}}):hexesClean.map(d=>{return{value:d.GEOID, text:d.county+","+d.abbrv}});
+
+        $: selection = null;
+        $: valueUK = null;
+        $: valueUS = null;
+
+        // setTimeout(() => {
+        //   value = 'de';
+        // }, 4000);
+
+        $: if (valueUK!== null) {
+          console.log(valueUK)
+          d3.selectAll(".laCircle").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
+          d3.select("#"+valueUK).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHover).moveToFront()//.attr("stroke-width", 1.5).raise()
+          d3.select("#label"+valueUK).attr("opacity", 1).attr("font-size", fontSize*2).style("font-weight", "700").moveToFront()
+        } else if (valueUK === null) {
+          d3.selectAll(".LStextUK").attr("font-size", fontSize)
+          d3.selectAll(".laCircle").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
+          // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
+        }
+
+        $: if (valueUS!== null) {
+          console.log(valueUS)
+          d3.selectAll(".laCircle").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
+          d3.select("#"+valueUS).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHover).moveToFront()//.attr("stroke-width", 1.5).raise()
+        } else if (valueUS === null) {
+          d3.selectAll(".laCircle").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
+          // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
+        }
+
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
 <!-- <div id="staticTooltip"></div> -->
 <div class="chart">
+<!-- <label for="areaSel">{country==="UK"?"Select a local authority":"Select a county"}</label> -->
+{#if country==="UK"}
+<Svelecte {options} 
+  inputId="areaSel"
+  bind:readSelection={selection}
+  bind:value={valueUK}
+  placeholder={country==="UK"?"Select a local authority":"Select a county"}
+></Svelecte>
+{:else if country === "US"}
+<Svelecte {options} 
+  inputId="areaSel"
+  bind:readSelection={selection}
+  bind:value={valueUS}
+  placeholder={country==="UK"?"Select a local authority":"Select a county"}
+></Svelecte>
+{/if}
 <svg viewBox="0 0 800 600" bind:this={svg}>
 {#if selectedView.value==="chart"||currentStep==1}
   <!-- y axis -->
@@ -966,13 +1034,17 @@
     height: 40vh;
   }
 
+.sv-control {
+  width:20vw;
+}
+
 .chart {
     /* background: whitesmoke; */
     /* width: 400px;
     height: 400px; */
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
     position: sticky;
-    top: 5%;
+    top: 2%;
     margin: auto;
     /* height: 100vh */
     /* bottom: 50%; */
@@ -980,7 +1052,7 @@
 
   /* Scrollytelling CSS */
   .step {
-    height: 100vh;
+    height: 120vh;
     display: flex;
     place-items: center;
     justify-content: center;
@@ -1013,6 +1085,23 @@
     /* max-height:600px; */
     /* max-width: 80vw;
     max-height:80vh; */
+}
+
+/* .sv-control.svelte-v9xikc {
+  background-color: #fffae7;
+  border: 1px solid #445312;
+  border-radius: 4px;
+  min-height: 38px;
+  width: 20vw;
+  margin: auto;
+} */
+
+.svelecte.svelte-1lvkhl0 {
+    position: relative;
+    flex: 1 1 auto;
+    width: 20vw;
+    margin: auto;
+    color: #fffae7;
 }
 
 /* .vizElement {
