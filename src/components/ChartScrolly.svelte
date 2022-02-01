@@ -370,11 +370,11 @@
 
         $: 
         
-        if (hexmap && circles && annot && selectedView.value==="chart") { 
+        // if (hexmap && circles && annot && selectedView.value==="chart") { 
 
-        // if (hexmap && circles && annot && currentStep===1) { 
+        if (hexmap && circles && annot && currentStep===1) { 
 
-
+        // d3.select(".chart").style("position", "sticky")
         d3.selectAll(".annotation-group").remove()
 
           circles.filter(d=>d.category==="#ccc")
@@ -404,10 +404,10 @@
           .attr("cy", d=> normScaleYMob(d[yVar]))
           .attr("opacity", d=>d.income!==null?1:0)
           .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-          .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-          // .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-          //                          country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+          // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+          //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+          .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
       
           annot.filter(d=>d.category!=="#ccc")
           .transition()
@@ -419,13 +419,14 @@
           .attr("x", d => normScaleXInc(d[xVar]))
           .attr("y", d=> normScaleYMob(d[yVar]))
           .attr("opacity", d=>d.income!==null?1:0)
-          .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-          // .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+          // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+          .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-          } else if (hexmap && circles && annot && selectedView.value==="map") {
+          // } else if (hexmap && circles && annot && selectedView.value==="map") {
 
-          // } else if (hexmap && circles && annot && currentStep===0) {
+          } else if (hexmap && circles && annot && currentStep===0) {
 
+            // d3.select(".chart").style("position", "sticky")
             d3.selectAll(".annotation-group").remove()
 
             circles
@@ -438,10 +439,10 @@
             .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
             .attr("opacity", 1)
             .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            // .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-                                  //  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
         
             annot
             .transition()
@@ -452,12 +453,13 @@
             .attr("x", d=>d.x)
             .attr("y", d=>d.y)
             .attr("opacity", 1)
-            .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            // .attr("transform",currentStep===0?`translate(${margin.left*2},0)`:`translate(0,0)`)
+            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${margin.left*2},0)`:`translate(0,0)`)
 
-          } else if (hexmap && circles && annot && selectedView.value==="bars") {
-          // } else if (hexmap && circles && annot && currentStep===2) {
+          // } else if (hexmap && circles && annot && selectedView.value==="bars") {
+          } else if (hexmap && circles && annot && currentStep===2) {
 
+            // d3.select(".chart").style("position", "sticky")
             d3.selectAll(".annotation-group").remove()
 
             circles.filter(d=>d.category==="#ccc")
@@ -486,10 +488,10 @@
             .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
             .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            // .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
             
             annot.filter(d=>d.category!=="#ccc")
             .transition()
@@ -501,8 +503,8 @@
             .attr("x", d => normScaleCatX(d.category)+d.paddingCat.x)
             .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
-            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            // .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
 
             if (country === "US") {
@@ -527,9 +529,9 @@
               162)
             }
 
-          } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
+          // } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
 
-          // } else if (hexmap && circles && annot && currentStep===3) {
+          } else if (hexmap && circles && annot && currentStep===3) {
 
             d3.selectAll(".annotation-group").remove()
 
@@ -559,10 +561,10 @@
             .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
             .attr("opacity", d=>d.income!==null?1:0)
             .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
-            .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            // .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
 
             annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
             .transition()
@@ -573,8 +575,8 @@
             .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
             .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
             .attr("opacity", d=>d.income!==null?1:0)
-            .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            // .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
             if (country==="US") {
               annotateBars(normScaleCatXUrb, 
@@ -606,6 +608,9 @@
                 normScaleCatXUrb.bandwidth()*0.6,
                 -40,
                 60)
+
+              // make chart not sticky
+              // d3.select(".chart").style("position", "static")
             }
 
         } 
@@ -825,6 +830,22 @@
           // annot.attr('font-size', fontSize*2)
         }
 
+        $: if (innerWidth<850) {
+          d3.selectAll(".chart").style("top", "15%")
+        } else if (innerWidth<820) {
+          d3.selectAll(".chart").style("top", "30%")
+        } else if (innerWidth<750) {
+          d3.selectAll(".chart").style("top", "40%")
+        } else if (innerWidth<700) {
+          d3.selectAll(".chart").style("top", "60%")
+        } else if (innerWidth<650) {
+          d3.selectAll(".chart").style("top", "100%")
+        } else if (innerWidth<550) {
+          d3.selectAll(".chart").style("top", "200%")
+        } else {
+          d3.selectAll(".chart").style("top", "10%")
+        }
+
         // legend interaction
         // d3.selectAll(".legendCircle")
         // .on("mouseover", function(event, d) { 
@@ -843,24 +864,18 @@
 
         // SCROLLYTELLING
         let currentStep;
-        const steps = ["<p>Step 0!</p>", "<p>Step 1?</p>", "<p>Step 2.</p>", "<p>Step 3.</p>"];
+        const steps = country==="UK"?
+                      ["<p>UK Step 0!</p>", 
+                       "<p>UK Step 1?</p>",
+                       "<p>UK Step 2.</p>", 
+                       "<p>UK Step 3.</p>"]:
+                       ["<p>US Step 0!</p>", 
+                       "<p>US Step 1?</p>",
+                       "<p>US Step 2.</p>", 
+                       "<p>US Step 3.</p>"]
 
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
-<!-- dropdowns -->
-    <!-- <select id="chartView" bind:value={selectedView} on:change="{(e)=>updateScales(selectedView.value)}"> -->
-  <!-- <select id="chartView" bind:value={selectedView} on:change="{(e)=>updateScales(selectedView.value)}"> -->
-  <select id="chartView" bind:value={selectedView}>
-		{#each viewOptions as option}
-			<option value={option}>
-				{option.text}
-			</option>
-		{/each}
-	</select>	
-    <!-- <p>selected {selectedCountry ? selectedCountry.value : '[waiting...]'}</p>
-    <p>selected {selectedView ? selectedView.value : '[waiting...]'}</p> -->
-<!-- </div> -->
-<br>
 <!-- <div id="staticTooltip"></div> -->
 <div class="chart">
 <svg viewBox="0 0 800 600" bind:this={svg}>
@@ -914,7 +929,7 @@
   {/if}
 </svg>
 </div>
-<!-- <Scroll bind:value={currentStep}>
+<Scroll bind:value={currentStep}>
   {#each steps as text, i}
     <div class="step" class:active={currentStep === i}>
       <div class="step-content">
@@ -922,7 +937,16 @@
       </div>
     </div>
   {/each}
-</Scroll> -->
+</Scroll>
+<!-- <div class="spacer" /> -->
+<!-- <div class='spacer'>
+  <h1> 
+    Thanks!
+  </h1>
+  <h2>
+    <a href='https://twitter.com/CL_Rothschild' target="_blank">Questions and Tips</a>
+  </h2>
+</div> -->
 <!-- <p>Outerwidth: {outerWidth}</p>
 <p>Innerwidth: {innerWidth}</p> -->
 <style>
@@ -938,26 +962,32 @@
     font-style: normal;
 }
 
+.spacer {
+    height: 40vh;
+  }
+
 .chart {
     /* background: whitesmoke; */
     /* width: 400px;
     height: 400px; */
-    /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-    position: sticky; */
-    top: 10%;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 5%;
     margin: auto;
+    /* height: 100vh */
+    /* bottom: 50%; */
   }
 
   /* Scrollytelling CSS */
   .step {
-    height: 80vh;
+    height: 100vh;
     display: flex;
     place-items: center;
     justify-content: center;
   }
 
   .step-content {
-    background: whitesmoke;
+    background: #f8f6ec;
     color: #ccc;
     border-radius: 5px;
     padding: 0.5rem 1rem;
@@ -970,7 +1000,7 @@
   }
 
   .step.active .step-content {
-    background: white;
+    background: #fffae7;
     color: black;
   }
 

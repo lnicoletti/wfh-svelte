@@ -2,7 +2,10 @@
 	import {csv, json, merge, autoType} from "d3"
 	import { onMount } from "svelte";
 	import Title from "./components/Title.svelte";
-	import Chart from "./components/Chart.svelte";
+  // button
+  // import Chart from "./components/Chart.svelte";
+  // scrolly
+	import Chart from "./components/ChartScrolly.svelte";
 	import Footer from "./components/Footer.svelte";
   import Legend from "./components/Legend.svelte";
 
@@ -84,7 +87,7 @@ $: innerHeight = 0
 			<Title {vizTheme}/>
 			<br>
       <Legend {colors}></Legend>
-      <div style="text-align:center" class="custom-select">
+      <!-- <div style="text-align:center" class="custom-select">
         <span class="mapCredit">SELECT COUNTRY AND VIEW</span><br>
         <select id="chartCountry" bind:value={selectedCountry}>
           {#each countryOptions as option}
@@ -96,10 +99,25 @@ $: innerHeight = 0
         {#if selectedCountry.value==="UK"}
         <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/>
         {:else if selectedCountry.value==="US"}
-        <!-- <h1>US Chart</h1> -->
         <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"US"}/>
         {/if}
-        </div>
+        </div> -->
+        <section>
+          <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/>
+        </section>
+        <section>
+          <div>
+            <h2>Transition</h2>
+          </div>
+        </section>
+        <section>
+          <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"US"}/>
+        </section>
+        <section>
+          <div>
+            <h2>Transition</h2>
+          </div>
+        </section>
 			<Footer {vizTheme}/>
 		</div>
 	</body>
