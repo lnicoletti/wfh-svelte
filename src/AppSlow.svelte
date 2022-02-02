@@ -12,8 +12,14 @@
 	let isLoading = true;
 
 	// initialize data variables
-	let data_UK = []
-	let data_US = []
+	let hex_la = []
+	let ukUpd_tot = []
+	let ukUpd_time = []
+	let engUrbRural = []
+	let scotUrbRural = []
+	let ukUrbRural = []
+	let uSuPd_tot = []
+	let hex_us = []
 
 	// color scheme
 	const vizTheme = "theNytimes"
@@ -35,24 +41,27 @@
 	onMount( async () => {
 		await Promise.all([
 					// uk base data
-					// json("https://raw.githubusercontent.com/odileeds/hexmaps/gh-pages/maps/uk-local-authority-districts-2021.hexjson"),
-					// json("https://gist.githubusercontent.com/lnicoletti/2e08ca8357c8d4e4cf9bf869d890ab99/raw/a8135c1175715c9d8715be58de2ce8752fe236a4/ukUpd_tot_final_reduced.json"),
-					// json("https://gist.githubusercontent.com/lnicoletti/8025f10314c9004f5c0d9e392bbf5b17/raw/f5fa0d5c86d1b8d41f9ed6624d6b23b0b1b2ec37/ukUpdGroupMonth"),
-					// ////uk urb rural
-					// csv("https://gist.githubusercontent.com/lnicoletti/9b5df10403fd89cc6af0ee8cd26b7925/raw/cacd508ed040a1d190401e9b16247b970181aac1/ukUrbRural_2class.csv", autoType),
-					// csv("https://gist.githubusercontent.com/lnicoletti/1117ef6f526534506e96f981758a5602/raw/e0611a8a1ce43b9debb8c04465d8a67a054e6b2c/urbanRuralScotland_2class.csv", autoType),
+					json("https://raw.githubusercontent.com/odileeds/hexmaps/gh-pages/maps/uk-local-authority-districts-2021.hexjson"),
+					json("https://gist.githubusercontent.com/lnicoletti/2e08ca8357c8d4e4cf9bf869d890ab99/raw/a8135c1175715c9d8715be58de2ce8752fe236a4/ukUpd_tot_final_reduced.json"),
+					json("https://gist.githubusercontent.com/lnicoletti/8025f10314c9004f5c0d9e392bbf5b17/raw/f5fa0d5c86d1b8d41f9ed6624d6b23b0b1b2ec37/ukUpdGroupMonth"),
+					////uk urb rural
+					csv("https://gist.githubusercontent.com/lnicoletti/9b5df10403fd89cc6af0ee8cd26b7925/raw/cacd508ed040a1d190401e9b16247b970181aac1/ukUrbRural_2class.csv", autoType),
+					csv("https://gist.githubusercontent.com/lnicoletti/1117ef6f526534506e96f981758a5602/raw/e0611a8a1ce43b9debb8c04465d8a67a054e6b2c/urbanRuralScotland_2class.csv", autoType),
 
-					// // US data
-					// json("https://gist.githubusercontent.com/lnicoletti/abbd577e047a3f501430869a2b6833ca/raw/2de81f38eaf396c5c2d1d75901660c9f86b10e64/usUpd_tot_fixed_reduced.json", autoType),
-					// csv("https://gist.githubusercontent.com/lnicoletti/a01622da3e106830fe1c51ab96403234/raw/2b0d35c4efff50a65beb29759ae1a55eb99f73ac/usCountiesHex_tilemaps_albers.csv")
-
-          // Already preprocessed data (drammatically faster)
-          csv("https://gist.githubusercontent.com/lnicoletti/d54d74c48e95c91477860b05b2076ff8/raw/43c35658f57df5c95fad0a06d1548c9f0a63fca7/hexes_clean_UK.csv", autoType),
-          csv("https://gist.githubusercontent.com/lnicoletti/206902d2e08bad7328ece8faee6921a1/raw/0945b85f8360e298bfdb277eb9169e559c6a3957/hexes_clean_US.csv", autoType)
+					// US data
+					json("https://gist.githubusercontent.com/lnicoletti/abbd577e047a3f501430869a2b6833ca/raw/2de81f38eaf396c5c2d1d75901660c9f86b10e64/usUpd_tot_fixed_reduced.json", autoType),
+					csv("https://gist.githubusercontent.com/lnicoletti/a01622da3e106830fe1c51ab96403234/raw/2b0d35c4efff50a65beb29759ae1a55eb99f73ac/usCountiesHex_tilemaps_albers.csv")
 					])
 					.then((datasets)=>{
-						data_UK = datasets[0]
-						data_US = datasets[1]
+						hex_la = datasets[0]
+						ukUpd_tot = datasets[1]
+						ukUpd_time = datasets[2]
+						engUrbRural = datasets[3]
+						scotUrbRural = datasets[4]
+						uSuPd_tot = datasets[5]
+						hex_us = datasets[6]
+
+						ukUrbRural = merge([engUrbRural, scotUrbRural])
 					})
 		isLoading = !isLoading;
 	})
@@ -94,7 +103,7 @@ $: innerHeight = 0
         {/if}
         </div> -->
         <section>
-          <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
+          <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/>
         </section>
         <section>
           <div>
@@ -102,7 +111,7 @@ $: innerHeight = 0
           </div>
         </section>
         <section>
-          <Chart {colors} hexesClean = {data_US} country={"US"}/>
+          <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"US"}/>
         </section>
         <section>
           <div>

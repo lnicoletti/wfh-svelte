@@ -19,10 +19,15 @@
 
     // export let vizTheme;
     export let colors;
-    export let hexesClean;
+    export let hex_la;
+    export let ukUpd_tot;
+    export let ukUpd_time;
+    export let ukUrbRural;
+    export let uSuPd_tot;
+    export let hex_us;
     export let country;
 
-    console.log(hexesClean)
+    // console.log(hex_us)
 
   //   let countryOptions = [
 	// 	{ id: 1, value: `UK`, text: `United Kingdom`},
@@ -50,9 +55,9 @@
     $: radiusHover = radius*2
     $: boundWidth = 4
     $: fontSize = 6.5
-    let yVar = "mobilityWork"
+    $: yVar = "mobilityWork"
     // const xVar = "mobilityRes"
-    let xVar = "income"
+    $: xVar = "income"
     $: xVarLabel = "Median Household Income"
     // const xVarLabel = "Average Change in Work From Home Households Since Feb. 2020"
     $: yVarLabel = "Average Change in People Going to Workplaces Since Feb. 2020 (%)"
@@ -70,11 +75,8 @@
                                    [categoriesX[0], categoriesX[1], categoriesX[5], categoriesX[3], categoriesX[8], categoriesX[4], categoriesX[7], categoriesX[2], categoriesX[6]];
 
     // bivar settings
-    let dataBivar = country==="UK"?Object.assign(new Map(hexesClean.map(d=>[d.key, [d[yVar], d[xVar]]])), {title: ["Travel to Work", "Med. Income"]}):
-                                   Object.assign(new Map(hexesClean.map(d=>[d.GEOID, [d[yVar], d[xVar]]])), {title: ["Travel to Work", "Med. Income"]})
-
-    console.log("bivar", dataBivar)
-                                   
+    let dataBivar = country==="UK"?Object.assign(new Map(ukUpd_tot.map(d=>[d.area_code, [d["workplaces_percent_change_from_baseline"], d["Total annual income (£)"]]])), {title: ["Travel to Work", "Med. Income"]}):
+                                   Object.assign(new Map(uSuPd_tot.map(d=>[d.area_code, [d["workplaces_percent_change_from_baseline"], d["Total annual income (£)"]]])), {title: ["Travel to Work", "Med. Income"]})
     let n = Math.floor(Math.sqrt(colors.length))
     let yBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[1]), d3.range(n))
     let xBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[0]), d3.range(n))
@@ -97,108 +99,108 @@
     const k = 63/n
 
     // Render the hexes
-    // let hexes = country==="UK"?
-    // renderHexJSON(hex_la, width, height).map(d=> ({ ...d, 
-    //       income: 
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === undefined)?null:
-    //             ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"],
-    //       mobilityWork: 
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"] === null)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"] === undefined)?null:
-    //             ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"],
+    let hexes = country==="UK"?
+    renderHexJSON(hex_la, width, height).map(d=> ({ ...d, 
+          income: 
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null)||
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === undefined)?null:
+                ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"],
+          mobilityWork: 
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"] === null)||
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"] === undefined)?null:
+                ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"],
                                                   
-    //       mobilityRes: 
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"] === null)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"] === undefined)?null:
-    //             ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"],
+          mobilityRes: 
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"] === null)||
+                (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"] === undefined)?null:
+                ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"],
           
-    //       category: ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined ? "#ccc": 
-    //       ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null? "#ccc":
-    //       ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === undefined ? "#ccc":        
-    //       colorBivar([ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"],ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"]]),
+          category: ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined ? "#ccc": 
+          ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null? "#ccc":
+          ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === undefined ? "#ccc":        
+          colorBivar([ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"],ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"]]),
 
-    //       urbCategory: ukUrbRural.filter(c=>c.LAD11CD===d.key)[0] === undefined ? null: 
-    //       ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === null? null:
-    //       ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === undefined ? null:        
-    //       ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"],
+          urbCategory: ukUrbRural.filter(c=>c.LAD11CD===d.key)[0] === undefined ? null: 
+          ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === null? null:
+          ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === undefined ? null:        
+          ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"],
                                                                             
-    //     })):
-    //     hex_us.map(d=> ({ ...d, 
-    //       income: 
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"],
+        })):
+        hex_us.map(d=> ({ ...d, 
+          income: 
+                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
+                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"],
                 
-    //       mobilityWork: 
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],
+          mobilityWork: 
+                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
+                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],
                                                   
-    //       mobilityRes: 
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["residential_percent_change_from_baseline"],
+          mobilityRes: 
+                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
+                uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["residential_percent_change_from_baseline"],
           
-    //       category: uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined? "#ccc": 
-    //       uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === null? "#ccc":
-    //       uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === undefined ? "#ccc":        
-    //       colorBivar([uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"]]),
+          category: uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined? "#ccc": 
+          uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === null? "#ccc":
+          uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === undefined ? "#ccc":        
+          colorBivar([uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"]]),
 
-    //       urbCategory: 
-    //               uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //               uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["urbCategory"]
+          urbCategory: 
+                  uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
+                  uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["urbCategory"]
 
                                                                             
-    //     }))
+        }))
         
-        // // console.log("urb",ukUrbRural)
-        // console.log("hex us", hexes)
+        // console.log("urb",ukUrbRural)
+        console.log("hex us", hexes)
 
-        // // variables for dot clusters bars
-        // let clusterData = d3.groups(hexes, v=>v.category).map(d=> { return {category: d[0], data: d[1].map((c, i) =>({ ...c, row: i}))}}).filter(d=>d.category!=="#ccc")
-        // console.log("cluster", clusterData)
+        // variables for dot clusters bars
+        let clusterData = d3.groups(hexes, v=>v.category).map(d=> { return {category: d[0], data: d[1].map((c, i) =>({ ...c, row: i}))}}).filter(d=>d.category!=="#ccc")
+        console.log("cluster", clusterData)
 
-        // //   variables for dot clusters bars urban rural
-        // let ruralData = country==="UK"?
-        // d3.groups(
-        //     ukUrbRural
-        //     .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
-        //                             hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
-        //                                     }))
-        //     .filter(d=>d.category!=="#ccc")
-        //     .filter(d=>hexes.map(d=>d.key).filter(onlyUnique).includes(d.LAD11CD)), v=>v.RUC11)
-        //     .map(d=> { 
-        //         return {urbCategory: d[0], data: d[1].sort(function(a, b) {
-        //         return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
-        //         })//.sort((a,b)=> d3.descending(a.category,b.category))
-        //         .map((c, i) =>({ ...c, row: i}))
-        //         }
-        //     }):
-        //     d3.groups(
-        //       hexes,
-        //     //   .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
-        //     //                                       hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
-        //     //                                     }))
-        //         // .filter(d=>hexes.map(d=>d.fullName).filter(onlyUnique).includes(d.fullName)), 
-        //         v=>v.urbCategory
-        //         )
-        //         .filter(d=>d[0]!==null)
-        //         .map(d=> { 
-        //           return {urbCategory: d[0], data: d[1]
-        //             .filter(d=>d.urbCategory!==null&&colors.includes(d.category)&&d.mobilityWork!==null&&d.income!==null).sort(function(a, b) {
-        //             return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
-        //           })//.sort((a,b)=> d3.descending(a.category,b.category))
-        //             .map((c, i) =>({ ...c, row: i}))
-        //             }
-        //         })
+        //   variables for dot clusters bars urban rural
+        let ruralData = country==="UK"?
+        d3.groups(
+            ukUrbRural
+            .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
+                                    hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
+                                            }))
+            .filter(d=>d.category!=="#ccc")
+            .filter(d=>hexes.map(d=>d.key).filter(onlyUnique).includes(d.LAD11CD)), v=>v.RUC11)
+            .map(d=> { 
+                return {urbCategory: d[0], data: d[1].sort(function(a, b) {
+                return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
+                })//.sort((a,b)=> d3.descending(a.category,b.category))
+                .map((c, i) =>({ ...c, row: i}))
+                }
+            }):
+            d3.groups(
+              hexes,
+            //   .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
+            //                                       hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
+            //                                     }))
+                // .filter(d=>hexes.map(d=>d.fullName).filter(onlyUnique).includes(d.fullName)), 
+                v=>v.urbCategory
+                )
+                .filter(d=>d[0]!==null)
+                .map(d=> { 
+                  return {urbCategory: d[0], data: d[1]
+                    .filter(d=>d.urbCategory!==null&&colors.includes(d.category)&&d.mobilityWork!==null&&d.income!==null).sort(function(a, b) {
+                    return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
+                  })//.sort((a,b)=> d3.descending(a.category,b.category))
+                    .map((c, i) =>({ ...c, row: i}))
+                    }
+                })
 
-        // console.log("urb rural", ruralData)
+        console.log("urb rural", ruralData)
         let urbCategoriesX = ["Urban", "Rural"]//ruralData.sort((a,b)=>b.data.length-a.data.length).map(d=>d.urbCategory)   
         let urbCategoryLabels = ["Urban", "Rural"]
 
         var featureCollection = country==="US"?
-        { type:"FeatureCollection", features: hexesClean.map(function(d) {
+        { type:"FeatureCollection", features: hexes.map(function(d) {
                     return {     
                       "type": "Feature",
                       "geometry": {
@@ -214,20 +216,20 @@
                           .fitSize([width-margin.right-margin.left, height-margin.top-margin.bottom], featureCollection):null;
                 
         $: normScaleXInc = d3.scaleLinear()
-                        .domain(d3.extent(hexesClean, d => d.income))
+                        .domain(d3.extent(hexes, d => d.income))
                         .range([margin.left, width - margin.right])
       
         $: normScaleYMob = d3.scaleLinear()
-                        .domain(d3.extent(hexesClean, d => d.mobilityWork))
+                        .domain(d3.extent(hexes, d => d.mobilityWork))
                         .range([height - margin.bottom, margin.top])
 
-        $: normScaleXhex = d3.scaleLinear()
-                        .domain(d3.extent(hexesClean, d => d.x))
-                        .range([margin.left, width - margin.right])
+        // let normScaleXhex = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.x))
+        //                 .range(margin.top, figWidth - margin.bottom)
       
-        $: normScaleYhex = d3.scaleLinear()
-                        .domain(d3.extent(hexesClean, d => d.y))
-                        .range([height - margin.bottom, margin.top])
+        // let normScaleYhex = d3.scaleLinear()
+        //                 .domain(d3.extent(hexes, d => d.y))
+        //                 .range([margin.top, figWidth - margin.bottom])
 
         $: normScaleCatRow = d3.scaleLinear()
                         .domain(country==="UK"?[0, 76]:[0, 520])
@@ -245,15 +247,6 @@
         $: normScaleCatXUrb = d3.scaleBand()
                         .domain(urbCategoryLabels)
                         .range([margin.left, width - margin.right])
-
-        // color scales
-        $: incomeColor = d3.scaleQuantize()
-                        .domain(d3.extent(hexesClean, d => d[xVar]))
-                        .range(d3.schemeOranges[9])
-
-        $: mobilityColor = d3.scaleQuantize()
-                        .domain(d3.extent(hexesClean, d => d[yVar]))
-                        .range(d3.schemeGreens[9])
 
 
         // ticks
@@ -284,10 +277,49 @@
           d3.range(-60, 5, 15) ;
         }
 
-        console.log("clean", hexesClean)    
-        
-        let firstStep;
-        let comingFromMap;
+
+        let hexesClean = country==="UK"?
+                              hexes.map(d=>({...d, mobilityWork: d.mobilityWork,
+                                             income: d.income,
+                                             x: d.x,
+                                             y: d.y,
+                                             category: d.category,
+                                             urbCategory: d.urbCategory,
+                                             urbRow: d.urbCategory!==null && 
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0]!==undefined? 
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.LAD11CD===d.key)[0].row:null,
+                                             catRow: d.category!=="#ccc"? clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.key===d.key)[0].row:null,
+                                             
+
+                                            }))
+                                            .map(d=>({...d, 
+
+                                              paddingCat: {x:getPadding("category", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("category", d.catRow, d.urbRow, d.urbCategory).y},
+                                              paddingUrb: {x:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).y}
+                                              
+                                            })):
+                              hexes.map(d=>({...d, mobilityWork: d.mobilityWork,
+                                             income: d.income,
+                                             x: d.x,
+                                             y: d.y,
+                                             category: d.category,
+                                             urbCategory: d.urbCategory,
+                                             urbRow: d.urbCategory!==null && 
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)!==undefined &&
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.fullName===d.fullName)[0]!==undefined?
+                                                         ruralData.filter(c=>c.urbCategory===d.urbCategory)[0].data.filter(e=>e.fullName===d.fullName)[0].row:null,
+                                             catRow: d.category!=="#ccc"?clusterData.filter(c=>c.category===d.category)[0].data.filter(e=>e.fullName===d.fullName)[0].row:null,
+                                          
+                                            }))
+                                            .map(d=>({...d, 
+
+                                              paddingCat: {x:getPadding("category", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("category", d.catRow, d.urbRow, d.urbCategory).y},
+                                              paddingUrb: {x:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).x, y:getPadding("urbCategory", d.catRow, d.urbRow, d.urbCategory).y}
+                                              
+                                            }))
+
+        console.log("clean", hexesClean)                                    
 
         onMount(() => {
 
@@ -306,10 +338,9 @@
                 .attr("r", radius)//innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius)
                 .attr("stroke", "#fffae7")
                 .attr("stroke-width", "0.5")
-                // .attr("fill", d => d.category)
-                .attr("fill", "#ccc")
-                .attr("class", "laCircle"+country)
-                .attr("id", d=> country==="UK"?d.key:d.fullName.replaceAll(",", "").replaceAll(" ", ""))
+                .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
+                .attr("class", "laCircle")
+                .attr("id", d=> country==="UK"?d.key:d.fullName.replace(",", "").replace(" ", "").replace(" ", ""))
                 .attr("cursor", "pointer")
                 // .style("z-index", 100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
@@ -323,8 +354,8 @@
                 .attr("x", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("y", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("text-anchor", "middle")
-                .attr('class', 'LStext'+country)
-                .attr("id", d=> country==="UK"?"label"+d.key:"label"+d.fullName.replaceAll(",", "").replaceAll(" ", ""))
+                .attr('class', 'LStextUK')
+                .attr("id", d=> country==="UK"?"label"+d.key:"label"+d.fullName.replace(",", "").replace(" ", "").replace(" ", ""))
                 .attr('font-size', fontSize)
                 .attr('fill', 'rgb(255,255,255)')
                 .attr("z-index", 10)
@@ -333,9 +364,6 @@
                 .on("mouseover", (event, d)=>console.log(innerWidth))
                 .attr("cursor", "pointer")
 
-              
-          firstStep = true
-          comingFromMap = true
           // annot = true
 
                 // resize()
@@ -345,42 +373,61 @@
 
         $: 
         
-        if (hexmap && circles && annot && currentStep===0 && firstStep===false){
+        // if (hexmap && circles && annot && selectedView.value==="chart") { 
 
-          d3.selectAll(".annotation-group").remove()
+        if (hexmap && circles && annot && currentStep===1) { 
 
-            circles
-            .transition()
+        // d3.select(".chart").style("position", "sticky")
+        d3.selectAll(".annotation-group").remove()
+
+          circles.filter(d=>d.category==="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          // .attr("cx", 200)
+          // .attr("cy", 1000)
+          .attr("opacity", 0)
+
+          annot.filter(d=>d.category==="#ccc")
+          .transition()
+          .duration(750)
+          .ease(d3.easeLinear)
+          // .attr("x", 200)
+          // .attr("y", 1000)
+          .attr("opacity", 0)
+          
+          circles.filter(d=>d.category!=="#ccc")
+          .transition()
             .delay((d, i) => {
               return i * Math.random() * 1.5;
               })
             .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", "#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot
-            .transition()
+          .ease(d3.easeLinear)
+          .attr("cx", d => normScaleXInc(d[xVar]))
+          .attr("cy", d=> normScaleYMob(d[yVar]))
+          .attr("opacity", d=>d.income!==null?1:0)
+          .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
+          // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+          //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+          .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+      
+          annot.filter(d=>d.category!=="#ccc")
+          .transition()
             .delay((d, i) => {
               return i * Math.random() * 1.5;
               })
             .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+          .ease(d3.easeLinear)
+          .attr("x", d => normScaleXInc(d[xVar]))
+          .attr("y", d=> normScaleYMob(d[yVar]))
+          .attr("opacity", d=>d.income!==null?1:0)
+          // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+          .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-          firstStep=true
-          comingFromMap = true
-          valueUK = null
+          // } else if (hexmap && circles && annot && selectedView.value==="map") {
 
-        } else if (hexmap && circles && annot && currentStep===1) {
+          } else if (hexmap && circles && annot && currentStep===0) {
 
             // d3.select(".chart").style("position", "sticky")
             d3.selectAll(".annotation-group").remove()
@@ -394,177 +441,26 @@
             .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
             .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
             .attr("opacity", 1)
-            .attr("fill", d => d.category!=="#ccc"?incomeColor(d[xVar]):"#ccc")
+            .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
             // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
             //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
-
-        } else if (hexmap && circles && annot && currentStep===2) {
-
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
-
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", d => d.category!=="#ccc"?mobilityColor(d[yVar]):"#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
-
-        } else if (hexmap && circles && annot && currentStep===3) {
-
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
-
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", d => d.category)
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
-
-          } else if (hexmap && circles && annot && currentStep===4) { 
-
-            // highlight islington
-            valueUK = "E09000019"
-
-            // } else if (hexmap && circles && annot && selectedView.value==="bars") {
-          } else if (hexmap && circles && annot && currentStep===5) { 
-
-          // d3.select(".chart").style("position", "sticky")
-          d3.selectAll(".annotation-group").remove()
-
-            circles.filter(d=>d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("cx", 200)
-            // .attr("cy", 1000)
-            .attr("opacity", 0)
-
-            annot.filter(d=>d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("x", 200)
-            // .attr("y", 1000)
-            .attr("opacity", 0)
-            
-            circles.filter(d=>d.category!=="#ccc")
-            .transition()
-              .delay((d, i) => {
-                return i * Math.random() * 1.5;
-                })
-              .duration(800)
-            .ease(d3.easeLinear)
-            .attr("cx", d => normScaleXInc(d[xVar]))
-            .attr("cy", d=> normScaleYMob(d[yVar]))
-            .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d => d.category)
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
             .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-                                    country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot.filter(d=>d.category!=="#ccc")
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+        
+            annot
             .transition()
-              .delay((d, i) => {
-                return i * Math.random() * 1.5;
-                })
-              .duration(800)
-            .ease(d3.easeLinear)
-            .attr("x", d => normScaleXInc(d[xVar]))
-            .attr("y", d=> normScaleYMob(d[yVar]))
-            .attr("opacity", d=>d.income!==null?1:0)
-            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("x", d=>d.x)
+            .attr("y", d=>d.y)
+            .attr("opacity", 1)
+            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${margin.left*2},0)`:`translate(0,0)`)
 
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
-            // } else if (hexmap && circles && annot && selectedView.value==="map") {
-    
-          } else if (hexmap && circles && annot && currentStep===6) { 
-
-              // highlight islington
-              valueUK = "E09000001"
-
-          } else if (hexmap && circles && annot && currentStep===7) { 
-
-              // highlight islington
-              valueUK = "S12000049"
-
-          } else if (hexmap && circles && annot && currentStep===8) { 
-
-              // highlight islington
-              valueUK = "E07000085"
-
-          } else if (hexmap && circles && annot && currentStep===9) {
+          // } else if (hexmap && circles && annot && selectedView.value==="bars") {
+          } else if (hexmap && circles && annot && currentStep===2) {
 
             // d3.select(".chart").style("position", "sticky")
             d3.selectAll(".annotation-group").remove()
@@ -591,10 +487,10 @@
               return i * Math.random() * 1.5;
               })
             .duration(800)
-            .attr("cx", d => normScaleCatX(d.category)+d.paddingCatX)
-            .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCatY))
+            .attr("cx", d => normScaleCatX(d.category)+d.paddingCat.x)
+            .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d => d.category)
+            .attr("fill", d => colorBivar([d.mobilityWork, d.income]))
             // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
             //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
             .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
@@ -607,15 +503,12 @@
               })
             .duration(800)
             .ease(d3.easeLinear)
-            .attr("x", d => normScaleCatX(d.category)+d.paddingCatX)
-            .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCatY))
+            .attr("x", d => normScaleCatX(d.category)+d.paddingCat.x)
+            .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCat.y))
             .attr("opacity", d=>d.income!==null?1:0)
             // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
             .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
 
             if (country === "US") {
               annotateBars(normScaleCatX, 
@@ -641,7 +534,7 @@
 
           // } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
 
-          } else if (hexmap && circles && annot && currentStep===10) {
+          } else if (hexmap && circles && annot && currentStep===3) {
 
             d3.selectAll(".annotation-group").remove()
 
@@ -667,10 +560,10 @@
               return i * Math.random() * 1.5;
               })
             .duration(800)
-            .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
-            .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
+            .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
+            .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
             .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?colorBivar([d.mobilityWork, d.income]):"#ccc")
             // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
             //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
             .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
@@ -682,15 +575,11 @@
               return i * Math.random() * 1.5;
               })
             .duration(800)
-            .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
-            .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
+            .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrb.x)
+            .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrb.y))
             .attr("opacity", d=>d.income!==null?1:0)
             // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
             .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
 
             if (country==="US") {
               annotateBars(normScaleCatXUrb, 
@@ -978,28 +867,11 @@
 
         // SCROLLYTELLING
         let currentStep;
-        // const steps = country==="UK"?
-        //               ["<p>UK Step 0!</p>", 
-        //                "<p>UK Step 1?</p>",
-        //                "<p>UK Step 2.</p>", 
-        //                "<p>UK Step 3.</p>"]:
-        //                ["<p>US Step 0!</p>", 
-        //                "<p>US Step 1?</p>",
-        //                "<p>US Step 2.</p>", 
-        //                "<p>US Step 3.</p>"]
-
         const steps = country==="UK"?
-                      ["<p>UK Naked</p>", 
-                       "<p>UK Income</p>",
-                       "<p>UK Mobility</p>", 
-                       "<p>UK Bivariate</p>", 
-                       "<p>UK Highlight orange and green example</p>", 
-                       "<p>UK scatter</p>", 
-                       "<p>UK highlight london</p>", 
-                       "<p>UK highlight glasgow + edingburgh</p>", 
-                       "<p>UK highlight dark green example</p>", 
-                       "<p>UK bars</p>", 
-                       "<p>UK urban vs rural</p>"]:
+                      ["<p>UK Step 0!</p>", 
+                       "<p>UK Step 1?</p>",
+                       "<p>UK Step 2.</p>", 
+                       "<p>UK Step 3.</p>"]:
                        ["<p>US Step 0!</p>", 
                        "<p>US Step 1?</p>",
                        "<p>US Step 2.</p>", 
@@ -1023,7 +895,7 @@
       };
 
         // search bar
-        let options = country==="UK"?hexesClean.map(d=>{return{value:d.key, text:d.n}}):hexesClean.map(d=>{return{value:d.fullName.replaceAll(",", "").replaceAll(" ", ""), text:d.county+","+d.abbrv}});
+        let options = country==="UK"?hexesClean.map(d=>{return{value:d.key, text:d.n}}):hexesClean.map(d=>{return{value:d.fullName.replace(",", "").replace(" ", "").replace(" ", ""), text:d.county+","+d.abbrv}});
 
         $: selection = null;
         $: valueUK = null;
@@ -1035,22 +907,22 @@
 
         $: if (valueUK!== null) {
           console.log(valueUK)
-          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".laCircle").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).moveToBack()
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
           d3.select("#"+valueUK).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHover).moveToFront()//.attr("stroke-width", 1.5).raise()
           d3.select("#label"+valueUK).attr("opacity", 1).attr("font-size", fontSize*2).style("font-weight", "700").moveToFront()
         } else if (valueUK === null) {
           d3.selectAll(".LStextUK").attr("font-size", fontSize)
-          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
+          d3.selectAll(".laCircle").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
         $: if (valueUS!== null) {
           console.log(valueUS)
-          d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".laCircle").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
           d3.select("#"+valueUS).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHover).moveToFront()//.attr("stroke-width", 1.5).raise()
         } else if (valueUS === null) {
-          d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
+          d3.selectAll(".laCircle").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
@@ -1075,7 +947,7 @@
 ></Svelecte>
 {/if}
 <svg viewBox="0 0 800 600" bind:this={svg}>
-{#if currentStep==5||currentStep==6||currentStep==7||currentStep==8}
+{#if selectedView.value==="chart"||currentStep==1}
   <!-- y axis -->
   <g class='axis y-axis'>
     {#each yTicksMob as tick}
@@ -1100,7 +972,7 @@
   <g class='axisTitle' text-anchor=end transform='translate({country==="UK"?normScaleXInc(65000):normScaleXInc(140000)}, {height - margin.bottom})'>
     <text x={0} y="+35" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>MEDIAN HOUSEHOLD INCOME</text>
   </g>
-  {:else if currentStep==9}
+  {:else if selectedView.value === "bars"||currentStep==2}
   <g class='axis x-axis'>
     {#each categoriesX as tick, i}
       <g class='axisTitle' transform='translate({normScaleCatX(tick)+margin.left/4},{0})' text-anchor=middle>
@@ -1114,7 +986,7 @@
       </g>
     {/each}
   </g>
-  {:else if currentStep==10}
+  {:else if selectedView.value === "barsUrban"||currentStep==3}
   <g class='axis x-axis'>
     {#each urbCategoryLabels as tick}
       <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
