@@ -47,7 +47,9 @@
 					// csv("https://gist.githubusercontent.com/lnicoletti/a01622da3e106830fe1c51ab96403234/raw/2b0d35c4efff50a65beb29759ae1a55eb99f73ac/usCountiesHex_tilemaps_albers.csv")
 
           // Already preprocessed data (drammatically faster)
-          csv("https://gist.githubusercontent.com/lnicoletti/d54d74c48e95c91477860b05b2076ff8/raw/43c35658f57df5c95fad0a06d1548c9f0a63fca7/hexes_clean_UK.csv", autoType),
+          // commuter belt
+          // csv("https://gist.githubusercontent.com/lnicoletti/8e926944a492e859ce8e2c3fe49b0311/raw/53d81aa1242db88f8e9f5bbf3f0049d6ab292dfc/hexes_clean_UK_le.csv", autoType),
+          csv("https://gist.githubusercontent.com/lnicoletti/c40cd3aafeeb56d6429692246650fe0c/raw/c7f118a6830a865c4a356ee256d67ee36548fffe/hexes_clean_UK_luz.csv", autoType),
           csv("https://gist.githubusercontent.com/lnicoletti/206902d2e08bad7328ece8faee6921a1/raw/0945b85f8360e298bfdb277eb9169e559c6a3957/hexes_clean_US.csv", autoType)
 					])
 					.then((datasets)=>{

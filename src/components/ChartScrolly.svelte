@@ -96,106 +96,12 @@
     let legendData = d3.cross(d3.range(n), d3.range(n))
     const k = 63/n
 
-    // Render the hexes
-    // let hexes = country==="UK"?
-    // renderHexJSON(hex_la, width, height).map(d=> ({ ...d, 
-    //       income: 
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === undefined)?null:
-    //             ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"],
-    //       mobilityWork: 
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"] === null)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"] === undefined)?null:
-    //             ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"],
-                                                  
-    //       mobilityRes: 
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"] === null)||
-    //             (ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"] === undefined)?null:
-    //             ukUpd_tot.filter(c=>c.area_code===d.key)[0]["residential_percent_change_from_baseline"],
-          
-    //       category: ukUpd_tot.filter(c=>c.area_code===d.key)[0] === undefined ? "#ccc": 
-    //       ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === null? "#ccc":
-    //       ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"] === undefined ? "#ccc":        
-    //       colorBivar([ukUpd_tot.filter(c=>c.area_code===d.key)[0]["workplaces_percent_change_from_baseline"],ukUpd_tot.filter(c=>c.area_code===d.key)[0]["Total annual income (£)"]]),
-
-    //       urbCategory: ukUrbRural.filter(c=>c.LAD11CD===d.key)[0] === undefined ? null: 
-    //       ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === null? null:
-    //       ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"] === undefined ? null:        
-    //       ukUrbRural.filter(c=>c.LAD11CD===d.key)[0]["RUC11"],
-                                                                            
-    //     })):
-    //     hex_us.map(d=> ({ ...d, 
-    //       income: 
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"],
-                
-    //       mobilityWork: 
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],
-                                                  
-    //       mobilityRes: 
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //             uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["residential_percent_change_from_baseline"],
-          
-    //       category: uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined? "#ccc": 
-    //       uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === null? "#ccc":
-    //       uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"] === undefined ? "#ccc":        
-    //       colorBivar([uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["workplaces_percent_change_from_baseline"],uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["Total annual income (£)"]]),
-
-    //       urbCategory: 
-    //               uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]===undefined?null:
-    //               uSuPd_tot.filter(c=>c.fullName === d.fullName)[0]["urbCategory"]
-
-                                                                            
-    //     }))
-        
-        // // console.log("urb",ukUrbRural)
-        // console.log("hex us", hexes)
-
-        // // variables for dot clusters bars
-        // let clusterData = d3.groups(hexes, v=>v.category).map(d=> { return {category: d[0], data: d[1].map((c, i) =>({ ...c, row: i}))}}).filter(d=>d.category!=="#ccc")
-        // console.log("cluster", clusterData)
-
-        // //   variables for dot clusters bars urban rural
-        // let ruralData = country==="UK"?
-        // d3.groups(
-        //     ukUrbRural
-        //     .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
-        //                             hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
-        //                                     }))
-        //     .filter(d=>d.category!=="#ccc")
-        //     .filter(d=>hexes.map(d=>d.key).filter(onlyUnique).includes(d.LAD11CD)), v=>v.RUC11)
-        //     .map(d=> { 
-        //         return {urbCategory: d[0], data: d[1].sort(function(a, b) {
-        //         return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
-        //         })//.sort((a,b)=> d3.descending(a.category,b.category))
-        //         .map((c, i) =>({ ...c, row: i}))
-        //         }
-        //     }):
-        //     d3.groups(
-        //       hexes,
-        //     //   .map(d=>({...d, category: hexes.filter(c=>c.key===d.LAD11CD)[0]!==undefined?
-        //     //                                       hexes.filter(c=>c.key===d.LAD11CD)[0].category:null
-        //     //                                     }))
-        //         // .filter(d=>hexes.map(d=>d.fullName).filter(onlyUnique).includes(d.fullName)), 
-        //         v=>v.urbCategory
-        //         )
-        //         .filter(d=>d[0]!==null)
-        //         .map(d=> { 
-        //           return {urbCategory: d[0], data: d[1]
-        //             .filter(d=>d.urbCategory!==null&&colors.includes(d.category)&&d.mobilityWork!==null&&d.income!==null).sort(function(a, b) {
-        //             return sortOrder.indexOf(a.category) - sortOrder.indexOf(b.category);
-        //           })//.sort((a,b)=> d3.descending(a.category,b.category))
-        //             .map((c, i) =>({ ...c, row: i}))
-        //             }
-        //         })
 
         // console.log("urb rural", ruralData)
         let urbCategoriesX = ["Urban", "Rural"]//ruralData.sort((a,b)=>b.data.length-a.data.length).map(d=>d.urbCategory)   
         let urbCategoryLabels = ["Urban", "Rural"]
+        let leCatX = ["London Commuter Belt", "Not London"]
+        let leCatLabels = ["London's Larger Urban Zone", "Elsewhere in the U.K."]
 
         var featureCollection = country==="US"?
         { type:"FeatureCollection", features: hexesClean.map(function(d) {
@@ -246,6 +152,14 @@
                         .domain(urbCategoryLabels)
                         .range([margin.left, width - margin.right])
 
+        $: normScaleLeRow = d3.scaleLinear()
+                        .domain(d3.extent(hexesClean, d => d.leRow))
+                        .range([height - margin.bottom, margin.top])
+
+        $: normScaleCatXLe = d3.scaleBand()
+                        .domain(leCatX)
+                        .range([margin.left, width - margin.right])
+
         // color scales
         $: incomeColor = d3.scaleQuantize()
                         .domain(d3.extent(hexesClean, d => d[xVar]))
@@ -288,6 +202,11 @@
         
         let firstStep;
         let comingFromMap;
+
+        // % of green areas in london commuter belt
+        let pctLe = country==="UK"?hexesClean.filter(d=>d.leCat==="London Commuter Belt"&&d.category==="#47a45b").length/hexesClean.filter(d=>d.category==="#47a45b").length:null
+
+        console.log("%percent green in commuter belt", pctLe)
 
         onMount(() => {
 
@@ -727,7 +646,71 @@
               // d3.select(".chart").style("position", "static")
             }
 
-        } 
+        } else if (hexmap && circles && annot && currentStep===11) {
+
+            d3.selectAll(".annotation-group").remove()
+
+            circles.filter(d=>d.leCat===null||d.category==="#ccc")
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            // .attr("cx", 200)
+            // .attr("cy", 1000)
+            .attr("opacity", 0)
+      
+            annot.filter(d=>d.leCat===null||d.category==="#ccc")
+            .transition()
+            .duration(750)
+            .ease(d3.easeLinear)
+            // .attr("x", 200)
+            // .attr("y", 1000)
+            .attr("opacity", 0)
+            
+            circles.filter(d=>d.leCat!==null&&d.category!=="#ccc")
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("cx", d => normScaleCatXLe(d.leCat)+d.paddingLeX)
+            .attr("cy", d=> normScaleLeRow(d.leRow+d.paddingLeY))
+            .attr("opacity", d=>d.income!==null?1:0)
+            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
+                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+            annot.filter(d=>d.leCat!==null&&d.category!=="#ccc")
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("x", d => normScaleCatXLe(d.leCat)+d.paddingLeX)
+            .attr("y", d=> normScaleLeRow(d.leRow+d.paddingLeY))
+            .attr("opacity", d=>d.income!==null?1:0)
+            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+            firstStep=false
+            comingFromMap = false
+            valueUK = null
+
+
+            if (country==="UK") {
+              annotateBars(normScaleCatXLe, 
+              normScaleLeRow, 
+                "London Commuter Belt", 
+                68, 
+                svg, 
+                (pctLe*100).toFixed()+"% of all high income, low travel localities are located in London's Larger Urban Zone", 
+                normScaleCatXLe.bandwidth()*0.52,
+                -40,
+                60)
+            }
+
+        }
 
 
         function getPadding(x, catRow, urbRow, urbCat) {
@@ -999,7 +982,8 @@
                        "<p>UK highlight glasgow + edingburgh</p>", 
                        "<p>UK highlight dark green example</p>", 
                        "<p>UK bars</p>", 
-                       "<p>UK urban vs rural</p>"]:
+                       "<p>UK urban vs rural</p>", 
+                       "<p>UK London vs Everywhere</p>"]:
                        ["<p>US Step 0!</p>", 
                        "<p>US Step 1?</p>",
                        "<p>US Step 2.</p>", 
@@ -1119,6 +1103,14 @@
     {#each urbCategoryLabels as tick}
       <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
         <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{tick}</text>
+      </g>
+    {/each}
+  </g>
+  {:else if currentStep==11}
+  <g class='axis x-axis'>
+    {#each leCatX as tick, i}
+      <g class='axisTitle' transform='translate({normScaleCatXLe(tick)+margin.left+10},{0})' text-anchor=middle>
+        <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{leCatLabels[i]}</text>
       </g>
     {/each}
   </g>
