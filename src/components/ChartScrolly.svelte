@@ -710,7 +710,43 @@
                 60)
             }
 
-        }
+        } else if (hexmap && circles && annot && currentStep===12) {
+
+            // d3.select(".chart").style("position", "sticky")
+            d3.selectAll(".annotation-group").remove()
+
+            circles
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+            .attr("opacity", d=>d.leCat!=="Not London"?1:0.5)
+            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+            .attr("transform", country==="UK"&&[6, 12].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+            annot
+            .transition()
+            .delay((d, i) => {
+              return i * Math.random() * 1.5;
+              })
+            .duration(800)
+            .attr("x", d=>d.x)
+            .attr("y", d=>d.y)
+            .attr("opacity", 1)
+            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+            .attr("transform",[6, 12].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+            firstStep=false
+            comingFromMap = true
+            valueUK = null
+
+          }
 
 
         function getPadding(x, catRow, urbRow, urbCat) {
@@ -983,7 +1019,8 @@
                        "<p>UK highlight dark green example</p>", 
                        "<p>UK bars</p>", 
                        "<p>UK urban vs rural</p>", 
-                       "<p>UK London vs Everywhere</p>"]:
+                       "<p>UK London vs Everywhere</p>", 
+                       "<p>UK Highlight London's Larger Urban Zone</p>"]:
                        ["<p>US Step 0!</p>", 
                        "<p>US Step 1?</p>",
                        "<p>US Step 2.</p>", 
