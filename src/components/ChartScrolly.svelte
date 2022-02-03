@@ -46,8 +46,10 @@
     // responsive margins
     let margin = ({ top: 0.05*height, right: 0.04*width, bottom: 0.1*height, left: 0.1*width})
 
-    $: radius = country==="UK"?width/80:width/220//9.8
-    $: radiusHover = radius*2
+    let radiusUK = width/80
+    let radiusUS = width/220//9.8
+    let radiusHoverUK = radiusUK*2
+    let radiusHoverUS = radiusUS*2
     $: boundWidth = 4
     $: fontSize = 6.5
     let yVar = "mobilityWork"
@@ -162,12 +164,13 @@
 
         // color scales
         $: incomeColor = d3.scaleQuantize()
-                        .domain(d3.extent(hexesClean, d => d[xVar]))
-                        .range(d3.schemeOranges[9])
+                        .domain(country==="UK"?d3.extent(hexesClean, d => d[xVar]):[d3.min(hexesClean, d => d[xVar]), 80000])
+                        .range(d3.schemeGreens[9])
 
         $: mobilityColor = d3.scaleQuantize()
-                        .domain(d3.extent(hexesClean, d => d[yVar]))
-                        .range(d3.schemeGreens[9])
+                        .domain(country==="UK"?d3.extent(hexesClean, d => d[yVar]):[-40, -5])
+                        .range(d3.schemeOranges[9])
+                        
 
 
         // ticks
@@ -222,7 +225,7 @@
                 .append("circle")
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("r", radius)//innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius)
+                .attr("r", country==="UK"?radiusUK:radiusUS)//innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius)
                 .attr("stroke", "#fffae7")
                 .attr("stroke-width", "0.5")
                 // .attr("fill", d => d.category)
@@ -262,617 +265,639 @@
 
         $: console.log("normalized", selectedView.value)
 
-        $: 
+        $: if (country==="UK" && hexmap && circles && annot && currentStep===0 && firstStep===false){
+
+              d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", "#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+              firstStep=true
+              comingFromMap = true
+              valueUK = null
+
+            } else if (country==="UK" && hexmap && circles && annot && currentStep===1) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d => d.category!=="#ccc"?incomeColor(d[xVar]):"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUK = null
+
+            } else if (country==="UK" && hexmap && circles && annot && currentStep===2) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d => d.category!=="#ccc"?mobilityColor(d[yVar]):"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUK = null
+
+            } else if (country==="UK" && hexmap && circles && annot && currentStep===3) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUK = null
+
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===4) { 
+
+                // highlight islington
+                valueUK = "E09000019"
+                valueUS = null
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                // .attr("opacity", 1)
+                // .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                // } else if (hexmap && circles && annot && selectedView.value==="bars") {
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===5) { 
+
+              // d3.select(".chart").style("position", "sticky")
+              d3.selectAll(".annotation-group").remove()
+
+                circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+                annot.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.category!=="#ccc")
+                .transition()
+                  .delay((d, i) => {
+                    return i * Math.random() * 1.5;
+                    })
+                  .duration(800)
+                .ease(d3.easeLinear)
+                .attr("cx", d => normScaleXInc(d[xVar]))
+                .attr("cy", d=> normScaleYMob(d[yVar]))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                        country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot.filter(d=>d.category!=="#ccc")
+                .transition()
+                  .delay((d, i) => {
+                    return i * Math.random() * 1.5;
+                    })
+                  .duration(800)
+                .ease(d3.easeLinear)
+                .attr("x", d => normScaleXInc(d[xVar]))
+                .attr("y", d=> normScaleYMob(d[yVar]))
+                .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = false
+                valueUK = null
+                // } else if (hexmap && circles && annot && selectedView.value==="map") {
         
-        if (hexmap && circles && annot && currentStep===0 && firstStep===false){
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===6) { 
 
-          d3.selectAll(".annotation-group").remove()
+                  // highlight london
+                  valueUK = "E09000001"
+                  valueUS = null
 
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", "#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
 
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===7) { 
 
-          firstStep=true
-          comingFromMap = true
-          valueUK = null
+                  // highlight Blaneau gwent
+                  valueUK = "W06000019"
+                  valueUS = null
 
-        } else if (hexmap && circles && annot && currentStep===1) {
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
 
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===8) { 
 
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", d => d.category!=="#ccc"?incomeColor(d[xVar]):"#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                  // highlight glasgow
+                  valueUK = "S12000049"
+                  valueUS = null
 
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                  // circles.filter(d=>d.income===null).attr("opacity", 0)
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
 
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===9) { 
 
-        } else if (hexmap && circles && annot && currentStep===2) {
+                d3.selectAll(".annotation-group").remove()
+                  // highlight East Hampshire
+                  valueUK = "E07000085"
+                  valueUS = null
 
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
 
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", d => d.category!=="#ccc"?mobilityColor(d[yVar]):"#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                annot.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.category!=="#ccc")
+                .transition()
+                  .delay((d, i) => {
+                    return i * Math.random() * 1.5;
+                    })
+                  .duration(800)
+                .ease(d3.easeLinear)
+                .attr("cx", d => normScaleXInc(d[xVar]))
+                .attr("cy", d=> normScaleYMob(d[yVar]))
+                // .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                        country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
 
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                annot.filter(d=>d.category!=="#ccc")
+                .transition()
+                  .delay((d, i) => {
+                    return i * Math.random() * 1.5;
+                    })
+                  .duration(800)
+                .ease(d3.easeLinear)
+                .attr("x", d => normScaleXInc(d[xVar]))
+                .attr("y", d=> normScaleYMob(d[yVar]))
+                // .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
+                firstStep=false
+                comingFromMap = false
 
-        } else if (hexmap && circles && annot && currentStep===3) {
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===10) {
 
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
 
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", 1)
-            .attr("fill", d => d.category)
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep<6?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
 
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                annot.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d => normScaleCatX(d.category)+d.paddingCatX)
+                .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCatY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                
+                annot.filter(d=>d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .ease(d3.easeLinear)
+                .attr("x", d => normScaleCatX(d.category)+d.paddingCatX)
+                .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCatY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
+                firstStep=false
+                comingFromMap = false
+                valueUK = null
 
-          } else if (hexmap && circles && annot && currentStep===4) { 
+                if (country === "US") {
+                  annotateBars(normScaleCatX, 
+                  normScaleCatRow, 
+                  categoriesX[0], 
+                  460, 
+                  svg, 
+                  "30% of localities are either low income, high travel or high income, low travel", 
+                  normScaleCatX.bandwidth()*1.75,
+                  15,
+                  170)
+                } else if (country==="UK") {
+                  annotateBars(normScaleCatX, 
+                  normScaleCatRow, 
+                  categoriesX[0], 
+                  78, 
+                  svg, 
+                  "50% of localities are either low income, high travel or high income, low travel", 
+                  normScaleCatX.bandwidth()*1.3,
+                  30,
+                  162)
+                }
 
-            // highlight islington
-            valueUK = "E09000019"
+              // } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
 
-            // } else if (hexmap && circles && annot && selectedView.value==="bars") {
-          } else if (hexmap && circles && annot && currentStep===5) { 
+              } else if (country==="UK" && hexmap && circles && annot && currentStep===11) {
 
-          // d3.select(".chart").style("position", "sticky")
-          d3.selectAll(".annotation-group").remove()
+                d3.selectAll(".annotation-group").remove()
 
-            circles.filter(d=>d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("cx", 200)
-            // .attr("cy", 1000)
-            .attr("opacity", 0)
+                circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+          
+                annot.filter(d=>d.urbCategory===null||d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
+                .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
 
-            annot.filter(d=>d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("x", 200)
-            // .attr("y", 1000)
-            .attr("opacity", 0)
-            
-            circles.filter(d=>d.category!=="#ccc")
-            .transition()
-              .delay((d, i) => {
-                return i * Math.random() * 1.5;
-                })
-              .duration(800)
-            .ease(d3.easeLinear)
-            .attr("cx", d => normScaleXInc(d[xVar]))
-            .attr("cy", d=> normScaleYMob(d[yVar]))
-            .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d => d.category)
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-                                    country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
+                .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-            annot.filter(d=>d.category!=="#ccc")
-            .transition()
-              .delay((d, i) => {
-                return i * Math.random() * 1.5;
-                })
-              .duration(800)
-            .ease(d3.easeLinear)
-            .attr("x", d => normScaleXInc(d[xVar]))
-            .attr("y", d=> normScaleYMob(d[yVar]))
-            .attr("opacity", d=>d.income!==null?1:0)
-            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+                firstStep=false
+                comingFromMap = false
+                valueUK = null
 
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
-            // } else if (hexmap && circles && annot && selectedView.value==="map") {
-    
-          } else if (hexmap && circles && annot && currentStep===6) { 
+                if (country==="US") {
+                  annotateBars(normScaleCatXUrb, 
+                    normScaleUrbRow, 
+                    "Rural", 
+                    450, 
+                    svg, 
+                    "Unlike the U.K., in the U.S. the majority of low income, high travel areas are rural...", 
+                    -15,
+                    -15,
+                    -60)
 
-              // highlight islington
-              valueUK = "E09000001"
+                  annotateBars(normScaleCatXUrb, 
+                    normScaleUrbRow, 
+                    "Urban", 
+                    363, 
+                    svg, 
+                    "...while the majority of high income, low travel localities are urban", 
+                    normScaleCatXUrb.bandwidth()*0.615,
+                    15,
+                    60)
+                } else if (country==="UK") {
+                  annotateBars(normScaleCatXUrb, 
+                    normScaleUrbRow, 
+                    "Urban", 
+                    78, 
+                    svg, 
+                    "The majority of low income, high travel and high income, low travel localities are located in urban areas", 
+                    normScaleCatXUrb.bandwidth()*0.6,
+                    -40,
+                    60)
 
-          } else if (hexmap && circles && annot && currentStep===7) { 
+                  // make chart not sticky
+                  // d3.select(".chart").style("position", "static")
+                }
 
-              // highlight islington
-              valueUK = "S12000049"
+            } else if (country==="UK" && hexmap && circles && annot && currentStep===12) {
 
-          } else if (hexmap && circles && annot && currentStep===8) { 
+                d3.selectAll(".annotation-group").remove()
 
-              // highlight islington
-              valueUK = "E07000085"
+                circles.filter(d=>d.leCat===null||d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+          
+                annot.filter(d=>d.leCat===null||d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.leCat!==null&&d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d => normScaleCatXLe(d.leCat)+d.paddingLeX)
+                .attr("cy", d=> normScaleLeRow(d.leRow+d.paddingLeY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
 
-          } else if (hexmap && circles && annot && currentStep===9) {
+                annot.filter(d=>d.leCat!==null&&d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d => normScaleCatXLe(d.leCat)+d.paddingLeX)
+                .attr("y", d=> normScaleLeRow(d.leRow+d.paddingLeY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${-margin.left},0)`:`translate(0,0)`)
 
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
-
-            circles.filter(d=>d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("cx", 200)
-            // .attr("cy", 1000)
-            .attr("opacity", 0)
-
-            annot.filter(d=>d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("x", 200)
-            // .attr("y", 1000)
-            .attr("opacity", 0)
-            
-            circles.filter(d=>d.category!=="#ccc")
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d => normScaleCatX(d.category)+d.paddingCatX)
-            .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCatY))
-            .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d => d.category)
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-            
-            annot.filter(d=>d.category!=="#ccc")
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .ease(d3.easeLinear)
-            .attr("x", d => normScaleCatX(d.category)+d.paddingCatX)
-            .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCatY))
-            .attr("opacity", d=>d.income!==null?1:0)
-            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
-
-            if (country === "US") {
-              annotateBars(normScaleCatX, 
-              normScaleCatRow, 
-              categoriesX[0], 
-              460, 
-              svg, 
-              "30% of localities are either low income, high travel or high income, low travel", 
-              normScaleCatX.bandwidth()*1.75,
-              15,
-              170)
-            } else if (country==="UK") {
-              annotateBars(normScaleCatX, 
-              normScaleCatRow, 
-              categoriesX[0], 
-              78, 
-              svg, 
-              "50% of localities are either low income, high travel or high income, low travel", 
-              normScaleCatX.bandwidth()*1.3,
-              30,
-              162)
-            }
-
-          // } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
-
-          } else if (hexmap && circles && annot && currentStep===10) {
-
-            d3.selectAll(".annotation-group").remove()
-
-            circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("cx", 200)
-            // .attr("cy", 1000)
-            .attr("opacity", 0)
-      
-            annot.filter(d=>d.urbCategory===null||d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("x", 200)
-            // .attr("y", 1000)
-            .attr("opacity", 0)
-            
-            circles.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
-            .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
-            .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
-            .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
-            .attr("opacity", d=>d.income!==null?1:0)
-            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
-
-            if (country==="US") {
-              annotateBars(normScaleCatXUrb, 
-                normScaleUrbRow, 
-                "Rural", 
-                450, 
-                svg, 
-                "Unlike the U.K., in the U.S. the majority of low income, high travel areas are rural...", 
-                -15,
-                -15,
-                -60)
-
-              annotateBars(normScaleCatXUrb, 
-                normScaleUrbRow, 
-                "Urban", 
-                363, 
-                svg, 
-                "...while the majority of high income, low travel localities are urban", 
-                normScaleCatXUrb.bandwidth()*0.615,
-                15,
-                60)
-            } else if (country==="UK") {
-              annotateBars(normScaleCatXUrb, 
-                normScaleUrbRow, 
-                "Urban", 
-                78, 
-                svg, 
-                "The majority of low income, high travel and high income, low travel localities are located in urban areas", 
-                normScaleCatXUrb.bandwidth()*0.6,
-                -40,
-                60)
-
-              // make chart not sticky
-              // d3.select(".chart").style("position", "static")
-            }
-
-        } else if (hexmap && circles && annot && currentStep===11) {
-
-            d3.selectAll(".annotation-group").remove()
-
-            circles.filter(d=>d.leCat===null||d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("cx", 200)
-            // .attr("cy", 1000)
-            .attr("opacity", 0)
-      
-            annot.filter(d=>d.leCat===null||d.category==="#ccc")
-            .transition()
-            .duration(750)
-            .ease(d3.easeLinear)
-            // .attr("x", 200)
-            // .attr("y", 1000)
-            .attr("opacity", 0)
-            
-            circles.filter(d=>d.leCat!==null&&d.category!=="#ccc")
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d => normScaleCatXLe(d.leCat)+d.paddingLeX)
-            .attr("cy", d=> normScaleLeRow(d.leRow+d.paddingLeY))
-            .attr("opacity", d=>d.income!==null?1:0)
-            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&currentStep===0?`translate(${margin.left*2},0)`:
-                                   country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
-
-            annot.filter(d=>d.leCat!==null&&d.category!=="#ccc")
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d => normScaleCatXLe(d.leCat)+d.paddingLeX)
-            .attr("y", d=> normScaleLeRow(d.leRow+d.paddingLeY))
-            .attr("opacity", d=>d.income!==null?1:0)
-            // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
-            .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
-
-            firstStep=false
-            comingFromMap = false
-            valueUK = null
+                firstStep=false
+                comingFromMap = false
+                valueUK = null
 
 
-            if (country==="UK") {
-              annotateBars(normScaleCatXLe, 
-              normScaleLeRow, 
-                "London Commuter Belt", 
-                68, 
-                svg, 
-                (pctLe*100).toFixed()+"% of all high income, low travel localities are located in London's Larger Urban Zone", 
-                normScaleCatXLe.bandwidth()*0.52,
-                -40,
-                60)
-            }
+                if (country==="UK") {
+                  annotateBars(normScaleCatXLe, 
+                  normScaleLeRow, 
+                    "London Commuter Belt", 
+                    68, 
+                    svg, 
+                    (pctLe*100).toFixed()+"% of all high income, low travel localities are located in London's Larger Urban Zone", 
+                    normScaleCatXLe.bandwidth()*0.52,
+                    -40,
+                    60)
+                }
 
-        } else if (hexmap && circles && annot && currentStep===12) {
+            } else if (country==="UK" && hexmap && circles && annot && currentStep===13) {
 
-            // d3.select(".chart").style("position", "sticky")
-            d3.selectAll(".annotation-group").remove()
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
 
-            circles
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
-            .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-            .attr("opacity", d=>d.leCat!=="Not London"?1:0.5)
-            .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
-            // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-            //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-            .attr("transform", country==="UK"&&[6, 12].includes(currentStep)?`translate(${margin.left*2},0)`:
-                                  country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", d=>d.leCat!=="Not London"?1:0.5)
+                .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
 
-            annot
-            .transition()
-            .delay((d, i) => {
-              return i * Math.random() * 1.5;
-              })
-            .duration(800)
-            .attr("x", d=>d.x)
-            .attr("y", d=>d.y)
-            .attr("opacity", 1)
-            // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
-            .attr("transform",[6, 12].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
 
-            firstStep=false
-            comingFromMap = true
-            valueUK = null
+                firstStep=false
+                comingFromMap = true
+                valueUK = null
+
+          } else if (country==="UK" && hexmap && circles && annot && currentStep===14) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d=>d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", country==="UK"&&[0,1,2,3,4,13,14].includes(currentStep)?`translate(${margin.left*2},0)`:
+                                      country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                annot
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("x", d=>d.x)
+                .attr("y", d=>d.y)
+                .attr("opacity", 1)
+                // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                .attr("transform",[0,1,2,3,4,13,14].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                // valueUK = null
 
           }
 
 
-        function getPadding(x, catRow, urbRow, urbCat) {
-
-
-            let padding={x:0, y:0}
-
-            if (country==="UK") {
-
-              if (x === "category") {
-
-                // console.log("showing", x, "row", catRow)
-
-                let rowCheck = d3.range(1,3,1).map(d=>{ return {
-                  key:[`num${d+1}`],
-                  val:d3.range(d, 500, 3)
-                }})
-                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
-                
-                // console.log("rowcheck", rowCheck)
-
-                rowCheck["num3"].includes(catRow)?padding={x:40, y:0}:
-                rowCheck["num2"].includes(catRow)?padding={x:20, y:1}:
-                padding={x:0, y:2}
-
-              } else if (x === "urbCategory") {
-
-                // console.log("showing", x, "urbRow", urbRow)
-
-                let rowCheck = d3.range(1,10,1).map(d=>{ return {
-                  key:[`num${d+1}`],
-                  val:d3.range(d, 1000, 10)
-                }})
-                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
-
-                // console.log("rowcheck", rowCheck)
-
-                  rowCheck["num10"].includes(urbRow)?padding={x:180, y:0}:
-                  rowCheck["num9"].includes(urbRow)?padding={x:160, y:1}:
-                  rowCheck["num8"].includes(urbRow)?padding={x:140, y:2}:
-                  rowCheck["num7"].includes(urbRow)?padding={x:120, y:3}:
-                  rowCheck["num6"].includes(urbRow)?padding={x:100, y:4}:
-                  rowCheck["num5"].includes(urbRow)?padding={x:80, y:5}:
-                  rowCheck["num4"].includes(urbRow)?padding={x:60, y:6}:
-                  rowCheck["num3"].includes(urbRow)?padding={x:40, y:7}:
-                  rowCheck["num2"].includes(urbRow)?padding={x:20, y:8}:
-                  padding={x:0, y:9}
-                
-                }
-
-              } else if (country==="US") {
-                // padding={x:0, y:9}
-
-                 if (x === "category") {
-
-                // console.log("showing", x, "row", catRow)
-
-                let rowCheck = d3.range(1,8,1).map(d=>{ return {
-                  key:[`num${d+1}`],
-                  val:d3.range(d, 1000, 8)
-                }})
-                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
-                
-                // console.log("rowcheck", rowCheck)
-
-                rowCheck["num8"].includes(catRow)?padding={x:56, y:0}:
-                rowCheck["num7"].includes(catRow)?padding={x:48, y:1}:
-                rowCheck["num6"].includes(catRow)?padding={x:40, y:2}:
-                rowCheck["num5"].includes(catRow)?padding={x:32, y:3}:
-                rowCheck["num4"].includes(catRow)?padding={x:24, y:4}:
-                rowCheck["num3"].includes(catRow)?padding={x:16, y:5}:
-                rowCheck["num2"].includes(catRow)?padding={x:8, y:6}:
-                padding={x:0, y:7}
-
-              } else if (x === "urbCategory") {
-
-                // console.log("showing", x, "urbRow", urbRow)
-
-                let rowCheck = d3.range(1,26,1).map(d=>{ return {
-                  key:[`num${d+1}`],
-                  val:d3.range(d, 3000, 26)
-                }})
-                .reduce((map, obj) => (map[obj.key] = obj.val, map), {})
-
-                // console.log("rowcheck", rowCheck)
-
-                  rowCheck["num26"].includes(urbRow)?padding={x:200, y:0}:
-                  rowCheck["num25"].includes(urbRow)?padding={x:192, y:1}:
-                  rowCheck["num24"].includes(urbRow)?padding={x:184, y:2}:
-                  rowCheck["num23"].includes(urbRow)?padding={x:176, y:3}:
-                  rowCheck["num22"].includes(urbRow)?padding={x:168, y:4}:
-                  rowCheck["num21"].includes(urbRow)?padding={x:160, y:5}:
-                  rowCheck["num20"].includes(urbRow)?padding={x:152, y:6}:
-                  rowCheck["num19"].includes(urbRow)?padding={x:144, y:7}:
-                  rowCheck["num18"].includes(urbRow)?padding={x:136, y:8}:
-                  rowCheck["num17"].includes(urbRow)?padding={x:128, y:9}:
-                  rowCheck["num16"].includes(urbRow)?padding={x:120, y:10}:
-                  rowCheck["num15"].includes(urbRow)?padding={x:112, y:11}:
-                  rowCheck["num14"].includes(urbRow)?padding={x:104, y:12}:
-                  rowCheck["num13"].includes(urbRow)?padding={x:96, y:13}:
-                  rowCheck["num12"].includes(urbRow)?padding={x:88, y:14}:
-                  rowCheck["num11"].includes(urbRow)?padding={x:80, y:15}:
-                  rowCheck["num10"].includes(urbRow)?padding={x:72, y:16}:
-                  rowCheck["num9"].includes(urbRow)?padding={x:64, y:17}:
-                  rowCheck["num8"].includes(urbRow)?padding={x:56, y:18}:
-                  rowCheck["num7"].includes(urbRow)?padding={x:48, y:19}:
-                  rowCheck["num6"].includes(urbRow)?padding={x:40, y:20}:
-                  rowCheck["num5"].includes(urbRow)?padding={x:32, y:21}:
-                  rowCheck["num4"].includes(urbRow)?padding={x:24, y:22}:
-                  rowCheck["num3"].includes(urbRow)?padding={x:16, y:23}:
-                  rowCheck["num2"].includes(urbRow)?padding={x:8, y:24}:
-                  padding={x:0, y:25}
-                
-              }
-
-            }
-            
-            // else {
-
-            //   padding = {x:0, y:0}
-            // }
-
-            // console.log("padding is", padding)
-
-            return padding
-        }
+        
 
         function annotateBars(x, y, category, row, svg, text, offset, yOffset, xOffset) {
             // console.log(y)
@@ -936,6 +961,532 @@
             d3.selectAll(".annotation-note-label").attr("fill", "#445312")
             d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
         }
+
+        $: if (country==="US" && hexmap && circles && annot && currentStep===0 && firstStep===false){
+
+              d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", "#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d=>d.x)
+                // .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+              firstStep=true
+              comingFromMap = true
+              valueUS = null
+
+            } else if (country==="US" && hexmap && circles && annot && currentStep===1) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d => d.category!=="#ccc"?incomeColor(d[xVar]):"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d=>d.x)
+                // .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUS = null
+
+            } else if (country==="US" && hexmap && circles && annot && currentStep===2) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d => d.category!=="#ccc"?mobilityColor(d[yVar]):"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d=>d.x)
+                // .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUS = null
+
+            } else if (country==="US" && hexmap && circles && annot && currentStep===3) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", 1)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d=>d.x)
+                // .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep<6?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUS = null
+
+              } else if (country==="US" && hexmap && circles && annot && currentStep===4) { 
+
+                // highlight islington
+                valueUK = null
+                valueUS = "SpokaneCountyWashington"
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random() * 1.5;
+                  })
+                .duration(800)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                // .attr("opacity", 1)
+                // .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,4,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+
+                // } else if (hexmap && circles && annot && selectedView.value==="bars") {
+              } else if (country==="US" && hexmap && circles && annot && currentStep===5) { 
+
+              // d3.select(".chart").style("position", "sticky")
+              d3.selectAll(".annotation-group").remove()
+
+                circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+                annot.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.category!=="#ccc")
+                .transition()
+                  .delay((d, i) => {
+                    return i * Math.random();
+                    })
+                  .duration(500)
+                .ease(d3.easeLinear)
+                .attr("cx", d => normScaleXInc(d[xVar]))
+                .attr("cy", d=> normScaleYMob(d[yVar]))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot.filter(d=>d.category!=="#ccc")
+                // .transition()
+                //   .delay((d, i) => {
+                //     return i * Math.random() * 1.5;
+                //     })
+                //   .duration(800)
+                // .ease(d3.easeLinear)
+                // .attr("x", d => normScaleXInc(d[xVar]))
+                // .attr("y", d=> normScaleYMob(d[yVar]))
+                // .attr("opacity", d=>d.income!==null?1:0)
+                // // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = false
+                valueUS = null
+                // } else if (hexmap && circles && annot && selectedView.value==="map") {
+        
+              } else if (country==="US" && hexmap && circles && annot && currentStep===6) { 
+
+                  // highlight islington
+                  valueUK = null
+                  valueUS = "SanFranciscoCountyCalifornia"
+
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+              } else if (country==="US" && hexmap && circles && annot && currentStep===7) { 
+
+                  // highlight islington
+                  valueUK = null
+                  valueUS = "DouglasCountyMissouri"
+
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+              } else if (country==="US" && hexmap && circles && annot && currentStep===8) { 
+
+                  // highlight islington
+                  valueUK = null
+                  valueUS = "LafayetteCountyArkansas"
+
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+               } else if (country==="US" && hexmap && circles && annot && currentStep===9) { 
+
+                  // highlight islington
+                  valueUK = null
+                  valueUS = "NantucketCountyMassachusetts"
+
+                  circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(0)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+                annot.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.category!=="#ccc")
+                .transition()
+                  .delay((d, i) => {
+                    return i * Math.random();
+                    })
+                  .duration(500)
+                .ease(d3.easeLinear)
+                .attr("cx", d => normScaleXInc(d[xVar]))
+                .attr("cy", d=> normScaleYMob(d[yVar]))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+              } else if (country==="US" && hexmap && circles && annot && currentStep===10) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+
+                annot.filter(d=>d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random();
+                  })
+                .duration(700)
+                .attr("cx", d => normScaleCatX(d.category)+d.paddingCatX)
+                .attr("cy", d=> normScaleCatRow(d.catRow+d.paddingCatY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d => d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                
+                // annot.filter(d=>d.category!=="#ccc")
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .ease(d3.easeLinear)
+                // .attr("x", d => normScaleCatX(d.category)+d.paddingCatX)
+                // .attr("y", d=> normScaleCatRow(d.catRow+d.paddingCatY))
+                // .attr("opacity", d=>d.income!==null?1:0)
+                // // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = false
+                valueUS = null
+
+                if (country === "US") {
+                  annotateBars(normScaleCatX, 
+                  normScaleCatRow, 
+                  categoriesX[0], 
+                  460, 
+                  svg, 
+                  "30% of localities are either low income, high travel or high income, low travel", 
+                  normScaleCatX.bandwidth()*1.75,
+                  15,
+                  170)
+                } else if (country==="UK") {
+                  annotateBars(normScaleCatX, 
+                  normScaleCatRow, 
+                  categoriesX[0], 
+                  78, 
+                  svg, 
+                  "50% of localities are either low income, high travel or high income, low travel", 
+                  normScaleCatX.bandwidth()*1.3,
+                  30,
+                  162)
+                }
+
+              // } else if (hexmap && circles && annot && selectedView.value==="barsUrban") {
+
+              } else if (country==="US" && hexmap && circles && annot && currentStep===11) {
+
+                d3.selectAll(".annotation-group").remove()
+
+                circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("cx", 200)
+                // .attr("cy", 1000)
+                .attr("opacity", 0)
+          
+                annot.filter(d=>d.urbCategory===null||d.category==="#ccc")
+                .transition()
+                .duration(750)
+                .ease(d3.easeLinear)
+                // .attr("x", 200)
+                // .attr("y", 1000)
+                .attr("opacity", 0)
+                
+                circles.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random();
+                  })
+                .duration(700)
+                .attr("cx", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
+                .attr("cy", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
+                .attr("opacity", d=>d.income!==null?1:0)
+                .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                         country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot.filter(d=>d.urbCategory!==null&&d.category!=="#ccc")
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d => normScaleCatXUrb(d.urbCategory)+d.paddingUrbX)
+                // .attr("y", d=> normScaleUrbRow(d.urbRow+d.paddingUrbY))
+                // .attr("opacity", d=>d.income!==null?1:0)
+                // // .attr("transform",selectedView.value==="map"?`translate(${-margin.left},0)`:`translate(0,0)`)
+                // .attr("transform",currentStep===0?`translate(${-margin.left},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = false
+                valueUS = null
+
+                if (country==="US") {
+                  annotateBars(normScaleCatXUrb, 
+                    normScaleUrbRow, 
+                    "Rural", 
+                    450, 
+                    svg, 
+                    "Unlike the U.K., in the U.S. the majority of low income, high travel areas are rural...", 
+                    -15,
+                    -15,
+                    -60)
+
+                  annotateBars(normScaleCatXUrb, 
+                    normScaleUrbRow, 
+                    "Urban", 
+                    363, 
+                    svg, 
+                    "...while the majority of high income, low travel localities are urban", 
+                    normScaleCatXUrb.bandwidth()*0.615,
+                    15,
+                    60)
+                } else if (country==="UK") {
+                  annotateBars(normScaleCatXUrb, 
+                    normScaleUrbRow, 
+                    "Urban", 
+                    78, 
+                    svg, 
+                    "The majority of low income, high travel and high income, low travel localities are located in urban areas", 
+                    normScaleCatXUrb.bandwidth()*0.6,
+                    -40,
+                    60)
+
+                  // make chart not sticky
+                  // d3.select(".chart").style("position", "static")
+                }
+
+            } else if (country==="US" && hexmap && circles && annot && currentStep===12) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random();
+                  })
+                .duration(700)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity", d=>d.urbCategory==="Urban"?1:0.3)
+                .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d=>d.x)
+                // .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                // .attr("transform",[6, 12].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                valueUS = null
+
+          } else if (country==="US" && hexmap && circles && annot && currentStep===13) {
+
+                // d3.select(".chart").style("position", "sticky")
+                d3.selectAll(".annotation-group").remove()
+
+                circles
+                .transition()
+                .delay((d, i) => {
+                  return i * Math.random();
+                  })
+                .duration(700)
+                .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
+                .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
+                .attr("opacity",1)
+                .attr("fill", d=>d.category)
+                // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
+                //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12,13].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+
+                // annot
+                // .transition()
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
+                // .duration(800)
+                // .attr("x", d=>d.x)
+                // .attr("y", d=>d.y)
+                // .attr("opacity", 1)
+                // // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
+                // .attr("transform",[6, 12].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                firstStep=false
+                comingFromMap = true
+                // valueUS = null
+          }
   
         function resize() {
           // ({ width, height } = svg.getBoundingClientRect());
@@ -976,7 +1527,7 @@
         } else if (innerWidth<550) {
           d3.selectAll(".chart").style("top", "200%")
         } else {
-          d3.selectAll(".chart").style("top", "2%")
+          d3.selectAll(".chart").style("top", "5%")
         }
 
         // legend interaction
@@ -1008,23 +1559,50 @@
         //                "<p>US Step 3.</p>"]
 
         const steps = country==="UK"?
-                      ["<p>UK Naked</p>", 
-                       "<p>UK Income</p>",
-                       "<p>UK Mobility</p>", 
-                       "<p>UK Bivariate</p>", 
-                       "<p>UK Highlight orange and green example</p>", 
-                       "<p>UK scatter</p>", 
-                       "<p>UK highlight london</p>", 
-                       "<p>UK highlight glasgow + edingburgh</p>", 
-                       "<p>UK highlight dark green example</p>", 
-                       "<p>UK bars</p>", 
-                       "<p>UK urban vs rural</p>", 
-                       "<p>UK London vs Everywhere</p>", 
-                       "<p>UK Highlight London's Larger Urban Zone</p>"]:
-                       ["<p>US Step 0!</p>", 
-                       "<p>US Step 1?</p>",
-                       "<p>US Step 2.</p>", 
-                       "<p>US Step 3.</p>"]
+                      ["<p>The United Kingdom, comprising England, Scotland, Wales, and Northern Ireland, is home to about 67.2 million residents and 374 (get actual number) local authorities.  With a cartogram approach below, each such local authority is represented by a circle. </p>", 
+                       
+                      "<p>While considered a high income country by the World Bank, some areas of this sovereign state are home to residents that earn higher income than others. Here, each circle's color tone represents the median household income of that local authority.  As such, local authorities colored in dark green represent areas where residents are higher income.  Local authorities colored in light green represent areas where residents are lower income.</p>",
+                       
+                      "<p>This same cartogram approach can also be used to investigate the impact of COVID-19 on mobility patterns to the workplace.  While employer implemented WFH policies during the COVID-19 pandemic have allowed some people to earn a living from home, many employees must still commute to the workplace, despite the public health risk, in search of income.  As illustrated below, local authorities colored in light orange represent areas where residents have benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace during the pandemic).  Contrastingly, local authorities colored in dark red represent areas where residents were unable to benefit from WFH, and they have continued to commute to the workplace.</p>", 
+                       
+                      "<p>In considering both household income and mobility patterns to the workplace, insight can be generated into who benefits from WFH in the pandemic era.  The resulting color scheme of such investigation is twofold.  Each of the cartogram circles' color tone is dependent on both 1) the median household income of the local authorities's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline.<br><br>As such, local authorities colored in green represent areas where residents are higher income and benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace). Contrastingly, local authorities colored in orange represent areas where residents are lower income and did not benefit from WFH policies.  Local authorities colored in dark-green represent areas where residents are higher income and continued to travel to the workplace during the COVID-19 pandemic.  Regardless of the wealthy status of these areas, residents did not benefit from WFH practices.  Finally, local authorities colored in light-gray represent areas where residents are lower income and benefited from WFH policies.  Regardless of the poorer status of these areas, residents in these national spatial units were still able to benefit from WFH practices.</p>", 
+                       
+                      "<p>For example, take Islington.  This local authority is observed to be home to high income residents that were able to reduce their mobility to the workplace during the pandemic.  These residents have benefited from WFH policies.</p>", 
+                       
+                      "<p>A striking correlation between median household income and residents' travel to the workplace can be observed.  In general, the wealthier local authority residents are, the more likely that they are to have benefited from WFH policies and reduced their mobility to the office.</p>", 
+                       
+                      "<p>Consider the local authority of the City of London.  Here, with a median household income of about £65k, residents are categorized as high income.  Since February 2020, these residents were able to reduce their travel to the place by about 55% relative to the pre-pandemic 2019 baseline.</p>", 
+                       
+                      "<p>Also consider the local authority of Blaenau Gwent.  Here the median household income is categorized as low at  about £ 25k.  Since February 2020, these residents were not able to reduce their travel to the workplace relative to the pre-pandemic 2019 baseline.</p>", 
+                       
+                      "<p>While most UK local authorities are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist.<br><br>For example, Glasgow, a local authority in Scotland, defies this notion.  Here, residents can be categorized as lower income, as the median household income is about £ 27k.  Despite this lower income status, Glasgow residents were able to reduce their mobility to the workplace by about 43% relative to the pre-pandemic 2019 baseline.  With about 11% of the Glasgow population enrolled in some form of higher-education, the student status of many residents may help explain this phenomenon.  While many students may be considered lower income, their affiliated universities have all made efforts to switch to online learning during the pandemic.  As such, many students have continued to learn from home, and they no longer commute to campuses.</p>", 
+                       
+                      "<p>The local authority of East Hampshire also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about £ 54k.  Regardless of this high income status, however, these residents only experienced a slight 25% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>", 
+                       
+                      "<p>Despite outliers like Glasgow and East Hampshire, the majority of local authorities fall into one of two extremes.  Residents are either 1) high income and they have benefited greatly from WFH policies, or they are 2) lower income and they have not benefited greatly from WFH policies. As observed in the figure below, the “Low Income High Travel” and “High Income Low Travel” bins encompass the most UK local authorities when compared to the other income/mobility categories.</p>", 
+                       
+                      "<p>Diving deeper into our understanding of who benefits from WFH policies in the UK, local authorities were then categorized by their urban and rural statuses. <br><br>“Low income, High travel” local authorities (orange) can be found in both urban and rural settings.  Similarly, a majority of the “high income and lower travel” local authorities (green) are categorized as urban areas.  But which urban areas in the UK are home to such high income residents who benefit from WFH?</p>", 
+                       
+                      "<p>As it turns out, an overwhelming majority of “high income and lower travel” local authorities (green) are located in London's Larger Urban Zone.  What exactly does this mean?</p>", 
+                       
+                      "<p>Relevant to household income and WFH benefits, clear social and spatial segregation exists in the UK.  A strong correlation is present where wealthier residents benefit more than lower income residents from WFH policies in response to the COVID-19 pandemic. What's more? These wealthier residents overwhelmingly reside in London's Larger Urban Zone.  Has the UK forgotten about its rural residents?  Is there an urban vs rural divide?  Or, has the UK simply decided to focus on London specifically, while forgetting about everybody else?</p>",
+                       
+                      "<p>Here, feel free to interact with the map below to explore these patterns, or use the search bar above to search for your own local authority Otherwise, keep scrolling to find out how WFH patterns have played out in another large large economy: the United States of America.</p>"]:
+
+                      ["<p>US Naked</p>", 
+                       "<p>US Income</p>",
+                       "<p>US Mobility</p>", 
+                       "<p>US Bivariate</p>", 
+                       "<p>US Highlight orange and green example</p>", 
+                       "<p>US scatter</p>", 
+                       "<p>US highlight example</p>", 
+                       "<p>US highlight other ex</p>", 
+                       "<p>US highlight other ex</p>", 
+                       "<p>US highlight other ex</p>",
+                       "<p>US bars</p>", 
+                       "<p>US urban vs rural</p>", 
+                       "<p>US urban + green areas on map</p>",
+                       "<p>US Explore the map</p>"]
 
 
         // raise and lower functions
@@ -1046,7 +1624,8 @@
         // search bar
         let options = country==="UK"?hexesClean.map(d=>{return{value:d.key, text:d.n}}):hexesClean.map(d=>{return{value:d.fullName.replaceAll(",", "").replaceAll(" ", ""), text:d.county+","+d.abbrv}});
 
-        $: selection = null;
+        $: selectionUS = null;
+        $: selectionUK = null;
         $: valueUK = null;
         $: valueUS = null;
 
@@ -1056,22 +1635,22 @@
 
         $: if (valueUK!== null) {
           console.log(valueUK)
-          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radiusUK).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).moveToBack()
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
-          d3.select("#"+valueUK).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHover).moveToFront()//.attr("stroke-width", 1.5).raise()
+          d3.select("#"+valueUK).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHoverUK).moveToFront()//.attr("stroke-width", 1.5).raise()
           d3.select("#label"+valueUK).attr("opacity", 1).attr("font-size", fontSize*2).style("font-weight", "700").moveToFront()
         } else if (valueUK === null) {
           d3.selectAll(".LStextUK").attr("font-size", fontSize)
-          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
+          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUK)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
         $: if (valueUS!== null) {
           console.log(valueUS)
-          d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radius).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
-          d3.select("#"+valueUS).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHover).moveToFront()//.attr("stroke-width", 1.5).raise()
+          d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radiusUS).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
+          d3.select("#"+valueUS).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHoverUS).moveToFront()//.attr("stroke-width", 1.5).raise()
         } else if (valueUS === null) {
-          d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radius)
+          d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUS)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
@@ -1080,23 +1659,23 @@
 <!-- <div id="staticTooltip"></div> -->
 <div class="chart">
 <!-- <label for="areaSel">{country==="UK"?"Select a local authority":"Select a county"}</label> -->
-{#if country==="UK"}
+{#if country==="UK" && currentStep===14}
 <Svelecte {options} 
-  inputId="areaSel"
-  bind:readSelection={selection}
+  inputId="areaSelUK"
+  bind:readSelection={selectionUK}
   bind:value={valueUK}
   placeholder={country==="UK"?"Select a local authority":"Select a county"}
 ></Svelecte>
-{:else if country === "US"}
+{:else if country === "US"&& currentStep===13}
 <Svelecte {options} 
-  inputId="areaSel"
-  bind:readSelection={selection}
+  inputId="areaSelUS"
+  bind:readSelection={selectionUK}
   bind:value={valueUS}
   placeholder={country==="UK"?"Select a local authority":"Select a county"}
 ></Svelecte>
 {/if}
 <svg viewBox="0 0 800 600" bind:this={svg}>
-{#if currentStep==5||currentStep==6||currentStep==7||currentStep==8}
+{#if currentStep==5||currentStep==6||currentStep==7||currentStep==8||currentStep==9}
   <!-- y axis -->
   <g class='axis y-axis'>
     {#each yTicksMob as tick}
@@ -1121,7 +1700,7 @@
   <g class='axisTitle' text-anchor=end transform='translate({country==="UK"?normScaleXInc(65000):normScaleXInc(140000)}, {height - margin.bottom})'>
     <text x={0} y="+35" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>MEDIAN HOUSEHOLD INCOME</text>
   </g>
-  {:else if currentStep==9}
+  {:else if currentStep==10}
   <g class='axis x-axis'>
     {#each categoriesX as tick, i}
       <g class='axisTitle' transform='translate({normScaleCatX(tick)+margin.left/4},{0})' text-anchor=middle>
@@ -1135,7 +1714,7 @@
       </g>
     {/each}
   </g>
-  {:else if currentStep==10}
+  {:else if currentStep==11}
   <g class='axis x-axis'>
     {#each urbCategoryLabels as tick}
       <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
@@ -1143,7 +1722,7 @@
       </g>
     {/each}
   </g>
-  {:else if currentStep==11}
+  {:else if currentStep==12 && country==="UK"}
   <g class='axis x-axis'>
     {#each leCatX as tick, i}
       <g class='axisTitle' transform='translate({normScaleCatXLe(tick)+margin.left+10},{0})' text-anchor=middle>
@@ -1199,9 +1778,9 @@
     /* background: whitesmoke; */
     /* width: 400px;
     height: 400px; */
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
     position: sticky;
-    top: 2%;
+    top: 5%;
     margin: auto;
     /* height: 100vh */
     /* bottom: 50%; */
@@ -1209,7 +1788,7 @@
 
   /* Scrollytelling CSS */
   .step {
-    height: 120vh;
+    height: 150vh;
     display: flex;
     place-items: center;
     justify-content: center;
