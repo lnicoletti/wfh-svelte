@@ -4,7 +4,7 @@
     import { tweened } from "svelte/motion";
     import * as easings from 'svelte/easing';
     import {renderHexJSON} from "d3-hexjson"
-	  import {annotationLabel, annotation} from "d3-svg-annotation"
+	  import {annotationLabel, annotation, annotationCalloutCircle} from "d3-svg-annotation"
     import {onlyUnique} from "../utils.js"
     import { onMount } from "svelte";
     import Scroll from "./Scrolly.svelte";
@@ -837,7 +837,7 @@
                 .duration(800)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("opacity", d=>d.leCat!=="Not London"?1:0.5)
+                .attr("opacity", d=>d.leCat!=="Not London"?1:0.3)
                 .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -856,6 +856,16 @@
                 // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
                 .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
 
+                annotateBars(null, 
+                    null, 
+                    413.6, 
+                    500.9, 
+                    svg, 
+                    "London's Larger Urban Zone", 
+                    200,
+                    -100,
+                    110)
+
                 firstStep=false
                 comingFromMap = true
                 valueUK = null
@@ -873,7 +883,7 @@
                 .duration(800)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("opacity", 1)
+                // .attr("opacity", 1)
                 .attr("fill", d=>d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -888,7 +898,7 @@
                 .duration(800)
                 .attr("x", d=>d.x)
                 .attr("y", d=>d.y)
-                .attr("opacity", 1)
+                // .attr("opacity", 1)
                 // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
                 .attr("transform",[0,1,2,3,4,13,14].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
 
@@ -900,70 +910,6 @@
 
 
         
-
-        function annotateBars(x, y, category, row, svg, text, offset, yOffset, xOffset) {
-            // console.log(y)
-            const type = annotationLabel
-
-            const annotations = [{
-            note: {
-                label: text,
-                bgPadding: 10,
-                // title: text
-            },
-            connector: {
-              end: "dot",
-              // type: "curve",
-            },
-            //can use x, y directly instead of data
-            data: {category: category, row: row},
-            className: "show-bg",
-            dy: yOffset,
-            dx: xOffset
-            }]
-
-
-            const makeAnnotations = annotation()
-            // .editMode(true)
-            //also can set and override in the note.padding property
-            //of the annotation object
-            .notePadding(15)
-            .type(type)
-            //accessors & accessorsInverse not needed
-            //if using x, y in annotations JSON
-            .accessors({
-                x: d => x(d.category)+offset,
-                y: d => y(d.row)
-            })
-            // .accessorsInverse({
-            //     category: d => x.invert(d.x),
-            //     row: d => y.invert(d.y)
-            // })
-            .annotations(annotations)
-
-            // console.log(d3.annotation())
-
-            // const annotationData = [{ category: category, row: row, text: text}]
-
-            // // const annotations = 
-            // d3.select("#chart")//.select("svg")
-            // // .data(annotationData)
-            d3.select(svg).append("g")
-            .attr("class", "annotation-group")
-            .style("font-size", "15px")
-            // .append("text")
-            // .attr("x", d=>x(d.category))
-            // .attr("y", d=>y(d.row))
-            // .text(text)
-            .call(makeAnnotations)
-            // .transition().duration(1000)
-            // .attr("transform", `translate(${x.bandwidth()}, 0)`)
-
-            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
-            d3.selectAll(".annotation-note-label").attr("fill", "#445312")
-            d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
-        }
-
         $: if (country==="US" && hexmap && circles && annot && currentStep===0 && firstStep===false){
 
               d3.selectAll(".annotation-group").remove()
@@ -1490,6 +1436,7 @@
                 // valueUS = null
           }
   
+        
         function resize() {
           // ({ width, height } = svg.getBoundingClientRect());
 
@@ -1503,6 +1450,137 @@
 
           // return [width, height]
         }
+
+        function annotateBars(x, y, category, row, svg, text, offset, yOffset, xOffset) {
+            // console.log(y)
+            const type = annotationLabel
+
+            const annotations = [{
+            note: {
+                label: x===null?"":text,
+                bgPadding: 10,
+                title: x!==null?"":text
+            },
+            connector: {
+              end: "dot",
+              // type: "curve",
+            },
+            //can use x, y directly instead of data
+            data: {category: category, row: row},
+            className: "show-bg",
+            dy: yOffset,
+            dx: xOffset
+            }]
+
+
+            const makeAnnotations = annotation()
+            // .editMode(true)
+            //also can set and override in the note.padding property
+            //of the annotation object
+            .notePadding(15)
+            .type(type)
+            //accessors & accessorsInverse not needed
+            //if using x, y in annotations JSON
+            .accessors({
+                x: d => x!==null?x(d.category)+offset:d.category+offset,
+                y: d => y!==null?y(d.row):d.row
+            })
+            // .accessorsInverse({
+            //     category: d => x.invert(d.x),
+            //     row: d => y.invert(d.y)
+            // })
+            .annotations(annotations)
+
+            // console.log(d3.annotation())
+
+            // const annotationData = [{ category: category, row: row, text: text}]
+
+            // // const annotations = 
+            // d3.select("#chart")//.select("svg")
+            // // .data(annotationData)
+            d3.select(svg).append("g")
+            .attr("class", "annotation-group")
+            .style("font-size", "15px")
+            // .append("text")
+            // .attr("x", d=>x(d.category))
+            // .attr("y", d=>y(d.row))
+            // .text(text)
+            .call(makeAnnotations)
+            // .transition().duration(1000)
+            // .attr("transform", `translate(${x.bandwidth()}, 0)`)
+
+            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
+            d3.selectAll(".annotation-note-label").attr("fill", "#445312")
+            d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
+        }
+
+        function annotateScatter(x, y, xValue, yValue, svg, area, mob, income, offset, yOffset, xOffset) {
+            // console.log(y)
+            const type = annotationCalloutCircle
+
+            const annotations = [{
+            note: {
+                label: `average income: ${income.toFixed()+"%"} insight ${mob.toFixed()+"%"} about county`,
+                bgPadding: 10,
+                title: area
+            },
+            connector: {
+              end: "dot",
+              // type: "curve",
+            },
+            //can use x, y directly instead of data
+            data: {xVar: xValue, yVar: yValue},
+            className: "show-bg",
+            subject: {
+              radius: 50,
+              radiusPadding: 5},
+            dy: yOffset,
+            dx: xOffset
+            }]
+
+
+            const makeAnnotations = annotation()
+            // .editMode(true)
+            //also can set and override in the note.padding property
+            //of the annotation object
+            .notePadding(15)
+            .type(type)
+            //accessors & accessorsInverse not needed
+            //if using x, y in annotations JSON
+            .accessors({
+                x: d => x(d.xVar)+offset,
+                y: d => y(d.yVar)
+            })
+            // .accessorsInverse({
+            //     category: d => x.invert(d.x),
+            //     row: d => y.invert(d.y)
+            // })
+            .annotations(annotations)
+
+            // console.log(d3.annotation())
+
+            // const annotationData = [{ category: category, row: row, text: text}]
+
+            // // const annotations = 
+            // d3.select("#chart")//.select("svg")
+            // // .data(annotationData)
+            d3.select(svg).append("g")
+            .attr("class", "annotation-group")
+            .style("font-size", "15px")
+            // .append("text")
+            // .attr("x", d=>x(d.category))
+            // .attr("y", d=>y(d.row))
+            // .text(text)
+            .call(makeAnnotations)
+            // .transition().duration(1000)
+            // .attr("transform", `translate(${x.bandwidth()}, 0)`)
+
+            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
+            d3.selectAll(".annotation-note-label").attr("fill", "#445312")
+            d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
+        }
+
+
 
         $: if (annot && innerWidth<550) {
           console.log(annot)
@@ -1642,6 +1720,7 @@
           d3.select("#"+valueUK).attr("opacity", 1).attr("stroke-width", 2).attr("r", radiusHoverUK).moveToFront()//.attr("stroke-width", 1.5).raise()
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
           d3.select("#label"+valueUK).attr("opacity", 1).attr("font-size", fontSize*2).style("font-weight", "700").moveToFront()
+          
         } else if (valueUK === null) {
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
           d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").attr("stroke-width", 0.5).attr("r", radiusUK)
