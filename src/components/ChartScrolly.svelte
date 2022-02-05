@@ -501,6 +501,7 @@
         
               } else if (country==="UK" && hexmap && circles && annot && currentStep===6) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight london
                   valueUK = "E09000001"
                   valueUS = null
@@ -513,8 +514,21 @@
                 // .attr("cy", 1000)
                 .attr("opacity", 0)
 
+                annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.key===valueUK)[0].n, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                0, 
+                                -250, 
+                                -10)
+
               } else if (country==="UK" && hexmap && circles && annot && currentStep===7) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight Blaneau gwent
                   valueUK = "W06000019"
                   valueUS = null
@@ -527,8 +541,21 @@
                 // .attr("cy", 1000)
                 .attr("opacity", 0)
 
+                annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.key===valueUK)[0].n, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                0, 
+                                0, 
+                                320)
+
               } else if (country==="UK" && hexmap && circles && annot && currentStep===8) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight glasgow
                   valueUK = "S12000049"
                   valueUS = null
@@ -541,6 +568,18 @@
                 // .attr("cx", 200)
                 // .attr("cy", 1000)
                 .attr("opacity", 0)
+
+                annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.key===valueUK)[0].n, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                0, 
+                                60, 
+                                0)
 
               } else if (country==="UK" && hexmap && circles && annot && currentStep===9) { 
 
@@ -596,6 +635,18 @@
 
                 firstStep=false
                 comingFromMap = false
+
+                annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.key===valueUK)[0].n, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                0, 
+                                0, 
+                                50)
 
               } else if (country==="UK" && hexmap && circles && annot && currentStep===10) {
 
@@ -916,10 +967,11 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random() * 1.5;
-                  })
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
                 .duration(800)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("opacity", 1)
@@ -951,10 +1003,11 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random() * 1.5;
-                  })
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
                 .duration(800)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("opacity", 1)
@@ -986,10 +1039,11 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random() * 1.5;
-                  })
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
                 .duration(800)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("opacity", 1)
@@ -1021,10 +1075,11 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random() * 1.5;
-                  })
+                // .delay((d, i) => {
+                //   return i * Math.random() * 1.5;
+                //   })
                 .duration(800)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("opacity", 1)
@@ -1413,7 +1468,7 @@
                 .duration(700)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("opacity",1)
+                // .attr("opacity",1)
                 .attr("fill", d=>d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -1520,7 +1575,7 @@
 
             const annotations = [{
             note: {
-                label: `average income: ${income.toFixed()+"%"} insight ${mob.toFixed()+"%"} about county`,
+                label: `Avg. Household income: ${(income/1000).toFixed()+"k"}, ${mob.toFixed()+"%"} in travel to workplaces`,
                 bgPadding: 10,
                 title: area
             },
@@ -1532,7 +1587,7 @@
             data: {xVar: xValue, yVar: yValue},
             className: "show-bg",
             subject: {
-              radius: 50,
+              radius: 30,
               radiusPadding: 5},
             dy: yOffset,
             dx: xOffset
