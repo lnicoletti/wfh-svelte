@@ -9,6 +9,8 @@
     import { onMount } from "svelte";
     import Scroll from "./Scrolly.svelte";
     import Svelecte from 'svelecte';
+    import UnivariateLegend from "./UnivariateLegend.svelte";
+    import Legend from "./Legend.svelte";
 
     // view reactivity
     $: view = "horizontal"  
@@ -1504,11 +1506,11 @@
 
         $: if (annot && innerWidth<550) {
           console.log(annot)
-          annot.lower()
+          d3.selectAll(".LStextUK").attr("visibility", "hidden")
           // d3.select(".tick").attr("font-size", "8")
           // d3.select(".axisTitle").attr("font-size", "8")
         } else if (annot && innerWidth>550) {
-          annot.raise()
+          d3.selectAll(".LStextUK").attr("visibility", "visible")
           // d3.select(".tick").attr("font-size", "11")
           // d3.select(".axisTitle").attr("font-size", "11")
           // annot.attr('font-size', fontSize*2)
@@ -1527,7 +1529,7 @@
         } else if (innerWidth<550) {
           d3.selectAll(".chart").style("top", "200%")
         } else {
-          d3.selectAll(".chart").style("top", "5%")
+          d3.selectAll(".chart").style("top", "2%")
         }
 
         // legend interaction
@@ -1635,13 +1637,14 @@
 
         $: if (valueUK!== null) {
           console.log(valueUK)
-          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radiusUK).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radiusUK).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
+          // d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
+          d3.select("#"+valueUK).attr("opacity", 1).attr("stroke-width", 2).attr("r", radiusHoverUK).moveToFront()//.attr("stroke-width", 1.5).raise()
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
-          d3.select("#"+valueUK).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHoverUK).moveToFront()//.attr("stroke-width", 1.5).raise()
           d3.select("#label"+valueUK).attr("opacity", 1).attr("font-size", fontSize*2).style("font-weight", "700").moveToFront()
         } else if (valueUK === null) {
-          d3.selectAll(".LStextUK").attr("font-size", fontSize)
-          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUK)
+          d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
+          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").attr("stroke-width", 0.5).attr("r", radiusUK)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
@@ -1659,7 +1662,7 @@
 <!-- <div id="staticTooltip"></div> -->
 <div class="chart">
 <!-- <label for="areaSel">{country==="UK"?"Select a local authority":"Select a county"}</label> -->
-{#if country==="UK" && currentStep===14}
+<!-- {#if country==="UK" && currentStep===14}
 <Svelecte {options} 
   inputId="areaSelUK"
   bind:readSelection={selectionUK}
@@ -1673,7 +1676,32 @@
   bind:value={valueUS}
   placeholder={country==="UK"?"Select a local authority":"Select a county"}
 ></Svelecte>
-{/if}
+{/if} -->
+
+<!-- legends and axes -->
+<div class="legendContainer">
+{#if currentStep == 1}
+  <UnivariateLegend {width} country={country} {hexesClean} colorVar={"income"} numTicks={6}/>
+{:else if currentStep == 2}
+  <UnivariateLegend {width} country={country} {hexesClean} colorVar={"mobility"} numTicks={6}/>
+{:else if currentStep == 3}
+  <Legend {colors}></Legend>
+{:else if country==="UK" && currentStep===14}
+  <Svelecte {options} 
+    inputId="areaSelUK"
+    bind:readSelection={selectionUK}
+    bind:value={valueUK}
+    placeholder={country==="UK"?"Select a local authority":"Select a county"}
+  ></Svelecte>
+  {:else if country === "US"&& currentStep===13}
+  <Svelecte {options} 
+    inputId="areaSelUS"
+    bind:readSelection={selectionUK}
+    bind:value={valueUS}
+    placeholder={country==="UK"?"Select a local authority":"Select a county"}
+  ></Svelecte>
+  {/if}
+</div>
 <svg viewBox="0 0 800 600" bind:this={svg}>
 {#if currentStep==5||currentStep==6||currentStep==7||currentStep==8||currentStep==9}
   <!-- y axis -->
@@ -1730,6 +1758,8 @@
       </g>
     {/each}
   </g>
+  <!-- {:else if currentStep == 1}
+  <UnivariateLegend {width} country={"UK"} {hexesClean} colorVar={"income"}/> -->
   {/if}
 </svg>
 </div>
@@ -1766,6 +1796,12 @@
     font-style: normal;
 }
 
+.legendContainer {
+    width:200px;
+    height:45px;
+    margin:auto;
+}
+
 .spacer {
     height: 40vh;
   }
@@ -1780,7 +1816,7 @@
     height: 400px; */
     /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
     position: sticky;
-    top: 5%;
+    top: 2%;
     margin: auto;
     /* height: 100vh */
     /* bottom: 50%; */
