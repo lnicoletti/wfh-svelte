@@ -7,8 +7,8 @@
         new TypeIt("#FigTitle", {
             speed: 150,
             strings: [
-            `A <span class="rich${vizTheme}" style="background-color:#449d57;font-weight:900;color:#fffae7">Rich</span> vs. <span class="poor${vizTheme}" style="background-color:#c17036;font-weight:900;color:#fffae7">Poor</span> issue`,
-            `An <span class="rich${vizTheme}" style="background-color:#449d57;font-weight:900;color:#fffae7">urban</span> vs. <span class="poor${vizTheme}" style="background-color:#c17036;font-weight:900;color:#fffae7">rural</span> issue`,
+            `A <span class="rich${vizTheme}" style="background-color:#449d57;font-weight:900;color:#fafafa">Rich</span> vs. <span class="poor${vizTheme}" style="background-color:#c17036;font-weight:900;color:#fafafa">Poor</span> issue`,
+            `An <span class="rich${vizTheme}" style="background-color:#449d57;font-weight:900;color:#fafafa">urban</span> vs. <span class="poor${vizTheme}" style="background-color:#c17036;font-weight:900;color:#fafafa">rural</span> issue`,
             ],
             breakLines: false,
             loop: true,
@@ -18,21 +18,21 @@
 
 </script>
 
-<div class="titleContainer">
+<!-- <div > -->
     <div class="content">
-        <div class="FigTitleBig">
-            <span style="font-weight:900;">Work From Home</span> <br>
+        <div class="titleContainer">
+          <div class="titleElements">
+            <div class="FigTitleBig"><span>Work<br>From<br>Home</span></div>
             <div id="FigTitle"></div>
+            <div class="mapCredit">
+                by <a href='https://www.leonardonicoletti.com/' style='text-decoration:underline; color:black' target='_blank'><b>LEONARDO NICOLETTI</b></a><br> and <a href='https://www.carolinecullinan.com/' style='text-decoration:underline; color:black' target='_blank'><b>CAROLINE CULLINAN</b></a>
+            </div>
+          </div>
         </div>
-        <br>
-        <div class="mapCredit">
-            by <a href='https://www.leonardonicoletti.com/' style='text-decoration:underline; color:black' target='_blank'><b>LEONARDO NICOLETTI</b></a> and <a href='https://www.carolinecullinan.com/' style='text-decoration:underline; color:black' target='_blank'><b>CAROLINE CULLINAN</b></a>
-        </div>
-        <br>
-        <br>
-        <br>
         <div class="FigSubtitle">
-            The March 11, 2020 official World Health Organization (WHO) announcement declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.  While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.  Who really benefits from this new WFH normal?  In investigating this question, we turned to data provided by Google, the UK Office for National Statistics, and the US Census regarding both mobility patterns and median household income in rural and urban areas for the United Kingdom (UK) and United States (US) over the course of the pandemic.
+          The March 11, 2020 official World Health Organization (WHO) announcement declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.  While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.  Who <i>really</i> benefits from this new WFH normal?  In investigating this question, we turned to data provided by Google, the US Census, and the UK Office for National Statistics regarding both mobility patterns and median household income in rural and urban areas for the United States (US) and United Kingdom (UK) over the course of the pandemic.<br><br>
+
+          Diving into this investigation, we first asked ourselves what constituted each of these nations.
         </div>
         <br><br>
         <!-- <details>
@@ -47,12 +47,12 @@
         </details> -->
         <br>
     </div>
-</div>
+<!-- </div> -->
 
 <style>
     @font-face {
-    font-family: 'Lato', sans-serif;
-    src: url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+    font-family: 'Roboto', sans-serif;
+    src: url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 }
 
 @font-face {
@@ -62,20 +62,20 @@
     font-style: normal;
 }
 
-body, main {
-    background-color: #fffae7;
-}
+/* body, main {
+    background-color: #fafafa;
+} */
 
 
 .legendTitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
 }
 
 .regionAnnot {
-font-family:'Lato', sans-serif;
+font-family:'Roboto', sans-serif;
   font-size: 12px;
   font-weight: 900;
   text-transform: None;
@@ -83,51 +83,51 @@ font-family:'Lato', sans-serif;
 }
 
 .LStext {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:12px;
   font-weight: bold;
   text-transform: capitalize;
 }
 
 .LStextUK {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
 }
 
 .legx-axis line, .legx-axis path { stroke: #fff; }
 
 .Axis {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px;
   text-transform: capitalize;
 }
 
 .AxisBig {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px;
   text-transform: capitalize;
 }
 
 .AxisLAN{
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:10px;
   text-transform: capitalize;
 }
 
 .AxisMonth {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-weight: bold;
   font-size: 12px
 }
 
 .AxisWide {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
   font-size:12px;
 }
 
 .axisGrid {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
   font-size:8px;
 }
@@ -145,23 +145,23 @@ font-family:'Lato', sans-serif;
 }
 
 .annotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px; 
 }
 
 .hoverAnnotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px; 
   font-weight: 700;
 }
 
 .policyAnnotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:11.5px; 
 }
 
 .cityAnnot {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:12px;
   font-weight: 700;
 }
@@ -174,13 +174,13 @@ font-family:'Lato', sans-serif;
 }
 
 .sourceMeta {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size: 11px;
   text-transform: None;
 }
 
 .subtitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   font-size:20px;
   font-weight:700;
@@ -188,7 +188,7 @@ font-family:'Lato', sans-serif;
 }
 
 .subsubtitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   font-size:17px;
   font-weight:700;
@@ -196,7 +196,7 @@ font-family:'Lato', sans-serif;
 }
 
 .title {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   transform: translate(100px, 0px);
 }
@@ -208,7 +208,7 @@ font-family:'Lato', sans-serif;
 }
 
 .legend {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 600;
     /* font-size: 9.5px; */
     font-size: calc(6px + 0.2vw);
@@ -216,11 +216,7 @@ font-family:'Lato', sans-serif;
     /* transform: translate(30px, calc(100px + 5vw)) */
 }
 
-.titleContainer {
-    /* max-width:850px; */
-    position: relative;
-    /* align-items: center; */
-}
+
 
 .content {
     max-width: 840px; /* Can be in percentage also. */
@@ -248,45 +244,93 @@ font-family:'Lato', sans-serif;
 
 .mapCredit {
 
-    font-family: 'Lato', sans-serif;
+    /* font-family: 'Roboto', sans-serif; */
+    font-family: 'DotGothic16', sans-serif;
     font-weight: 700;
-    font-size: calc(6px + 0.4vw);
+    font-size: calc(7px + 0.4vw);
     text-align: center;
+    line-height: 1.6em;
+    margin-top: 1.5em;
+    letter-spacing: 0.1em;
     /* transform: translate(10px,93px) */
     /* transform: translate(10px, calc(35px + 3.5vw)) */
     /* font-size: 12px; */
 }
 
 .FigTitleBig {
-    font-family:'Lato', sans-serif;
-    font-size: 50px;
+    /* font-family:'Roboto', sans-serif; */
+    /* font-family: 'Montserrat Subrayada', sans-serif; */
+    /* font-family: 'Righteous', cursive; */
+    /* font-family: 'Oswald', sans-serif; */
+    /* font-family: 'Syncopate', sans-serif; */
+    /* font-family: 'Anton', sans-serif; */
+    font-family: 'DotGothic16', sans-serif;
+    font-size: calc(60px + 8vw);
     font-weight: 900;
+    /* line-height: 0.8em; */
+    line-height: 1em;
+    letter-spacing: 0.2em;
+    /* height: 100vh; */
     /* height:130px; */
     text-transform: uppercase;
     text-align: center;
-    margin-bottom: 40px;
+    transform: translate(10px, 0);
   }
 
+  .titleElements {
+    display:table-cell;
+    vertical-align:middle
+  }
+
+  .titleContainer {
+    height: 92vh;
+    line-height: 100vh;
+    width:100%;
+    /* height:130px; */
+    margin-bottom: 20px;
+    /* border: 7px solid #449d57; */
+    display:table;
+    position: relative;
+    /* align-items: center;
+    display: flex;
+    flex-direction: column; */
+  }
+
+  /* .titleContainer:before {
+  content: " ";
+  position: absolute;
+  z-index: 1;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 7px solid #c17036;
+} */
+
   #FigTitle {
-    font-family:'Lato', sans-serif;
-    font-size: 40px;
+    /* font-family:'Roboto', sans-serif; */
+    font-family: 'DotGothic16', sans-serif;
+    font-size: calc(10px + 1.7vw);
     font-weight: 500;
     height:53px;
     vertical-align:text-bottom;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
+    text-transform: lowercase;
     text-align: center;
+    line-height: 1em;
+    margin-top: 0.8em;
   }
   
   .FigSubtitle {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     /* font-size: 14px; */
     font-size: calc(18px - 0.2vw);
-    font-weight: 200;
+    font-weight: 400;
     text-transform: None;
   }
 
   .methodSection {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     /* font-size: 14px; */
     font-size: calc(14px - 0.2vw);
     font-weight: 200;
@@ -296,72 +340,72 @@ font-family:'Lato', sans-serif;
   .richoriginal {
     background-color:#cbb35c;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheEconomist {
     background-color:#747474;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheNytimes {
     background-color:#449d57;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poororiginal {
     background-color:#9c75b4;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheEconomist {
     background-color:#e83000;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheNytimes {
     background-color:#c17036;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHigh {
     background-color:#804d36;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHightheNytimes {
     background-color:rgb(2, 83, 2);
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLow {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLowtheNytimes {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
   
 
   .custom-select {
     position: relative;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
   }
 
   #chartView, #chartCountry {
-      background-color: #fffae7;
+      background-color: #fafafa;
       width: 120px;
       height:30px;
       color:black;
@@ -378,16 +422,16 @@ font-family:'Lato', sans-serif;
   #staticTooltip {
       height: 30px;
       margin-top:10px;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Roboto', sans-serif;
   }
 /* 
   .annotation-group {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 15px;
   } */
 
   .annotation-note-label {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 10px;
   }
 </style>

@@ -221,6 +221,7 @@
               .selectAll("g")
               .data(hexesClean)
               .join("g")
+              .attr("id", d=> country==="UK"?d.key + "Group":d.fullName.replaceAll(",", "").replaceAll(" ", "")+"Group")
               // .attr("transform", `translate(${margin.left},0)`)
 
           circles = hexmap
@@ -228,7 +229,7 @@
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("r", country==="UK"?radiusUK:radiusUS)//innerWidth>600?radius:innerWidth>500?0.95*radius:innerWidth>450?0.9*radius:0.85*radius)
-                .attr("stroke", "#fffae7")
+                .attr("stroke", "#fafafa")
                 .attr("stroke-width", "0.5")
                 // .attr("fill", d => d.category)
                 .attr("fill", "#ccc")
@@ -1107,6 +1108,7 @@
               } else if (country==="US" && hexmap && circles && annot && currentStep===4) { 
 
                 // highlight islington
+                d3.selectAll(".annotation-group").remove()
                 valueUK = null
                 valueUS = "SpokaneCountyWashington"
 
@@ -1182,9 +1184,25 @@
         
               } else if (country==="US" && hexmap && circles && annot && currentStep===6) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight islington
                   valueUK = null
                   valueUS = "SanFranciscoCountyCalifornia"
+                  GEOID = 6075
+
+                  
+                annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar],
+                                0, 
+                                -250, 
+                                10)
+
 
                   circles.filter(d=>d.category==="#ccc")
                 .transition()
@@ -1196,9 +1214,23 @@
 
               } else if (country==="US" && hexmap && circles && annot && currentStep===7) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight islington
                   valueUK = null
                   valueUS = "DouglasCountyMissouri"
+                  GEOID = 29067
+
+                  annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar],
+                                0, 
+                                0, 
+                                300)
 
                   circles.filter(d=>d.category==="#ccc")
                 .transition()
@@ -1210,9 +1242,23 @@
 
               } else if (country==="US" && hexmap && circles && annot && currentStep===8) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight islington
                   valueUK = null
                   valueUS = "LafayetteCountyArkansas"
+                  GEOID = 5073
+
+                  annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                0, 
+                                -20, 
+                                0)
 
                   circles.filter(d=>d.category==="#ccc")
                 .transition()
@@ -1224,9 +1270,23 @@
 
                } else if (country==="US" && hexmap && circles && annot && currentStep===9) { 
 
+                d3.selectAll(".annotation-group").remove()
                   // highlight islington
                   valueUK = null
                   valueUS = "NantucketCountyMassachusetts"
+                  GEOID = 25019
+
+                  annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                svg, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                0, 
+                                30, 
+                                0)
 
                   circles.filter(d=>d.category==="#ccc")
                 .transition()
@@ -1253,7 +1313,7 @@
                 .ease(d3.easeLinear)
                 .attr("cx", d => normScaleXInc(d[xVar]))
                 .attr("cy", d=> normScaleYMob(d[yVar]))
-                .attr("opacity", d=>d.income!==null?1:0)
+                // .attr("opacity", d=>d.income!==null?1:0)
                 .attr("fill", d => d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                          country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -1587,7 +1647,7 @@
             data: {xVar: xValue, yVar: yValue},
             className: "show-bg",
             subject: {
-              radius: 30,
+              radius: country==="UK"?30:15,
               radiusPadding: 5},
             dy: yOffset,
             dx: xOffset
@@ -1724,20 +1784,20 @@
                        
                       "<p>Here, feel free to interact with the map below to explore these patterns, or use the search bar above to search for your own local authority Otherwise, keep scrolling to find out how WFH patterns have played out in another large large economy: the United States of America.</p>"]:
 
-                      ["<p>US Naked</p>", 
-                       "<p>US Income</p>",
-                       "<p>US Mobility</p>", 
-                       "<p>US Bivariate</p>", 
-                       "<p>US Highlight orange and green example</p>", 
-                       "<p>US scatter</p>", 
-                       "<p>US highlight example</p>", 
-                       "<p>US highlight other ex</p>", 
-                       "<p>US highlight other ex</p>", 
-                       "<p>US highlight other ex</p>",
-                       "<p>US bars</p>", 
-                       "<p>US urban vs rural</p>", 
-                       "<p>US urban + green areas on map</p>",
-                       "<p>US Explore the map</p>"]
+                      ["<p>With regard to the US, we learned that about 330 million residents dispersed over 3,174 counties call the nation home.  With a cartogram approach, each of these counties are illustrated with a circle.</p>", 
+                       "<p>Of course, of these 330 million US residents, some are wealthier than others.  The median household income of each county can be observed in the following figure.  While each county is represented by a circle in the cartogram, the median household income of residents in that county is represented by the circle's color tone.  Counties colored in dark green represent areas where residents are higher income.  Counties colored in light green represent areas where residents are lower income.</p>",
+                       "<p>This same cartogram approach can also be used to investigate the impact of COVID-19 on US mobility patterns to the workplace.  While employer implemented WFH policies during the COVID-19 pandemic have allowed some US residents to earn a living from home, many people must still commute to the workplace, despite the public health risk, in search of income.  As illustrated below, counties colored in light orange represent areas where residents have benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace during the pandemic).  Contrastingly, counties colored in dark red represent areas where residents were unable to benefit from WFH, and they have continued to commute to the workplace.</p>", 
+                       "<p>In considering both US household income and US mobility patterns to the workplace, insight can be generated into who benefits from WFH in the pandemic era.  The resulting color scheme of such investigation is twofold.  Each of the cartogram circles' color tone is dependent on both 1) the median household income of the county's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline.<br><br>As such, counties colored in green represent areas where residents are higher income and benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace). Contrastingly, counties colored in orange represent areas where residents are lower income and did not benefit from WFH policies. Counties colored in dark-green represent areas where residents are higher income and continued to travel to the workplace during the COVID-19 pandemic.  Regardless of the wealthy status of these areas, residents did not benefit from WFH practices. Finally, counties colored in light-gray represent areas where residents are lower income and benefited from WFH policies.  Regardless of the poorer status of these areas, residents in these national spatial units were still able to benefit from WFH practices. </p>", 
+                       "<p>Consider, for example, XXX.  This county is observed to be home to high income residents that were able to reduce their mobility to the workplace during the pandemic.  These residents have benefited from WFH policies.</p>", 
+                       "<p>A striking correlation between median household income and residents' travel to the workplace can be observed.  In general, the wealthier county residents are, the more likely that they are to have benefited from WFH policies and reduced their mobility to the office.</p>", 
+                       "<p>Take XXXX.  Here, with a median household income of about $XXk, residents are categorized as high income.  Since February 2020, these residents were able to reduce their travel to the place by about XX% relative to the pre-pandemic 2019 baseline.</p>", 
+                       "<p>On the other hand, consider XXXX.  Here the median household income is categorized as low at about $  XXk.  Since February 2020, these residents were only able to reduce their travel to the workplace by a meager  XX%  relative to the pre-pandemic 2019 baseline.</p>", 
+                       "<p>While most US counties are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist. For example, the county of XXX defies this notion.  Here, residents can be categorized as lower income, as the median household income is about $XXk.  Despite this lower income status, XXX residents were able to reduce their mobility to the workplace by about XX% relative to the pre-pandemic 2019 baseline.</p>", 
+                       "<p>The county of XXX also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about $ XXk.  Regardless of this high income status, however, these residents only experienced a slight XX% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>",
+                       "<p>Despite outliers like XXX and XXX, the majority of US counties fall into one of two extremes.  County residents are either 1) high income and they have benefited greatly from WFH policies, or they are 2) lower income and they have not benefited greatly from WFH policies. As observed in the following figure, the “Low Income, High Travel” and “High Income, Low Travel” bins encompass the most US counties when compared to the other income/mobility categories.</p>", 
+                       "<p>Diving deeper into our understanding of who benefits from WFH policies in the US, counties were then categorized by their urban and rural statuses.<br><br>Shockingly, in the US, a majority of “Low Income, High Travel” counties (orange) are found in rural settings. In addition, an overwhelming number of “High Income, Low Travel” counties (green) are categorized as urban areas.  A clear divide exists.  Residents of urban US counties are more likely to be earning higher median household incomes and benefiting from WFH policies when compared to their rural counterparts.</p>", 
+                       "<p>Relevant to household income and WFH benefits, clear social and spatial segregation exists in the US.  A strong correlation is present where wealthier residents benefit more than lower income residents from WFH policies in response to the COVID-19 pandemic. What's more? These wealthier residents overwhelmingly reside in urban counties.  Has the US forgotten about its rural residents?  The data most definitely presents this way.</p>",
+                       "<p>But don't take our word for it.  Explore the data yourself.</p>"]
 
 
         // raise and lower functions
@@ -1763,6 +1823,7 @@
         $: selectionUK = null;
         $: valueUK = null;
         $: valueUS = null;
+        $: GEOID = null
 
         // setTimeout(() => {
         //   value = 'de';
@@ -1770,24 +1831,26 @@
 
         $: if (valueUK!== null) {
           console.log(valueUK)
-          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radiusUK).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radiusUK).attr("stroke", "#fafafa").attr("stroke-width", 0.5).moveToBack()
           // d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
+          d3.select("#"+valueUK+"Group").raise()//.attr("stroke-width", 1.5).raise()
           d3.select("#"+valueUK).attr("opacity", 1).attr("stroke-width", 2).attr("r", radiusHoverUK).moveToFront()//.attr("stroke-width", 1.5).raise()
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
           d3.select("#label"+valueUK).attr("opacity", 1).attr("font-size", fontSize*2).style("font-weight", "700").moveToFront()
           
         } else if (valueUK === null) {
           d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
-          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fffae7").attr("stroke-width", 0.5).attr("r", radiusUK)
+          d3.selectAll(".laCircleUK").attr("opacity", 1).attr("stroke", "#fafafa").attr("stroke-width", 0.5).attr("r", radiusUK)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
         $: if (valueUS!== null) {
           console.log(valueUS)
-          d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radiusUS).attr("stroke", "#fffae7").attr("stroke-width", 0.5).moveToBack()
-          d3.select("#"+valueUS).attr("opacity", 1).attr("stroke", "#445312").attr("stroke-width", 3).attr("r", radiusHoverUS).moveToFront()//.attr("stroke-width", 1.5).raise()
+          d3.select("#"+valueUS+"Group").raise()
+          d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radiusUS).attr("stroke", "#fafafa").attr("stroke-width", 0.5).moveToBack()
+          d3.select("#"+valueUS).attr("opacity", 1).attr("stroke-width", 2).attr("r", radiusHoverUS).moveToFront()//.attr("stroke-width", 1.5).raise()
         } else if (valueUS === null) {
-          d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fffae7").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUS)
+          d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fafafa").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUS)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
@@ -1965,7 +2028,7 @@
   }
 
   .step-content {
-    background: #f8f6ec;
+    background: #eeeeee;
     color: #ccc;
     border-radius: 5px;
     padding: 0.5rem 1rem;
@@ -1975,10 +2038,12 @@
     transition: background 500ms ease;
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
     z-index: 10;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
   }
 
   .step.active .step-content {
-    background: #fffae7;
+    background: #ffffff;
     color: black;
   }
 
@@ -1994,7 +2059,7 @@
 }
 
 /* .sv-control.svelte-v9xikc {
-  background-color: #fffae7;
+  background-color: #fafafa;
   border: 1px solid #445312;
   border-radius: 4px;
   min-height: 38px;
@@ -2007,7 +2072,7 @@
     flex: 1 1 auto;
     width: 20vw;
     margin: auto;
-    color: #fffae7;
+    color: #fafafa;
 }
 
 /* .vizElement {
@@ -2015,7 +2080,7 @@
 } */
 
 body, main {
-    background-color: #fffae7;
+    background-color: #fafafa;
 }
 
 .tick line {
@@ -2052,7 +2117,7 @@ body, main {
 
   .axisText {
     background: #445312;
-    color: #fffae7;
+    color: #fafafa;
   }
 
 
@@ -2277,61 +2342,61 @@ font-family:'Lato', sans-serif;
   .richoriginal {
     background-color:#cbb35c;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheEconomist {
     background-color:#747474;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheNytimes {
     background-color:#449d57;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poororiginal {
     background-color:#9c75b4;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheEconomist {
     background-color:#e83000;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheNytimes {
     background-color:#c17036;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHigh {
     background-color:#804d36;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHightheNytimes {
     background-color:rgb(2, 83, 2);
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLow {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLowtheNytimes {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
   
 
@@ -2342,7 +2407,7 @@ font-family:'Lato', sans-serif;
   }
 
   #chartView, #chartCountry {
-      background-color: #fffae7;
+      background-color: #fafafa;
       width: 120px;
       height:30px;
       color:black;

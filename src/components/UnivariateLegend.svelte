@@ -52,7 +52,7 @@
         stroke-width=1.8px -->
         <line
         transform={`translate(0,0)`}
-        stroke="#fffae7"
+        stroke="#fafafa"
         stroke-width=1
         x1={i*legendTickWidth}
         y1=0

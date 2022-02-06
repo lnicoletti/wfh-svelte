@@ -97,15 +97,15 @@ $: innerHeight = 0
         {/if}
         </div> -->
         <section>
-          <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
+          <Chart {colors} hexesClean = {data_US} country={"US"}/>
         </section>
         <section>
-          <div>
-            <h2>Transition</h2>
+          <div class="FigSubtitle">
+            Done exploring the US?  You may be wondering how the UK compares.  Let's take a look.
           </div>
         </section>
         <section>
-          <Chart {colors} hexesClean = {data_US} country={"US"}/>
+          <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
         </section>
         <section>
           <div>
@@ -118,6 +118,15 @@ $: innerHeight = 0
 	{/if}
 </main>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 <style>
 	/* main {
 		text-align: center;
@@ -134,8 +143,13 @@ $: innerHeight = 0
 	} */
 
 	@font-face {
-    font-family: 'Lato', sans-serif;
-    src: url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+    font-family: 'Roboto', sans-serif;
+    src: url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+}
+
+@font-face {
+    font-family: 'Montserrat Subrayada', sans-serif;
+    src: url('https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@700&display=swap');
 }
 
 @font-face {
@@ -146,19 +160,20 @@ $: innerHeight = 0
 }
 
 body, main {
-    background-color: #fffae7;
+    /* background-color: #fffae7; */
+    background-color: #fafafa;
 }
 
 
 .legendTitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
 }
 
 .regionAnnot {
-font-family:'Lato', sans-serif;
+font-family:'Roboto', sans-serif;
   font-size: 12px;
   font-weight: 900;
   text-transform: None;
@@ -166,51 +181,51 @@ font-family:'Lato', sans-serif;
 }
 
 .LStext {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:12px;
   font-weight: bold;
   text-transform: capitalize;
 }
 
 .LStextUK {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
 }
 
 .legx-axis line, .legx-axis path { stroke: #fff; }
 
 .Axis {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px;
   text-transform: capitalize;
 }
 
 .AxisBig {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px;
   text-transform: capitalize;
 }
 
 .AxisLAN{
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:10px;
   text-transform: capitalize;
 }
 
 .AxisMonth {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-weight: bold;
   font-size: 12px
 }
 
 .AxisWide {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
   font-size:12px;
 }
 
 .axisGrid {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
   font-size:8px;
 }
@@ -228,23 +243,23 @@ font-family:'Lato', sans-serif;
 }
 
 .annotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px; 
 }
 
 .hoverAnnotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px; 
   font-weight: 700;
 }
 
 .policyAnnotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:11.5px; 
 }
 
 .cityAnnot {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:12px;
   font-weight: 700;
 }
@@ -257,13 +272,13 @@ font-family:'Lato', sans-serif;
 }
 
 .sourceMeta {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size: 11px;
   text-transform: None;
 }
 
 .subtitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   font-size:20px;
   font-weight:700;
@@ -271,7 +286,7 @@ font-family:'Lato', sans-serif;
 }
 
 .subsubtitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   font-size:17px;
   font-weight:700;
@@ -279,7 +294,7 @@ font-family:'Lato', sans-serif;
 }
 
 .title {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   transform: translate(100px, 0px);
 }
@@ -291,7 +306,7 @@ font-family:'Lato', sans-serif;
 }
 
 .legend {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 600;
     /* font-size: 9.5px; */
     font-size: calc(6px + 0.2vw);
@@ -331,7 +346,7 @@ font-family:'Lato', sans-serif;
 
 .mapCredit {
 
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 700;
     font-size: calc(6px + 0.4vw);
     text-align: center;
@@ -341,7 +356,7 @@ font-family:'Lato', sans-serif;
 }
 
 .FigTitleBig {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     font-size: 50px;
     font-weight: 900;
     /* height:130px; */
@@ -351,7 +366,7 @@ font-family:'Lato', sans-serif;
   }
 
   #FigTitle {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     font-size: 40px;
     font-weight: 500;
     height:53px;
@@ -361,81 +376,82 @@ font-family:'Lato', sans-serif;
   }
   
   .FigSubtitle {
-    font-family:'Lato', sans-serif;
-    font-size: 14px;
-    font-weight: 200;
+    font-family:'Roboto', sans-serif;
+    /* font-size: 14px; */
+    font-size: calc(18px - 0.2vw);
+    font-weight: 400;
     text-transform: None;
   }
 
   .richoriginal {
     background-color:#cbb35c;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheEconomist {
     background-color:#747474;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheNytimes {
     background-color:#449d57;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poororiginal {
     background-color:#9c75b4;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheEconomist {
     background-color:#e83000;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheNytimes {
     background-color:#c17036;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHigh {
     background-color:#804d36;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHightheNytimes {
     background-color:rgb(2, 83, 2);
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLow {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLowtheNytimes {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
   
 
   .custom-select button {
     position: relative;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
   }
 
   #chartView, #chartCountry {
-      background-color: #fffae7;
+      background-color: #fafafa;
       width: 120px;
       height:30px;
       color:black;
@@ -452,16 +468,16 @@ font-family:'Lato', sans-serif;
   #staticTooltip {
       height: 30px;
       margin-top:10px;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Roboto', sans-serif;
   }
 /* 
   .annotation-group {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 15px;
   } */
 
   .annotation-note-label {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 10px;
   }
 </style>

@@ -77,7 +77,7 @@ let labels = ["low", "medium", "high"]
 } */
 
 body, main {
-    background-color: #fffae7;
+    background-color: #fafafa;
 }
 
 .tick line {
@@ -334,61 +334,61 @@ font-family:'Lato', sans-serif;
   .richoriginal {
     background-color:#cbb35c;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheEconomist {
     background-color:#747474;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richtheNytimes {
     background-color:#449d57;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poororiginal {
     background-color:#9c75b4;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheEconomist {
     background-color:#e83000;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poortheNytimes {
     background-color:#c17036;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHigh {
     background-color:#804d36;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .richHightheNytimes {
     background-color:rgb(2, 83, 2);
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLow {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
 
   .poorLowtheNytimes {
     background-color:#e8e8e8;
     font-weight:900;
-    color:#fffae7
+    color:#fafafa
   }
   
 
@@ -399,7 +399,7 @@ font-family:'Lato', sans-serif;
   }
 
   #chartView, #chartCountry {
-      background-color: #fffae7;
+      background-color: #fafafa;
       width: 120px;
       height:30px;
       color:black;
