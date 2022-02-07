@@ -4,6 +4,11 @@ export let vizTheme;
 </script>
 
 <div class="content">
+    <div class="FigSubtitle">
+      All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for X nations.  Check out the results below.
+    </div>
+    <br>
+    <br>
     <details>
         <summary class="mapCredit" style="opacity:0.6">Learn more about how these visual was created</summary>
     
@@ -12,7 +17,7 @@ export let vizTheme;
         
             For each administrative area in both the United Kingdom and the United States, temporal data on mobility to work-places was aggregated spatially by computing the median change in mobility over the course of the pandemic (February 2020-Today) relative to Google's 2019 baseline. By using rural population data, each area with a rural population greater than 50% was classified as "Rural" and each area with a rural population lower than 50% was classified as "Urban".<br><br>
 
-            Raw data was cleaned and processed with Javascript inside an <a href="https://observablehq.com" target="__blank">Observable</a> notebook. The visualizations themselves were created using <a href="https://d3js.org/" target="__blank">D3.js</a> and the <a href="https://svelte.dev/" target="__blank">Svelte</a> Javascript framework. U.K. level tiles were created using the <a href="https://github.com/olihawkins/d3-hexjson" target="__blank">d3-hexjson plugin</a> developed by <a href="https://olihawkins.com/" target="__blank">Oli Hawkins</a> and the Leeds <a href="https://open-innovations.org/about/" target="__blank">Open Innovations</a> team, and U.S. level tiles were created using the <a href="https://github.com/kaerosen/tilemaps">tilemaps</a> R library developed by <a href="https://github.com/kaerosen">Kaelyn Rosenberg</a>. Finally, the scrolling animation was created using the <a href="https://github.com/russellgoldenberg/scrollama">Scrollama</a> Javascript library developed by Russel Goldenberg.
+            Raw data was cleaned and processed with Javascript inside an <a href="https://observablehq.com" target="__blank">Observable</a> notebook. The visualizations themselves were created using <a href="https://d3js.org/" target="__blank">D3.js</a> and the <a href="https://svelte.dev/" target="__blank">Svelte</a> Javascript framework. U.K. level tiles were created using the <a href="https://github.com/olihawkins/d3-hexjson" target="__blank">d3-hexjson plugin</a> developed by <a href="https://olihawkins.com/" target="__blank">Oli Hawkins</a> and the Leeds <a href="https://open-innovations.org/about/" target="__blank">Open Innovations</a> team, and U.S. level tiles were created using the <a href="https://github.com/kaerosen/tilemaps">tilemaps</a> R library developed by <a href="https://github.com/kaerosen">Kaelyn Rosenberg</a>. Finally, the scrolling animation was created using the <a href="https://github.com/russellgoldenberg/scrollama">Scrollama</a> Javascript library developed by <a href="https://twitter.com/codenberg?lang=en" target=__blank>Russel Goldenberg</a>.
     </p>
     </details>
 </div>
@@ -252,10 +257,12 @@ font-family:'Lato', sans-serif;
   }
   
   .FigSubtitle {
-    font-family:'Lato', sans-serif;
-    font-size: 14px;
-    font-weight: 200;
+    font-family:'Roboto', sans-serif;
+    /* font-size: 14px; */
+    font-size: calc(18px - 0.2vw);
+    font-weight: 400;
     text-transform: None;
+    margin-top: 80px;
   }
 
   .richoriginal {

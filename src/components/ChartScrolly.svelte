@@ -1004,7 +1004,7 @@
                 // .delay((d, i) => {
                 //   return i * Math.random() * 1.5;
                 //   })
-                .duration(800)
+                .duration(200)
                 .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
@@ -1041,7 +1041,7 @@
                 // .delay((d, i) => {
                 //   return i * Math.random() * 1.5;
                 //   })
-                .duration(800)
+                .duration(200)
                 .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
@@ -1077,7 +1077,7 @@
                 // .delay((d, i) => {
                 //   return i * Math.random() * 1.5;
                 //   })
-                .duration(800)
+                .duration(200)
                 .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
@@ -1113,7 +1113,7 @@
                 // .delay((d, i) => {
                 //   return i * Math.random() * 1.5;
                 //   })
-                .duration(800)
+                .duration(200)
                 .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
@@ -1150,10 +1150,8 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random() * 1.5;
-                  })
-                .duration(800)
+                .duration(100)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 // .attr("opacity", 1)
@@ -1665,8 +1663,8 @@
             // .attr("transform", `translate(${x.bandwidth()}, 0)`)
 
             d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
-            d3.selectAll(".annotation-note-label").attr("fill", "#445312")
-            d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
+            // d3.selectAll(".annotation-note-label")//.attr("fill", "#445312")
+            // d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
         }
 
         function annotateScatter(x, y, xValue, yValue, svg, area, mob, income, offset, yOffset, xOffset) {
@@ -1731,8 +1729,8 @@
             // .attr("transform", `translate(${x.bandwidth()}, 0)`)
 
             d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
-            d3.selectAll(".annotation-note-label").attr("fill", "#445312")
-            d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
+            // d3.selectAll(".annotation-note-label").attr("fill", "#445312")
+            // d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
         }
 
 
@@ -1794,49 +1792,62 @@
         //                "<p>US Step 3.</p>"]
 
         const steps = country==="UK"?
-                      ["<p>The United Kingdom, comprising England, Scotland, Wales, and Northern Ireland, is home to about 67.2 million residents and 374 (get actual number) local authorities.  With a cartogram approach below, each such local authority is represented by a circle. </p>", 
+                      ["<p>Comprising England, Scotland, Wales, and Northern Ireland, the UK is home to about 67.2 million residents across 374 local authorities.  Similarly to our US example, each UK  local authority is represented by a single circle in the following cartogram.</p>", 
                        
-                      "<p>While considered a high income country by the World Bank, some areas of this sovereign state are home to residents that earn higher income than others. Here, each circle's color tone represents the median household income of that local authority.  As such, local authorities colored in dark green represent areas where residents are higher income.  Local authorities colored in light green represent areas where residents are lower income.</p>",
+                      "<p>While considered a high income country by the World Bank, some areas of this sovereign state are home to residents that earn higher income than others.  In the following cartogram, each circle's color tone represents the median household income of that local authority.</p>",
                        
-                      "<p>This same cartogram approach can also be used to investigate the impact of COVID-19 on mobility patterns to the workplace.  While employer implemented WFH policies during the COVID-19 pandemic have allowed some people to earn a living from home, many employees must still commute to the workplace, despite the public health risk, in search of income.  As illustrated below, local authorities colored in light orange represent areas where residents have benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace during the pandemic).  Contrastingly, local authorities colored in dark red represent areas where residents were unable to benefit from WFH, and they have continued to commute to the workplace.</p>", 
+                      "<p>Just like with our US example, this same cartogram approach can also be used to investigate the impact of COVID-19 on mobility patterns to the workplace.</p>", 
                        
-                      "<p>In considering both household income and mobility patterns to the workplace, insight can be generated into who benefits from WFH in the pandemic era.  The resulting color scheme of such investigation is twofold.  Each of the cartogram circles' color tone is dependent on both 1) the median household income of the local authorities's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline.<br><br>As such, local authorities colored in green represent areas where residents are higher income and benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace). Contrastingly, local authorities colored in orange represent areas where residents are lower income and did not benefit from WFH policies.  Local authorities colored in dark-green represent areas where residents are higher income and continued to travel to the workplace during the COVID-19 pandemic.  Regardless of the wealthy status of these areas, residents did not benefit from WFH practices.  Finally, local authorities colored in light-gray represent areas where residents are lower income and benefited from WFH policies.  Regardless of the poorer status of these areas, residents in these national spatial units were still able to benefit from WFH practices.</p>", 
+                      "<p>As with our US example, in considering both household income and mobility patterns to the workplace, insight can be generated into who benefits from WFH in the pandemic era.", 
                        
                       "<p>For example, take Islington.  This local authority is observed to be home to high income residents that were able to reduce their mobility to the workplace during the pandemic.  These residents have benefited from WFH policies.</p>", 
                        
-                      "<p>A striking correlation between median household income and residents' travel to the workplace can be observed.  In general, the wealthier local authority residents are, the more likely that they are to have benefited from WFH policies and reduced their mobility to the office.</p>", 
+                      "<p>Just like with our US example, a correlation between median household income and residents' travel to the workplace can be observed.  Again, and in in general, the wealthier local authority residents are, the more likely that they are to have benefited from WFH policies and reduced their mobility to the office.</p>", 
                        
                       "<p>Consider the local authority of the City of London.  Here, with a median household income of about £65k, residents are categorized as high income.  Since February 2020, these residents were able to reduce their travel to the place by about 55% relative to the pre-pandemic 2019 baseline.</p>", 
                        
                       "<p>Also consider the local authority of Blaenau Gwent.  Here the median household income is categorized as low at  about £ 25k.  Since February 2020, these residents were not able to reduce their travel to the workplace relative to the pre-pandemic 2019 baseline.</p>", 
                        
-                      "<p>While most UK local authorities are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist.<br><br>For example, Glasgow, a local authority in Scotland, defies this notion.  Here, residents can be categorized as lower income, as the median household income is about £ 27k.  Despite this lower income status, Glasgow residents were able to reduce their mobility to the workplace by about 43% relative to the pre-pandemic 2019 baseline.  With about 11% of the Glasgow population enrolled in some form of higher-education, the student status of many residents may help explain this phenomenon.  While many students may be considered lower income, their affiliated universities have all made efforts to switch to online learning during the pandemic.  As such, many students have continued to learn from home, and they no longer commute to campuses.</p>", 
+                      "<p>While most UK local authorities are distinguished by the same inverse linear relationship between income and mobility patterns observed in our US example, outliers to such norm do exist.<br><br>For example, Glasgow, a local authority in Scotland, defies this notion.  Here, residents can be categorized as low income, as the median household income is about £27k.  Despite this low income status, Glasgow residents were able to reduce their mobility to the workplace by about 43% relative to the pre-pandemic 2019 baseline.   However with about <a href='https://www.heraldscotland.com/news/13063064.students-boost-glasgows-economy-500m-year/#:~:text=Around%2067%2C000%20people%20%E2%80%93more%20than,average%20%C2%A311%2C000%20a%20year' target=__blank>11% of the Glasgow population enrolled in some form of higher-education</a>, the student status of many residents may help explain this phenomenon.  While many students may be considered low income, their affiliated universities have all made efforts to switch to online learning during the pandemic.  As such, many students have continued to learn from home, and they no longer commute to campuses.</p>", 
                        
-                      "<p>The local authority of East Hampshire also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about £ 54k.  Regardless of this high income status, however, these residents only experienced a slight 25% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>", 
+                      "<p>The local authority of East Hampshire also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about £54k.  Regardless of this high income status, however, these residents only experienced a slight 25% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>", 
                        
-                      "<p>Despite outliers like Glasgow and East Hampshire, the majority of local authorities fall into one of two extremes.  Residents are either 1) high income and they have benefited greatly from WFH policies, or they are 2) lower income and they have not benefited greatly from WFH policies. As observed in the figure below, the “Low Income High Travel” and “High Income Low Travel” bins encompass the most UK local authorities when compared to the other income/mobility categories.</p>", 
+                      "<p>Despite outliers like Glasgow and East Hampshire, the majority of local authorities fall into one of the same two extremes as our US example.  UK residents are also either 1) high income and they have benefited greatly from WFH policies, or they are 2) low income and they have not benefited greatly from WFH policies.<br><br>Just like the US, the “Low Income, High Travel” and “High Income, Low Travel” bins encompass the most local authorities when compared to the other income/mobility categories.</p>", 
                        
-                      "<p>Diving deeper into our understanding of who benefits from WFH policies in the UK, local authorities were then categorized by their urban and rural statuses. <br><br>“Low income, High travel” local authorities (orange) can be found in both urban and rural settings.  Similarly, a majority of the “high income and lower travel” local authorities (green) are categorized as urban areas.  But which urban areas in the UK are home to such high income residents who benefit from WFH?</p>", 
+                      "<p>Diving deeper into our understanding of <i>who</i> benefits from WFH policies in the UK, local authorities were then also categorized by their urban and rural statuses. <br><br>In the UK, “Low Income, High Travel” local authorities (orange) can be found in both urban and rural settings.  However, a majority of the “High Income, Low Travel” local authorities (green) are categorized as urban areas.  But <i>which urban areas in the UK are home to such high income residents who benefit from WFH?</i></p>", 
                        
-                      "<p>As it turns out, an overwhelming majority of “high income and lower travel” local authorities (green) are located in London's Larger Urban Zone.  What exactly does this mean?</p>", 
+                      "<p>As it turns out, an overwhelming majority of “High Income, Low Travel” local authorities (green) are located in London's Larger Urban Zone.  <i>What exactly does this mean?</i></p>", 
                        
-                      "<p>Relevant to household income and WFH benefits, clear social and spatial segregation exists in the UK.  A strong correlation is present where wealthier residents benefit more than lower income residents from WFH policies in response to the COVID-19 pandemic. What's more? These wealthier residents overwhelmingly reside in London's Larger Urban Zone.  Has the UK forgotten about its rural residents?  Is there an urban vs rural divide?  Or, has the UK simply decided to focus on London specifically, while forgetting about everybody else?</p>",
+                      "<p>Relevant to household income and WFH benefits, clear social and spatial segregation exists in the UK.  A strong correlation is present where wealthier residents benefit more than low income residents from WFH policies in response to the COVID-19 pandemic. What's more? These wealthier residents overwhelmingly reside in London's Larger Urban Zone.  Similarly to the US, has the UK forgotten about its rural residents?  Or, has the UK championed its financial center, London, to the dismay of everywhere else in the kingdom?</p>",
                        
-                      "<p>Here, feel free to interact with the map below to explore these patterns, or use the search bar above to search for your own local authority Otherwise, keep scrolling to find out how WFH patterns have played out in another large large economy: the United States of America.</p>"]:
+                      "<p>The evidence seems stark to us.  But once again, explore the data and decide for yourself.</p>"]:
 
-                      ["<p>With regard to the US, we learned that about 330 million residents dispersed over 3,174 counties call the nation home.  With a cartogram approach, each of these counties are illustrated with a circle.</p>", 
-                       "<p>Of course, of these 330 million US residents, some are wealthier than others.  The median household income of each county can be observed in the following figure.  While each county is represented by a circle in the cartogram, the median household income of residents in that county is represented by the circle's color tone.  Counties colored in dark green represent areas where residents are higher income.  Counties colored in light green represent areas where residents are lower income.</p>",
-                       "<p>This same cartogram approach can also be used to investigate the impact of COVID-19 on US mobility patterns to the workplace.  While employer implemented WFH policies during the COVID-19 pandemic have allowed some US residents to earn a living from home, many people must still commute to the workplace, despite the public health risk, in search of income.  As illustrated below, counties colored in light orange represent areas where residents have benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace during the pandemic).  Contrastingly, counties colored in dark red represent areas where residents were unable to benefit from WFH, and they have continued to commute to the workplace.</p>", 
-                       "<p>In considering both US household income and US mobility patterns to the workplace, insight can be generated into who benefits from WFH in the pandemic era.  The resulting color scheme of such investigation is twofold.  Each of the cartogram circles' color tone is dependent on both 1) the median household income of the county's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline.<br><br>As such, counties colored in green represent areas where residents are higher income and benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace). Contrastingly, counties colored in orange represent areas where residents are lower income and did not benefit from WFH policies. Counties colored in dark-green represent areas where residents are higher income and continued to travel to the workplace during the COVID-19 pandemic.  Regardless of the wealthy status of these areas, residents did not benefit from WFH practices. Finally, counties colored in light-gray represent areas where residents are lower income and benefited from WFH policies.  Regardless of the poorer status of these areas, residents in these national spatial units were still able to benefit from WFH practices. </p>", 
-                       "<p>Consider, for example, XXX.  This county is observed to be home to high income residents that were able to reduce their mobility to the workplace during the pandemic.  These residents have benefited from WFH policies.</p>", 
+                      ["<p>With regard to the US, we learned that about 330 million residents dispersed over 3,174 counties call the nation home.  Here, with a cartogram approach, each of these counties are illustrated with a circle.</p>", 
+
+                       "<p>Of course, of these 330 million US residents, some are wealthier than others.  The median household income of each county can be observed in the following figure.  While each county is represented by a circle in the cartogram, the median household income of residents in that county is represented by the circle's color tone.  Counties colored in dark green represent areas where residents are higher income.  Counties colored in light green represent areas where residents are low income.</p>",
+
+                       "<p>This same cartogram approach can also be used to investigate the impact of COVID-19 on US mobility patterns to the workplace.  While employer implemented WFH policies during the COVID-19 pandemic have allowed some US residents to earn a living from home, many people must still commute to the workplace, despite the public health risk, in search of income.  As illustrated below, counties colored in dark red represent areas where residents have benefited from WFH policies (i.e., these residents were able to greatly reduce their mobility to the workplace during the pandemic).  Contrastingly, counties colored in light orange represent areas where residents were unable to benefit from WFH, and they have continued to commute to the workplace.</p>", 
+
+                       "<p>In considering both US household income and US mobility patterns to the workplace, insight can be generated into who benefits from WFH in the pandemic era.  The resulting color scheme of such investigation is twofold.  Each of the cartogram circles' color tone is dependent on both 1) the median household income of the county's residents and 2) the residents' percent change in mobility to workplaces relative to a pre-pandemic 2019 baseline. </p>", 
+
+                       "<p>Consider, for example, New York County (New York).  This county is observed to be home to high income residents with a median household income of about $83k.  In general, these residents were able to reduce their mobility to the workplace during the pandemic by 55% when compared to the 2019 baseline.  As such, these residents have benefited from WFH policies.</p>", 
+
                        "<p>A striking correlation between median household income and residents' travel to the workplace can be observed.  In general, the wealthier county residents are, the more likely that they are to have benefited from WFH policies and reduced their mobility to the office.</p>", 
-                       "<p>Take XXXX.  Here, with a median household income of about $XXk, residents are categorized as high income.  Since February 2020, these residents were able to reduce their travel to the place by about XX% relative to the pre-pandemic 2019 baseline.</p>", 
-                       "<p>On the other hand, consider XXXX.  Here the median household income is categorized as low at about $  XXk.  Since February 2020, these residents were only able to reduce their travel to the workplace by a meager  XX%  relative to the pre-pandemic 2019 baseline.</p>", 
-                       "<p>While most US counties are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist. For example, the county of XXX defies this notion.  Here, residents can be categorized as lower income, as the median household income is about $XXk.  Despite this lower income status, XXX residents were able to reduce their mobility to the workplace by about XX% relative to the pre-pandemic 2019 baseline.</p>", 
-                       "<p>The county of XXX also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about $ XXk.  Regardless of this high income status, however, these residents only experienced a slight XX% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>",
-                       "<p>Despite outliers like XXX and XXX, the majority of US counties fall into one of two extremes.  County residents are either 1) high income and they have benefited greatly from WFH policies, or they are 2) lower income and they have not benefited greatly from WFH policies. As observed in the following figure, the “Low Income, High Travel” and “High Income, Low Travel” bins encompass the most US counties when compared to the other income/mobility categories.</p>", 
-                       "<p>Diving deeper into our understanding of who benefits from WFH policies in the US, counties were then categorized by their urban and rural statuses.<br><br>Shockingly, in the US, a majority of “Low Income, High Travel” counties (orange) are found in rural settings. In addition, an overwhelming number of “High Income, Low Travel” counties (green) are categorized as urban areas.  A clear divide exists.  Residents of urban US counties are more likely to be earning higher median household incomes and benefiting from WFH policies when compared to their rural counterparts.</p>", 
-                       "<p>Relevant to household income and WFH benefits, clear social and spatial segregation exists in the US.  A strong correlation is present where wealthier residents benefit more than lower income residents from WFH policies in response to the COVID-19 pandemic. What's more? These wealthier residents overwhelmingly reside in urban counties.  Has the US forgotten about its rural residents?  The data most definitely presents this way.</p>",
+
+                       "<p>Take San Francisco County (California).  Here, with a median household income of about $105k, residents are categorized as high income.  Since February 2020, these residents were able to reduce their travel to the place by about 61% relative to the pre-pandemic 2019 baseline.</p>", 
+
+                       "<p>On the other hand, consider Douglas County (Missouri).  Here the median household income is categorized as low at about $34k.  Since February 2020, these residents were only able to reduce their travel to the workplace by a meager 5% relative to the pre-pandemic 2019 baseline.</p>", 
+
+                       "<p>While most US counties are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist.<br><br>For example, the county of Lafayette (Arkansas) defies this notion.  Here, residents can be categorized as low income, as the median household income is about $32k.  Despite this low income status, Lafayette County (Arkansas) residents were able to reduce their mobility to the workplace by a staggering 56% relative to the pre-pandemic 2019 baseline.</p>", 
+
+                       "<p>Nantucket County (Massachusetts) also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about $105k.  Regardless of this high income status, however, these residents only experienced a scant 3% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>",
+
+                       "<p>Despite outliers like Lafayette County (Arkansas) and Nantucket County (Massachusetts), a disproportionate number of US counties falls into one of two extremes.  County residents are either 1) high income and they have benefited greatly from WFH policies, or they are 2) low income and they have not benefited greatly from WFH policies.<br><br>As observed in the following figure, the “Low Income, High Travel” and “High Income, Low Travel” bins encompass the most US counties when compared to the other income/mobility categories.</p>", 
+
+                       "<p>Diving deeper into our understanding of <i>who</i> benefits from WFH policies in the US, counties were then categorized by their urban and rural statuses.<br><br>Shockingly, in the US, a majority of “Low Income, High Travel” counties (orange) are found in rural settings. In addition, an overwhelming number of “High Income, Low Travel” counties (green) are categorized as urban areas.  A clear divide exists.  Residents of urban US counties are more likely to be earning higher median household incomes and benefiting from WFH policies when compared to their rural counterparts.</p>", 
+
+                       "<p>Relevant to household income and WFH benefits, clear social and spatial segregation exists in the US.  A strong correlation is present where wealthier residents benefit more than low income residents from WFH policies in response to the COVID-19 pandemic. What's more? These wealthier residents overwhelmingly reside in urban counties.  <i>Has the US forgotten about its rural residents?</i>  The data most definitely presents this way.</p>",
+                       
                        "<p>But don't take our word for it.  Explore the data yourself.</p>"]
 
 
@@ -1919,12 +1930,15 @@
 
 <!-- legends and axes -->
 <div class="legendContainer">
-{#if currentStep == 1}
+{#if currentStep == 0}
+<span class="frameTitle"></span>
+<!-- <span class="frameTitle">A map of the U.S.</span> -->
+{:else if currentStep == 1}
   <UnivariateLegend {width} country={country} {hexesClean} colorVar={"income"} numTicks={6}/>
 {:else if currentStep == 2}
   <UnivariateLegend {width} country={country} {hexesClean} colorVar={"mobility"} numTicks={6}/>
 {:else if currentStep == 3}
-  <Legend {colors}></Legend>
+  <Legend {colors} {country}></Legend>
 {:else if country==="UK" && currentStep===14}
   <Svelecte {options} 
     inputId="areaSelUK"
@@ -2036,9 +2050,10 @@
 }
 
 .legendContainer {
-    width:200px;
+    width:400px;
     height:45px;
     margin:auto;
+    text-align: center;
 }
 
 .spacer {
@@ -2368,6 +2383,19 @@ font-family:'Roboto', sans-serif;
     /* margin-bottom: 10px; */
   }
 
+  .frameTitle {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: calc(10px + 1.2vw);
+    font-weight: 500;
+    /* height:53px;
+    vertical-align:text-bottom; */
+    /* text-transform: uppercase; */
+    text-transform: lowercase;
+    text-align: center;
+    /* line-height: 1em; */
+    /* margin-top: 0.8em; */
+  }
+
   #FigTitle {
     font-family:'Roboto', sans-serif;
     font-size: 40px;
@@ -2476,7 +2504,7 @@ font-family:'Roboto', sans-serif;
   .annotation-group {
     font-family: 'Roboto', sans-serif;
     /* font-size: 15px; */
-    opacity:0.5
+    /* opacity:0.5 */
   }
 
   .annotation-note-label {

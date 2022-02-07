@@ -2,6 +2,7 @@
 	  import TypeIt from "typeit";
     export let vizTheme;
     import { onMount } from "svelte";
+    import { select } from "d3";
 
     let typedSubtitle;
     let typedTitle;
@@ -30,7 +31,7 @@
             ],
             breakLines: false,
             loop: true,
-            pause: 1000,
+            pause: 10000,
         })
 
         function typeTitle() {
@@ -45,6 +46,10 @@
         // })
 
         setTimeout(() => {typedSubtitle.go()}, 5300)
+
+        setTimeout(() => {
+          select(".mapCredit").transition().duration(1500).style("opacity", "1")
+        }, 14000);
         
     });
 
@@ -62,9 +67,9 @@
           </div>
         </div>
         <div class="FigSubtitle">
-          The March 11, 2020 official World Health Organization (WHO) announcement declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.  While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.  Who <i>really</i> benefits from this new WFH normal?  In investigating this question, we turned to data provided by Google, the US Census, and the UK Office for National Statistics regarding both mobility patterns and median household income in rural and urban areas for the United States (US) and United Kingdom (UK) over the course of the pandemic.<br><br>
+          The March 11, 2020 <a class="inTextLink" href="https://www.who.int/director-general/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020" target=__blank>official World Health Organization (WHO) announcement</a> declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.  While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.  <i>Who really benefits from this new WFH normal?</i>  In investigating this question, we turned to data provided by <a class="inTextLink" href="https://www.google.com/covid19/mobility/?hl=en" target=__blank>Google</a>, the <a class="inTextLink" href="https://www.census.gov/" target=__blank>US Census Bureau</a>, and the <a class="inTextLink" href="https://www.ons.gov.uk/" target=__blank>UK Office for National Statistics</a> regarding both mobility patterns and median household income in rural and urban areas for the United States (US) and United Kingdom (UK) over the course of the pandemic.<br><br>
 
-          Diving into this investigation, we first asked ourselves what constituted each of these nations.
+          Diving into this investigation, we first asked ourselves, <i>“what constitutes each of these anglophone nations?”</i>
         </div>
         <br><br>
         <!-- <details>
@@ -99,6 +104,10 @@
 } */
 
 
+.inTextLink {
+  color:rgb(75, 75, 75);
+  text-decoration: underline;
+}
 .legendTitle {
   font-family:'Roboto', sans-serif;
   font-size: 10px;
@@ -284,6 +293,8 @@ font-family:'Roboto', sans-serif;
     line-height: 1.6em;
     margin-top: 1.5em;
     letter-spacing: 0.1em;
+    opacity: 0;
+    /* visibility:hidden; */
     /* transform: translate(10px,93px) */
     /* transform: translate(10px, calc(35px + 3.5vw)) */
     /* font-size: 12px; */
@@ -302,11 +313,11 @@ font-family:'Roboto', sans-serif;
     /* line-height: 0.8em; */
     line-height: 1em;
     letter-spacing: 0.2em;
-    /* height: 100vh; */
+    /* min-height: 40vh; */
     /* height:130px; */
     text-transform: uppercase;
     text-align: center;
-    transform: translate(10px, 0);
+    transform: translate(15px, 0);
   }
 
   .titleElements {
@@ -359,6 +370,7 @@ font-family:'Roboto', sans-serif;
     font-size: calc(18px - 0.2vw);
     font-weight: 400;
     text-transform: None;
+    margin-top: 80px;
   }
 
   .methodSection {

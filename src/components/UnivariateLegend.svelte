@@ -34,10 +34,10 @@
     console.log("legend data", legendTicks)
 </script>
 
-<!-- <div class="legendContainer"> -->
+<div class="legendContainer">
     <svg width={width} height={legendSvgHeight} display=block margin=auto > 
     <!-- transform={`translate(${margin.left}, 0)`} -->
-    <g transform={`translate(${margin.left}, ${margin.top})`}>
+    <g transform={`translate(${0}, ${margin.top})`}>
     {#each legendTicks as data, i}
         <rect
         transform={`translate(0,5)`}
@@ -101,7 +101,7 @@
         </text>
     </g>
     </svg>
-<!-- </div> -->
+</div>
 
 <style>
 
@@ -109,8 +109,14 @@
         font-family: 'Source', sans-serif;
         font-size: 8px;
         font-weight: 700;
-        fill: #445312;
+        fill: black;
 		text-transform: uppercase;
     }
+
+    .legendContainer {
+    width:240px;
+    height:100px;
+    margin:auto;
+}
 
 </style>

@@ -108,11 +108,8 @@ $: innerHeight = 0
           <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
         </section>
         <section>
-          <div>
-            <h2>Transition</h2>
-          </div>
+          <Footer {vizTheme}/>
         </section>
-			<Footer {vizTheme}/>
 		</div>
 	</body>
 	{/if}
