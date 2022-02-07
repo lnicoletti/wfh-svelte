@@ -41,7 +41,7 @@
 	  // let selectedCountry = countryOptions[0];
     $: selectedView = viewOptions[0];
     
-    let svg, hexmap, circles, annot;
+    let svg, hexmap, circles, annot, stateAnnot;
     let scale = 1
     let width = 800
     let height = 600
@@ -121,7 +121,7 @@
 
         $: projection = country==="US"?
                         d3.geoAlbersUsa()
-                          .fitSize([width-margin.right-margin.left, height-margin.top-margin.bottom], featureCollection):null;
+                          .fitSize([width-margin.right/4-margin.left, height-margin.bottom/4], featureCollection):null;
                 
         $: normScaleXInc = d3.scaleLinear()
                         .domain(d3.extent(hexesClean, d => d.income))
@@ -154,7 +154,7 @@
 
         $: normScaleCatXUrb = d3.scaleBand()
                         .domain(urbCategoryLabels)
-                        .range([margin.left, width - margin.right])
+                        .range([margin.left*1.5, width - margin.right])
 
         $: normScaleLeRow = d3.scaleLinear()
                         .domain(d3.extent(hexesClean, d => d.leRow))
@@ -162,7 +162,7 @@
 
         $: normScaleCatXLe = d3.scaleBand()
                         .domain(leCatX)
-                        .range([margin.left, width - margin.right])
+                        .range([margin.left*1.5, width - margin.right])
 
         // color scales
         $: incomeColor = d3.scaleQuantize()
@@ -211,7 +211,15 @@
         // % of green areas in london commuter belt
         let pctLe = country==="UK"?hexesClean.filter(d=>d.leCat==="London Commuter Belt"&&d.category==="#47a45b").length/hexesClean.filter(d=>d.category==="#47a45b").length:null
 
-        console.log("%percent green in commuter belt", pctLe)
+        // console.log("%percent green in commuter belt", pctLe)
+
+        $: stateCentroids = country==="US"?d3.rollups(
+          hexesClean.map(d=>{return{GEOID:d.GEOID, abbrv:d.abbrv.replaceAll(" ", ""), x:d.x, y:+d.y}}), 
+            v=>[d3.mean(v, d=>d.x), d3.mean(v, d=>d.y)], 
+              d=>d.abbrv).map(d=>{return{abbrv:d[0], x:d[1][0], y:d[1][1]}})
+              :null
+        
+        $: console.log("centroids", stateCentroids)
 
         onMount(() => {
 
@@ -238,7 +246,7 @@
                 .attr("cursor", "pointer")
                 // .style("z-index", 100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
-                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
+                                   country==="US"&&selectedView.value==="map"?`translate(${margin.left/2},0)`:`translate(0,0)`)
                 .on("mouseover", (event,d)=>console.log(d))//[normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX)
                 // .on("mouseover", (event, d)=>console.log(normScaleYhex(+d.y)))
 
@@ -257,6 +265,28 @@
                 .text(d=>country==="UK"?d.n.slice(0,3):"")
                 .on("mouseover", (event, d)=>console.log(innerWidth))
                 .attr("cursor", "pointer")
+
+
+          if (country==="US") {
+
+            stateAnnot = 
+              d3.select(svg).append("g")
+                
+              stateAnnot.selectAll(".stateAbbrv")
+                .data(stateCentroids)
+                .join("text")
+                .attr('class', 'stateAbbrv')
+                .attr("x", d=>d.abbrv==="FL"?projection([d.x, d.y])[0]+30:projection([d.x, d.y])[0])
+                .attr("y", d=>projection([d.x, d.y])[1])
+                .attr("text-anchor", "middle")
+                // .attr('fill', 'rgb(255,255,255)')
+                .attr('fill', 'black')
+                .attr("font-weight", "bold")
+                .attr('font-size', 12)
+                .text(d=>d.abbrv)
+                .attr("transform",`translate(${margin.left/2},0)`)
+
+          }
 
               
           firstStep = true
@@ -298,6 +328,8 @@
                 .attr("opacity", 1)
                 // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
                 .attr("transform",[0,1,2,3,4,13].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+
 
               firstStep=true
               comingFromMap = true
@@ -965,6 +997,7 @@
         $: if (country==="US" && hexmap && circles && annot && currentStep===0 && firstStep===false){
 
               d3.selectAll(".annotation-group").remove()
+              d3.selectAll(".stateAbbrv").attr('visibility', 'visible').attr('fill', 'black')
 
                 circles
                 .transition()
@@ -979,7 +1012,7 @@
                 .attr("fill", "#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
                 // annot
                 // .transition()
@@ -1001,6 +1034,7 @@
 
                 // d3.select(".chart").style("position", "sticky")
                 d3.selectAll(".annotation-group").remove()
+                d3.selectAll(".stateAbbrv").attr('visibility', 'hidden')//.attr('fill', 'rgb(255,255,255)')
 
                 circles
                 .transition()
@@ -1015,7 +1049,7 @@
                 .attr("fill", d => d.category!=="#ccc"?incomeColor(d[xVar]):"#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
                 // annot
                 // .transition()
@@ -1051,7 +1085,7 @@
                 .attr("fill", d => d.category!=="#ccc"?mobilityColor(d[yVar]):"#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
                 // annot
                 // .transition()
@@ -1087,7 +1121,7 @@
                 .attr("fill", d => d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
                 // annot
                 // .transition()
@@ -1109,6 +1143,8 @@
 
                 // highlight islington
                 d3.selectAll(".annotation-group").remove()
+                // d3.selectAll(".stateAbbrv").attr('visibility', 'visible')
+
                 valueUK = null
                 valueUS = "SpokaneCountyWashington"
 
@@ -1124,7 +1160,7 @@
                 // .attr("fill", d => d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,4,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,4,12].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
 
                 // } else if (hexmap && circles && annot && selectedView.value==="bars") {
@@ -1132,6 +1168,7 @@
 
               // d3.select(".chart").style("position", "sticky")
               d3.selectAll(".annotation-group").remove()
+              // d3.selectAll(".stateAbbrv").attr('visibility', 'hidden')
 
                 circles.filter(d=>d.category==="#ccc")
                 .transition()
@@ -1398,6 +1435,7 @@
               } else if (country==="US" && hexmap && circles && annot && currentStep===11) {
 
                 d3.selectAll(".annotation-group").remove()
+                // d3.selectAll(".stateAbbrv").attr('visibility', 'hidden')
 
                 circles.filter(d=>d.urbCategory===null||d.category==="#ccc")
                 .transition()
@@ -1452,9 +1490,9 @@
                     450, 
                     svg, 
                     "Unlike the U.K., in the U.S. the majority of low income, high travel areas are rural...", 
+                    -10,
                     -15,
-                    -15,
-                    -60)
+                    -48)
 
                   annotateBars(normScaleCatXUrb, 
                     normScaleUrbRow, 
@@ -1462,7 +1500,7 @@
                     363, 
                     svg, 
                     "...while the majority of high income, low travel localities are urban", 
-                    normScaleCatXUrb.bandwidth()*0.615,
+                    normScaleCatXUrb.bandwidth()*0.65,
                     15,
                     60)
                 } else if (country==="UK") {
@@ -1484,6 +1522,7 @@
 
                 // d3.select(".chart").style("position", "sticky")
                 d3.selectAll(".annotation-group").remove()
+                // d3.selectAll(".stateAbbrv").attr('visibility', 'visible')//.attr('fill', 'black')
 
                 circles
                 .transition()
@@ -1497,7 +1536,7 @@
                 .attr("fill", d=>[categoriesX[1], categoriesX[0]].includes(d.category)?d.category:"#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
                 // annot
                 // .transition()
@@ -1519,6 +1558,7 @@
 
                 // d3.select(".chart").style("position", "sticky")
                 d3.selectAll(".annotation-group").remove()
+                // d3.selectAll(".stateAbbrv").attr('fill', 'rgb(255,255,255)')
 
                 circles
                 .transition()
@@ -1532,7 +1572,7 @@
                 .attr("fill", d=>d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
-                .attr("transform", [0,1,2,3,12,13].includes(currentStep)?`translate(${margin.left},0)`:`translate(0,0)`)
+                .attr("transform", [0,1,2,3,12,13].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
                 // annot
                 // .transition()
@@ -1846,10 +1886,12 @@
 
         $: if (valueUS!== null) {
           console.log(valueUS)
+          // d3.selectAll(".stateAbbrv").attr('opacity', '0.5')
           d3.select("#"+valueUS+"Group").raise()
           d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radiusUS).attr("stroke", "#fafafa").attr("stroke-width", 0.5).moveToBack()
           d3.select("#"+valueUS).attr("opacity", 1).attr("stroke-width", 2).attr("r", radiusHoverUS).moveToFront()//.attr("stroke-width", 1.5).raise()
         } else if (valueUS === null) {
+          // d3.selectAll(".stateAbbrv").attr('opacity', '1')
           d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fafafa").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUS)
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
@@ -1982,8 +2024,8 @@
 <p>Innerwidth: {innerWidth}</p> -->
 <style>
     @font-face {
-    font-family: 'Lato', sans-serif;
-    src: url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+    font-family: 'Roboto', sans-serif;
+    src: url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 }
 
 @font-face {
@@ -2043,7 +2085,7 @@
   }
 
   .step.active .step-content {
-    background: #ffffff;
+    background: rgb(255, 255, 255, 0.9);
     color: black;
   }
 
@@ -2090,9 +2132,13 @@ body, main {
     z-index: -100
 	}
 
+  .stateAbbrv {
+    font-family: "Roboto", sans-serif;
+  }
+
 
   .tick text {
-    font-family:'Lato', sans-serif;
+    font-family: "Roboto", sans-serif;
 		/* font-size: 10px; */
     /* font-size:11px; */
 		fill: #445312;
@@ -2107,7 +2153,7 @@ body, main {
 	}
 
   .axisTitle text {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     /* font-size: 10px; */
     /* font-size:11px; */
 		fill: #445312;
@@ -2122,7 +2168,7 @@ body, main {
 
 
 .legendTitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
@@ -2130,7 +2176,7 @@ body, main {
 }
 
 .regionAnnot {
-font-family:'Lato', sans-serif;
+font-family:'Roboto', sans-serif;
   font-size: 12px;
   font-weight: 900;
   text-transform: None;
@@ -2138,51 +2184,51 @@ font-family:'Lato', sans-serif;
 }
 
 .LStext {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:12px;
   font-weight: bold;
   text-transform: capitalize;
 }
 
 .LStextUK {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
 }
 
 .legx-axis line, .legx-axis path { stroke: #fff; }
 
 .Axis {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px;
   text-transform: capitalize;
 }
 
 .AxisBig {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px;
   text-transform: capitalize;
 }
 
 .AxisLAN{
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:10px;
   text-transform: capitalize;
 }
 
 .AxisMonth {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-weight: bold;
   font-size: 12px
 }
 
 .AxisWide {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
   font-size:12px;
 }
 
 .axisGrid {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-transform: capitalize;
   font-size:8px;
 }
@@ -2200,23 +2246,23 @@ font-family:'Lato', sans-serif;
 }
 
 .annotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px; 
 }
 
 .hoverAnnotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:6px; 
   font-weight: 700;
 }
 
 .policyAnnotation {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:11.5px; 
 }
 
 .cityAnnot {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size:12px;
   font-weight: 700;
 }
@@ -2229,13 +2275,13 @@ font-family:'Lato', sans-serif;
 }
 
 .sourceMeta {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   font-size: 11px;
   text-transform: None;
 }
 
 .subtitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   font-size:20px;
   font-weight:700;
@@ -2243,7 +2289,7 @@ font-family:'Lato', sans-serif;
 }
 
 .subsubtitle {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   font-size:17px;
   font-weight:700;
@@ -2251,7 +2297,7 @@ font-family:'Lato', sans-serif;
 }
 
 .title {
-  font-family:'Lato', sans-serif;
+  font-family:'Roboto', sans-serif;
   text-align:center;
   transform: translate(100px, 0px);
 }
@@ -2263,7 +2309,7 @@ font-family:'Lato', sans-serif;
 }
 
 .legend {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 600;
     /* font-size: 9.5px; */
     font-size: calc(6px + 0.2vw);
@@ -2303,7 +2349,7 @@ font-family:'Lato', sans-serif;
 
 .mapCredit {
 
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 700;
     font-size: calc(6px + 0.4vw);
     text-align: center;
@@ -2313,7 +2359,7 @@ font-family:'Lato', sans-serif;
 }
 
 .FigTitleBig {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     font-size: 50px;
     font-weight: 900;
     /* height:130px; */
@@ -2323,7 +2369,7 @@ font-family:'Lato', sans-serif;
   }
 
   #FigTitle {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     font-size: 40px;
     font-weight: 500;
     height:53px;
@@ -2333,7 +2379,7 @@ font-family:'Lato', sans-serif;
   }
   
   .FigSubtitle {
-    font-family:'Lato', sans-serif;
+    font-family:'Roboto', sans-serif;
     font-size: 14px;
     font-weight: 200;
     text-transform: None;
@@ -2402,7 +2448,7 @@ font-family:'Lato', sans-serif;
 
   .custom-select {
     position: relative;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     text-transform: uppercase;
   }
 
@@ -2424,17 +2470,17 @@ font-family:'Lato', sans-serif;
   #staticTooltip {
       height: 30px;
       margin-top:10px;
-      font-family: 'Lato', sans-serif;
+      font-family: 'Roboto', sans-serif;
   }
 
   .annotation-group {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     /* font-size: 15px; */
     opacity:0.5
   }
 
   .annotation-note-label {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 10px;
   }
 

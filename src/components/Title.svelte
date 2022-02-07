@@ -3,8 +3,26 @@
     export let vizTheme;
     import { onMount } from "svelte";
 
+    let typedSubtitle;
+    let typedTitle;
+    let titleTyped=false;
+
     onMount( async () => {
-        new TypeIt("#FigTitle", {
+
+      typedTitle = new TypeIt(".FigTitleBig", {
+            speed: 250,
+            strings: [
+            `<span>Work<br>From<br>Home</span>`
+            ],
+            breakLines: false,
+            loop: false,
+            pause: 1000,
+            afterComplete: function (instance) {
+            instance.destroy();
+          }
+        })
+
+      typedSubtitle = new TypeIt("#FigTitle", {
             speed: 150,
             strings: [
             `A <span class="rich${vizTheme}" style="background-color:#449d57;font-weight:900;color:#fafafa">Rich</span> vs. <span class="poor${vizTheme}" style="background-color:#c17036;font-weight:900;color:#fafafa">Poor</span> issue`,
@@ -13,7 +31,21 @@
             breakLines: false,
             loop: true,
             pause: 1000,
-        }).go();
+        })
+
+        function typeTitle() {
+          return new Promise(function() {
+            typedTitle.go()
+          })
+        }
+
+        typeTitle()
+        // .then(function() {
+        //   titleTyped=true
+        // })
+
+        setTimeout(() => {typedSubtitle.go()}, 5300)
+        
     });
 
 </script>
@@ -22,7 +54,7 @@
     <div class="content">
         <div class="titleContainer">
           <div class="titleElements">
-            <div class="FigTitleBig"><span>Work<br>From<br>Home</span></div>
+            <div class="FigTitleBig"></div><!--<span>Work<br>From<br>Home</span></div>-->
             <div id="FigTitle"></div>
             <div class="mapCredit">
                 by <a href='https://www.leonardonicoletti.com/' style='text-decoration:underline; color:black' target='_blank'><b>LEONARDO NICOLETTI</b></a><br> and <a href='https://www.carolinecullinan.com/' style='text-decoration:underline; color:black' target='_blank'><b>CAROLINE CULLINAN</b></a>

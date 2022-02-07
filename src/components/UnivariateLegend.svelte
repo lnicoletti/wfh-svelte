@@ -81,7 +81,7 @@
         y={legendHeight*2}
         text-anchor=middle
         >
-        {colorVar==="income"?(data/1000).toFixed()+"k":i===0?"More Travel":i===numTicks-1?"Less Travel":""}
+        {colorVar==="income"?(data/1000).toFixed()+"k":i===0?"Less Travel":i===numTicks-1?"More Travel":""}
         </text>
 
         <!-- {data===min?"middle":data===2 * Math.floor(max/2)?"start":""} -->
