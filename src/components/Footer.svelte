@@ -1,11 +1,18 @@
 <script>
+import * as animateScroll from "svelte-scrollto";
+import {selectAll} from "d3";
 export let vizTheme;
 
+function revertFrameOne() {
+  animateScroll.scrollTo({element: '#start'})
+  selectAll(".laCircleUK").attr("opacity", 1).attr("fill", "#ccc")
+  selectAll(".laCircleUS").attr("opacity", 1).attr("fill", "#ccc")
+}
 </script>
 
 <div class="content">
     <div class="FigSubtitle">
-      All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for X nations.  Check out the results below.
+      All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for X nations.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
     </div>
     <br>
     <br>
@@ -38,6 +45,17 @@ export let vizTheme;
 body, main {
     background-color: #fffae7;
 }
+
+.scrollButton {
+      background-color: #fafafa;
+      /* width: 140px; */
+      height:30px;
+      color:black;
+      font-weight:500;
+      font-size: 12px;
+      text-transform: uppercase;
+      border-color: black
+  }
 
 .methodSection {
     font-family:'Lato', sans-serif;

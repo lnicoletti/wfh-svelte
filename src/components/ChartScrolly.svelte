@@ -348,7 +348,7 @@
                 .duration(800)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("opacity", 1)
+                // .attr("opacity", 1)
                 .attr("fill", d => d.category!=="#ccc"?incomeColor(d[xVar]):"#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -384,7 +384,7 @@
                 .duration(800)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("opacity", 1)
+                // .attr("opacity", 1)
                 .attr("fill", d => d.category!=="#ccc"?mobilityColor(d[yVar]):"#ccc")
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -420,7 +420,7 @@
                 .duration(800)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                .attr("opacity", 1)
+                // .attr("opacity", 1)
                 .attr("fill", d => d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -1760,7 +1760,7 @@
         } else if (innerWidth<550) {
           d3.selectAll(".chart").style("top", "200%")
         } else {
-          d3.selectAll(".chart").style("top", "2%")
+          d3.selectAll(".chart").style("top", "5%")
         }
 
         // legend interaction
@@ -2070,7 +2070,7 @@
     height: 400px; */
     /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
     position: sticky;
-    top: 2%;
+    top: 5vh;
     margin: auto;
     /* height: 100vh */
     /* bottom: 50%; */

@@ -45,7 +45,7 @@
         //   titleTyped=true
         // })
 
-        setTimeout(() => {typedSubtitle.go()}, 5300)
+        setTimeout(() => {typedSubtitle.go()}, 4500)
 
         setTimeout(() => {
           select(".mapCredit").transition().duration(1500).style("opacity", "1")
@@ -66,12 +66,12 @@
             </div>
           </div>
         </div>
-        <div class="FigSubtitle">
+        <div class="FigSubtitle" id="opener">
           The March 11, 2020 <a class="inTextLink" href="https://www.who.int/director-general/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020" target=__blank>official World Health Organization (WHO) announcement</a> declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.  While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.  <i>Who really benefits from this new WFH normal?</i>  In investigating this question, we turned to data provided by <a class="inTextLink" href="https://www.google.com/covid19/mobility/?hl=en" target=__blank>Google</a>, the <a class="inTextLink" href="https://www.census.gov/" target=__blank>US Census Bureau</a>, and the <a class="inTextLink" href="https://www.ons.gov.uk/" target=__blank>UK Office for National Statistics</a> regarding both mobility patterns and median household income in rural and urban areas for the United States (US) and United Kingdom (UK) over the course of the pandemic.<br><br>
 
           Diving into this investigation, we first asked ourselves, <i>“what constitutes each of these anglophone nations?”</i>
         </div>
-        <br><br>
+        <br>
         <!-- <details>
             <summary class="mapCredit" style="opacity:0.6">What does this visualization show?</summary>
         

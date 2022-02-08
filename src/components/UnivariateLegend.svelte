@@ -37,7 +37,7 @@
 <div class="legendContainer">
     <svg width={width} height={legendSvgHeight} display=block margin=auto > 
     <!-- transform={`translate(${margin.left}, 0)`} -->
-    <g transform={`translate(${0}, ${margin.top})`}>
+    <g transform={`translate(${margin.left}, ${margin.top})`}>
     {#each legendTicks as data, i}
         <rect
         transform={`translate(0,5)`}

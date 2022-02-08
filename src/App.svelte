@@ -8,6 +8,7 @@
 	import Chart from "./components/ChartScrolly.svelte";
 	import Footer from "./components/Footer.svelte";
   import Legend from "./components/Legend.svelte";
+  // import * as animateScroll from "svelte-scrollto";
   
 
 	let isLoading = true;
@@ -27,8 +28,9 @@
 	let colors = colorSchemes.get(vizTheme)
 
   let countryOptions = [
-		{ id: 1, value: `UK`, text: `United Kingdom`},
-		{ id: 2, value: `US`, text: `United States`}
+    { id: 0, value: null, text: `Select a country`},
+    { id: 1, value: `US`, text: `United States`},
+		{ id: 2, value: `UK`, text: `United Kingdom`}
 	];
 
   $: selectedCountry = countryOptions[0];
@@ -79,24 +81,27 @@ $: innerHeight = 0
 	<body>
 		<div class="content">
 			<Title {vizTheme}/>
-			<br>
       <!-- <Legend {colors}></Legend> -->
-      <!-- <div style="text-align:center" class="custom-select">
-        <span class="mapCredit">SELECT COUNTRY AND VIEW</span><br>
-        <select id="chartCountry" bind:value={selectedCountry}>
+      <div style="text-align:center" class="custom-select" id="start">
+        <span class="mapCredit">START BY SELECTING A COUNTRY</span><br>
+        <select id="chartCountry" class="animatedButton" bind:value={selectedCountry} on:click={() => 
+          selectedCountry.value!==null?document.getElementById('chartCountry').classList.remove('animatedButton'):
+          document.getElementById('chartCountry').classList.add('animatedButton')}>
           {#each countryOptions as option}
             <option value={option}>
               {option.text}
             </option>
           {/each}
         </select>
-        {#if selectedCountry.value==="UK"}
-        <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"UK"}/>
-        {:else if selectedCountry.value==="US"}
-        <Chart {colors} {hex_la} {ukUpd_tot} {ukUpd_time} {ukUrbRural} {uSuPd_tot} {hex_us} country={"US"}/>
-        {/if}
-        </div> -->
+        </div>
         <section>
+        {#if selectedCountry.value==="US"}
+        <Chart {colors} hexesClean = {data_US} country={"US"}/>
+        {:else if selectedCountry.value==="UK"}
+        <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
+        {/if}
+      </section>
+        <!-- <section>
           <Chart {colors} hexesClean = {data_US} country={"US"}/>
         </section>
         <section>
@@ -106,9 +111,24 @@ $: innerHeight = 0
         </section>
         <section>
           <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
+        </section> -->
+        <!-- <section>
+          <Chart {colors} hexesClean = {data_US} country={"US"}/>
         </section>
         <section>
-          <Footer {vizTheme}/>
+          <div class="FigSubtitle">
+            Done exploring the US?  You may be wondering how the UK compares.  Let's take a look.
+          </div>
+        </section>
+        <section>
+          <Chart {colors} hexesClean = {data_UK} country={"UK"}/>
+        </section> -->
+        <section>
+          {#if selectedCountry.value!==null}
+            <Footer {vizTheme}/>
+          {:else}
+            <div id="emptySpacer"></div>
+          {/if}
         </section>
 		</div>
 	</body>
@@ -317,6 +337,10 @@ font-family:'Roboto', sans-serif;
     /* align-items: center; */
 }
 
+#emptySpacer {
+  height: 80vh
+}
+
 .content {
     max-width: 840px; /* Can be in percentage also. */
     height: auto;
@@ -449,14 +473,38 @@ font-family:'Roboto', sans-serif;
 
   #chartView, #chartCountry {
       background-color: #fafafa;
-      width: 120px;
+      width: 160px;
       height:30px;
       color:black;
       font-weight:500;
       font-size: 12px;
       text-transform: uppercase;
-      border-color: black
-  }
+      border-color: black;
+      margin-top: 10px;
+    }
+
+    .animatedButton {
+      box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+      transform: scale(1);
+      animation: pulse 2s infinite;
+    }
+
+      @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+      }
+      
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+      }
+      
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+      }
+    }
 
   #chartView-selected {
     border-color: lightgrey
