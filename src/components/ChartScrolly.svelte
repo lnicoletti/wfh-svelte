@@ -449,6 +449,31 @@
                 valueUK = "E09000019"
                 valueUS = null
 
+                annotateScatter(normScaleXInc, 
+                                normScaleYMob, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar]+5.1, 
+                                svg, 
+                                hexesClean.filter(d=>d.key===valueUK)[0].n, 
+                                hexesClean.filter(d=>d.key===valueUK)[0][yVar], 
+                                hexesClean.filter(d=>d.key===valueUK)[0][xVar], 
+                                -43, 
+                                -100, 
+                                120)
+
+
+                // annotateBars(null, 
+                //     null, 
+                //     370, 
+                //     490, 
+                //     svg, 
+                //     hexesClean.filter(d=>d.key===valueUK)[0].n, 
+                //     200,
+                //     -100,
+                //     110)
+
+                                
+
                 circles
                 .transition()
                 .delay((d, i) => {
@@ -1146,7 +1171,21 @@
                 // d3.selectAll(".stateAbbrv").attr('visibility', 'visible')
 
                 valueUK = null
-                valueUS = "SpokaneCountyWashington"
+                valueUS = "NewYorkCountyNewYork"
+                GEOID = 36061
+
+                annotateScatter(projection, 
+                                projection, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].x, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].y, 
+                                svg, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName.split(",")[0].replace(" County", "")+","+hexesClean.filter(d=>d.GEOID===GEOID)[0].abbrv, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
+                                0, 
+                                40, 
+                                0,
+                                true)
 
                 circles
                 .transition()
@@ -1231,7 +1270,7 @@
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 svg, 
-                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName.split(",")[0].replace(" County", "")+","+hexesClean.filter(d=>d.GEOID===GEOID)[0].abbrv, 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar],
                                 0, 
@@ -1260,7 +1299,7 @@
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 svg, 
-                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName.split(",")[0].replace(" County", "")+","+hexesClean.filter(d=>d.GEOID===GEOID)[0].abbrv, 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar],
                                 0, 
@@ -1288,7 +1327,7 @@
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 svg, 
-                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName.split(",")[0].replace(" County", "")+","+hexesClean.filter(d=>d.GEOID===GEOID)[0].abbrv, 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
                                 0, 
@@ -1316,7 +1355,7 @@
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 svg, 
-                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOID)[0].fullName.split(",")[0].replace(" County", "")+","+hexesClean.filter(d=>d.GEOID===GEOID)[0].abbrv, 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][yVar], 
                                 hexesClean.filter(d=>d.GEOID===GEOID)[0][xVar], 
                                 0, 
@@ -1556,20 +1595,46 @@
                 // annotate: king county WA (53033), san diego county (6073), sf county (6075), la county (6037), harris county (48201), palm beach county (12099), kings county NY (36047)
                 // new york county (36061), suffolk county boston (25025), baltimore county (24005), cook county (17031), denver county (8031)
                 
-                GEOIDs = [53033, 6073, 6075, 6037, 48201, 12099, 36047, 36061, 25025, 24005, 17031, 8031]
+                GEOIDs = [{GEOID:53033, offset:0, yOffset:-40, xOffset:-20},
+                          {GEOID:6073, offset:0, yOffset:190, xOffset:0}, 
+                          {GEOID:6075, offset:0, yOffset:300, xOffset:0}, 
+                          {GEOID:6037, offset:0, yOffset:140, xOffset:40}, 
+                          {GEOID:48201, offset:0, yOffset:40, xOffset:50}, 
+                          {GEOID:12099, offset:0, yOffset:70, xOffset:0}, 
+                          {GEOID:36061, offset:0, yOffset:40, xOffset:0}, 
+                          {GEOID:25025, offset:0, yOffset:-90, xOffset:-10}, 
+                          {GEOID:24005, offset:0, yOffset:-115, xOffset:-40}, 
+                          {GEOID:17031, offset:0, yOffset:-110, xOffset:-20}, 
+                          {GEOID:8031, offset:0, yOffset:-160, xOffset:20}]
 
-                annotateScatter(projection, 
+                GEOIDs.forEach((c)=> {
+
+                  annotateScatter(projection, 
                                 projection, 
-                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].x, 
-                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].y, 
+                                hexesClean.filter(d=>d.GEOID===c.GEOID)[0].x, 
+                                hexesClean.filter(d=>d.GEOID===c.GEOID)[0].y, 
                                 svg, 
-                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].fullName, 
-                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0][yVar], 
-                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0][xVar], 
-                                0, 
-                                -40, 
-                                0,
+                                hexesClean.filter(d=>d.GEOID===c.GEOID)[0].fullName.split(",")[0].replace(" County", "")+","+hexesClean.filter(d=>d.GEOID===c.GEOID)[0].abbrv, 
+                                hexesClean.filter(d=>d.GEOID===c.GEOID)[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===c.GEOID)[0][xVar], 
+                                c.offset, 
+                                c.yOffset, 
+                                c.xOffset,
                                 true)
+                  
+                })
+                // annotateScatter(projection, 
+                //                 projection, 
+                //                 hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].x, 
+                //                 hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].y, 
+                //                 svg, 
+                //                 hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].fullName, 
+                //                 hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0][yVar], 
+                //                 hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0][xVar], 
+                //                 0, 
+                //                 -40, 
+                //                 0,
+                //                 true)
 
           } else if (country==="US" && hexmap && circles && annot && currentStep===13) {
 
