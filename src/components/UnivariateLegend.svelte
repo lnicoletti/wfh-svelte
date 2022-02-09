@@ -40,7 +40,7 @@
     <g transform={`translate(${margin.left}, ${margin.top})`}>
     {#each legendTicks as data, i}
         <rect
-        transform={`translate(0,5)`}
+        transform={`translate(0,7)`}
         width={legendTickWidth}
         height={legendHeight}
         fill={legendColor(data)}
@@ -51,7 +51,7 @@
         <!-- stroke="#4d004b"
         stroke-width=1.8px -->
         <line
-        transform={`translate(0,0)`}
+        transform={`translate(0,7)`}
         stroke="#fafafa"
         stroke-width=1
         x1={i*legendTickWidth}
@@ -74,7 +74,7 @@
         </text>
     {/each} -->
         <text
-        transform={`translate(10,0)`}
+        transform={`translate(10,2)`}
         class="legendTicks"
         id="legendLabel"
         x={i*legendTickWidth}
@@ -90,7 +90,7 @@
         <!-- data.toFixed()+"%" -->
     {/each}
     </g>
-    <g transform={`translate(${width/2}, 0)`}>
+    <g transform={`translate(${width/2}, 2)`}>
         <text
         class="legendTicks"
         x={0}
@@ -106,9 +106,11 @@
 <style>
 
 .legendTicks {
-        font-family: 'Source', sans-serif;
-        font-size: 8px;
-        font-weight: 700;
+        font-family: 'Roboto', sans-serif;
+        /* font-family: 'DotGothic16', sans-serif; */
+        /* font-size: 8px; */
+        font-size: calc(8px + 0.15vw);
+        font-weight: 400;
         fill: black;
 		text-transform: uppercase;
     }

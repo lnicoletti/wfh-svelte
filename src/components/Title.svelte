@@ -265,7 +265,7 @@ font-family:'Roboto', sans-serif;
     margin: 0 auto;
     padding: 10px;
     position: relative;
-    text-align: justify;
+    /* text-align: justify; */
 }
 
 .svg-container {

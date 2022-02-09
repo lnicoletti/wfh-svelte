@@ -74,9 +74,9 @@ $: innerHeight = 0
 
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight />
 <main>
-	{#if isLoading}
+	<!-- {#if isLoading}
 	<h2>Loading...</h2>
-	{:else }
+	{:else } -->
 	<!-- <h2>Data has been loaded!</h2> -->
 	<body>
 		<div class="content">
@@ -133,7 +133,7 @@ $: innerHeight = 0
         </section>
 		</div>
 	</body>
-	{/if}
+	<!-- {/if} -->
 </main>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -346,9 +346,9 @@ font-family:'Roboto', sans-serif;
     max-width: 840px; /* Can be in percentage also. */
     height: auto;
     margin: 0 auto;
-    padding: 10px;
+    /* padding: 10px; */
     position: relative;
-    text-align: justify;
+    /* text-align: justify; */
 }
 
 .svg-container {

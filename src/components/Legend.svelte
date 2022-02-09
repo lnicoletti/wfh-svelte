@@ -39,8 +39,8 @@ let labels = ["low", "medium", "high"]
           {/each}
           <line marker-end="url(#arrow)" x1=0 x2={n * k} y1={n * k} y2={n * k} stroke=#445312 stroke-width=1.5 />
           <line marker-end="url(#arrow)" y2=0 y1={n * k} stroke=#445312 stroke-width=1.5 />
-          <text fill=#445312 font-weight="bold" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{title[0]}</text>
-          <text fill=#445312 font-weight="bold" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{title[1]}</text>
+          <text class="legendTicks" dy="0.71em" transform="rotate(90) translate({n / 2 * k},6)" text-anchor="middle">{title[0]}</text>
+          <text class="legendTicks" dy="0.71em" transform="translate({n / 2 * k},{n * k + 6})" text-anchor="middle">{title[1]}</text>
       </g>
     </svg>
   </div>
@@ -66,6 +66,16 @@ let labels = ["low", "medium", "high"]
     /* max-width: 80vw;
     max-height:80vh; */
 }
+
+.legendTicks {
+        font-family: 'Roboto', sans-serif;
+        /* font-family: 'DotGothic16', sans-serif; */
+        /* font-size: 8px; */
+        font-size: calc(8px + 0.15vw);
+        font-weight: 400;
+        fill: black;
+		    text-transform: uppercase;
+    }
 
 .legendContainer {
     width:100px;
@@ -255,14 +265,12 @@ font-family:'Lato', sans-serif;
  transform: translate(100px, 0px);
 }
 
-.legend {
+/* .legend {
     font-family: 'Lato', sans-serif;
     font-weight: 600;
-    /* font-size: 9.5px; */
     font-size: calc(6px + 0.2vw);
     text-transform:uppercase;
-    /* transform: translate(30px, calc(100px + 5vw)) */
-}
+} */
 
 .titleContainer {
     /* max-width:850px; */

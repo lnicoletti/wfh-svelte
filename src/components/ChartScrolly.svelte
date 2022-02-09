@@ -1341,10 +1341,10 @@
                 
                 circles.filter(d=>d.category!=="#ccc")
                 .transition()
-                  .delay((d, i) => {
-                    return i * Math.random();
-                    })
-                  .duration(500)
+                  // .delay((d, i) => {
+                  //   return i * Math.random();
+                  //   })
+                .duration(500)
                 .ease(d3.easeLinear)
                 .attr("cx", d => normScaleXInc(d[xVar]))
                 .attr("cy", d=> normScaleYMob(d[yVar]))
@@ -1524,10 +1524,11 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random();
-                  })
-                .duration(700)
+                // .delay((d, i) => {
+                //   return i * Math.random();
+                //   })
+                .duration(300)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 .attr("opacity", d=>d.urbCategory==="Urban"?1:0.3)
@@ -1552,6 +1553,24 @@
                 comingFromMap = true
                 valueUS = null
 
+                // annotate: king county WA (53033), san diego county (6073), sf county (6075), la county (6037), harris county (48201), palm beach county (12099), kings county NY (36047)
+                // new york county (36061), suffolk county boston (25025), baltimore county (24005), cook county (17031), denver county (8031)
+                
+                GEOIDs = [53033, 6073, 6075, 6037, 48201, 12099, 36047, 36061, 25025, 24005, 17031, 8031]
+
+                annotateScatter(projection, 
+                                projection, 
+                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].x, 
+                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].y, 
+                                svg, 
+                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0].fullName, 
+                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0][yVar], 
+                                hexesClean.filter(d=>d.GEOID===GEOIDs[0])[0][xVar], 
+                                0, 
+                                -40, 
+                                0,
+                                true)
+
           } else if (country==="US" && hexmap && circles && annot && currentStep===13) {
 
                 // d3.select(".chart").style("position", "sticky")
@@ -1560,10 +1579,11 @@
 
                 circles
                 .transition()
-                .delay((d, i) => {
-                  return i * Math.random();
-                  })
-                .duration(700)
+                // .delay((d, i) => {
+                //   return i * Math.random();
+                //   })
+                .duration(300)
+                .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
                 // .attr("opacity",1)
@@ -1662,20 +1682,20 @@
             // .transition().duration(1000)
             // .attr("transform", `translate(${x.bandwidth()}, 0)`)
 
-            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
+            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 1)
             // d3.selectAll(".annotation-note-label")//.attr("fill", "#445312")
             // d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
         }
 
-        function annotateScatter(x, y, xValue, yValue, svg, area, mob, income, offset, yOffset, xOffset) {
+        function annotateScatter(x, y, xValue, yValue, svg, area, mob, income, offset, yOffset, xOffset, map=false) {
             // console.log(y)
             const type = annotationCalloutCircle
 
             const annotations = [{
             note: {
-                label: `Avg. Household income: ${(income/1000).toFixed()+"k"}, ${mob.toFixed()+"%"} in travel to workplaces`,
+                label: map===false?`Avg. Household income: ${(income/1000).toFixed()+"k"}, ${mob.toFixed()+"%"} in travel to workplaces`:area,
                 bgPadding: 10,
-                title: area
+                title: map===false?area:""
             },
             connector: {
               end: "dot",
@@ -1685,7 +1705,7 @@
             data: {xVar: xValue, yVar: yValue},
             className: "show-bg",
             subject: {
-              radius: country==="UK"?30:15,
+              radius: country==="UK"?30:map===true?7:15,
               radiusPadding: 5},
             dy: yOffset,
             dx: xOffset
@@ -1701,8 +1721,8 @@
             //accessors & accessorsInverse not needed
             //if using x, y in annotations JSON
             .accessors({
-                x: d => x(d.xVar)+offset,
-                y: d => y(d.yVar)
+                x: d => map===false?x(d.xVar)+offset:x([d.xVar, d.yVar])[0]+offset,
+                y: d => map===false?y(d.yVar):y([d.xVar, d.yVar])[1]
             })
             // .accessorsInverse({
             //     category: d => x.invert(d.x),
@@ -1720,6 +1740,7 @@
             d3.select(svg).append("g")
             .attr("class", "annotation-group")
             .style("font-size", "15px")
+            .attr("transform", map===true?`translate(${margin.left/2},0)`:`translate(0,0)`)
             // .append("text")
             // .attr("x", d=>x(d.category))
             // .attr("y", d=>y(d.row))
@@ -1728,7 +1749,7 @@
             // .transition().duration(1000)
             // .attr("transform", `translate(${x.bandwidth()}, 0)`)
 
-            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 0.6)
+            d3.selectAll(".annotation-group").attr("opacity", 0).transition().duration(1000).attr("opacity", 1)
             // d3.selectAll(".annotation-note-label").attr("fill", "#445312")
             // d3.selectAll(".annotation-connector path").attr("stroke", "#445312").attr("fill", "#445312")
         }
@@ -1893,6 +1914,7 @@
         $: valueUK = null;
         $: valueUS = null;
         $: GEOID = null
+        $: GEOIDs = null
 
         // setTimeout(() => {
         //   value = 'de';
@@ -1950,8 +1972,19 @@
 <div class="chartElements">
   <div class="legendContainer">
   {#if currentStep == 0}
-  <span class="frameTitle"></span>
-  <!-- <span class="frameTitle">A map of the U.S.</span> -->
+  <!-- <span class="frameTitle"></span> -->
+    <span class="frameTitle">A cartogram of the {country} (each </span> 
+    <svg width=10 height=10><circle r=5 fill="lightgrey" style="transform:translate(5px, 5px)"></circle></svg> <span class="frameTitle"> = 1 {country==="UK"?"local authority":"county"})</span> 
+  {:else if [5, 6, 7, 8, 9].includes(currentStep)}
+    <span class="frameTitle"><span class="richtheNytimes"> Wealthy {country==="UK"?"brits":"americans"}</span> work from home, while <span class="poortheNytimes"> poor {country==="UK"?"brits":"americans"}</span> commute</span> 
+  {:else if currentStep==10}
+    <span class="frameTitle">Work from home: a <span class="richtheNytimes">rich</span> vs. <span class="poortheNytimes">poor</span> issue</span>
+  {:else if [11,12].includes(currentStep)&&country=="US"}
+    <span class="frameTitle">Work from home: an <span class="richtheNytimes">urban</span> vs. <span class="poortheNytimes">rural</span> issue</span>
+  {:else if currentStep==11&&country=="UK"}
+    <span class="frameTitle">Work from home: not an <span class="richtheNytimes">urban</span> vs. <span class="poortheNytimes">rural</span> issue...</span>
+  {:else if [12,13].includes(currentStep)&&country=="UK"}
+    <span class="frameTitle">...but a <span class="richtheNytimes">london</span> vs. <span class="poortheNytimes">the rest</span> issue</span>
   {:else if currentStep == 1}
     <UnivariateLegend {width} country={country} {hexesClean} colorVar={"income"} numTicks={6}/>
   {:else if currentStep == 2}
@@ -2090,6 +2123,18 @@
     height: 40vh;
   }
 
+  .richtheNytimes {
+    background-color:#449d57;
+    font-weight:900;
+    color:#fafafa
+  }
+
+  .poortheNytimes {
+    background-color:#c17036;
+    font-weight:900;
+    color:#fafafa
+  }
+
 /* .sv-control {
   width:20vw;
 } */
@@ -2213,15 +2258,16 @@ body, main {
     font-family:'Roboto', sans-serif;
     /* font-size: 10px; */
     /* font-size:11px; */
-		fill: #445312;
+		/* fill: #445312; */
+    fill: black;
     font-weight: 700;
     text-transform: uppercase
 	}
 
-  .axisText {
+  /* .axisText {
     background: #445312;
     color: #fafafa;
-  }
+  } */
 
 
 .legendTitle {
@@ -2229,7 +2275,9 @@ body, main {
   font-size: 10px;
   font-weight: 200;
   text-transform: None;
-  fill: #445312;
+  /* fill: #445312; */
+  fill: black;
+
 }
 
 .regionAnnot {
@@ -2384,9 +2432,9 @@ font-family:'Roboto', sans-serif;
     max-width: 840px; /* Can be in percentage also. */
     height: auto;
     margin: 0 auto;
-    padding: 10px;
+    /* padding: 10px; */
     position: relative;
-    text-align: justify;
+    /* text-align: justify; */
 }
 
 .svg-container {
@@ -2427,7 +2475,7 @@ font-family:'Roboto', sans-serif;
 
   .frameTitle {
     font-family: 'DotGothic16', sans-serif;
-    font-size: calc(10px + 1.2vw);
+    font-size: calc(8px + 1.2vw);
     font-weight: 500;
     /* height:53px;
     vertical-align:text-bottom; */
