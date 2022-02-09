@@ -82,11 +82,12 @@ $: innerHeight = 0
 		<div class="content">
 			<Title {vizTheme}/>
       <!-- <Legend {colors}></Legend> -->
+      <!-- selectedCountry.value!==null?document.getElementById('chartCountry').classList.remove('animatedButton'):
+      document.getElementById('chartCountry').classList.add('animatedButton') -->
       <div style="text-align:center" class="custom-select" id="start">
         <span class="mapCredit">START BY SELECTING A COUNTRY</span><br>
         <select id="chartCountry" class="animatedButton" bind:value={selectedCountry} on:click={() => 
-          selectedCountry.value!==null?document.getElementById('chartCountry').classList.remove('animatedButton'):
-          document.getElementById('chartCountry').classList.add('animatedButton')}>
+          document.getElementById('chartCountry').classList.remove('animatedButton')}>
           {#each countryOptions as option}
             <option value={option}>
               {option.text}
@@ -338,7 +339,7 @@ font-family:'Roboto', sans-serif;
 }
 
 #emptySpacer {
-  height: 80vh
+  height: 85vh
 }
 
 .content {

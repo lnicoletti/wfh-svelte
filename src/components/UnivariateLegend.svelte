@@ -115,7 +115,7 @@
 
     .legendContainer {
     width:240px;
-    height:100px;
+    /* height:100px; */
     margin:auto;
 }
 

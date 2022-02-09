@@ -1747,20 +1747,38 @@
           // annot.attr('font-size', fontSize*2)
         }
 
-        $: if (innerWidth<850) {
-          d3.selectAll(".chart").style("top", "15%")
-        } else if (innerWidth<820) {
-          d3.selectAll(".chart").style("top", "30%")
-        } else if (innerWidth<750) {
-          d3.selectAll(".chart").style("top", "40%")
-        } else if (innerWidth<700) {
-          d3.selectAll(".chart").style("top", "60%")
-        } else if (innerWidth<650) {
-          d3.selectAll(".chart").style("top", "100%")
-        } else if (innerWidth<550) {
-          d3.selectAll(".chart").style("top", "200%")
+        // $: if (innerWidth<850) {
+        //   d3.selectAll(".chart").style("top", "15%")
+        // } else if (innerWidth<820) {
+        //   d3.selectAll(".chart").style("top", "30%")
+        // } else if (innerWidth<750) {
+        //   d3.selectAll(".chart").style("top", "40%")
+        // } else if (innerWidth<700) {
+        //   d3.selectAll(".chart").style("top", "60%")
+        // } else if (innerWidth<650) {
+        //   d3.selectAll(".chart").style("top", "100%")
+        // } else if (innerWidth<550) {
+        //   d3.selectAll(".chart").style("top", "200%")
+        // } else {
+        //   d3.selectAll(".chart").style("top", "5%")
+        // }
+
+        $: widthHeightRatio = innerWidth/innerHeight*100
+
+        $: if (innerWidth<innerHeight) {
+          d3.selectAll(".chart").style("top", `30%`)
+        // } else if (innerWidth<820) {
+        //   d3.selectAll(".chart").style("top", "30%")
+        // } else if (innerWidth<750) {
+        //   d3.selectAll(".chart").style("top", "40%")
+        // } else if (innerWidth<700) {
+        //   d3.selectAll(".chart").style("top", "60%")
+        // } else if (innerWidth<650) {
+        //   d3.selectAll(".chart").style("top", "100%")
+        // } else if (innerWidth<550) {
+        //   d3.selectAll(".chart").style("top", "200%")
         } else {
-          d3.selectAll(".chart").style("top", "5%")
+          d3.selectAll(".chart").style("top", "5vh")
         }
 
         // legend interaction
@@ -1929,92 +1947,98 @@
 {/if} -->
 
 <!-- legends and axes -->
-<div class="legendContainer">
-{#if currentStep == 0}
-<span class="frameTitle"></span>
-<!-- <span class="frameTitle">A map of the U.S.</span> -->
-{:else if currentStep == 1}
-  <UnivariateLegend {width} country={country} {hexesClean} colorVar={"income"} numTicks={6}/>
-{:else if currentStep == 2}
-  <UnivariateLegend {width} country={country} {hexesClean} colorVar={"mobility"} numTicks={6}/>
-{:else if currentStep == 3}
-  <Legend {colors} {country}></Legend>
-{:else if country==="UK" && currentStep===14}
-  <Svelecte {options} 
-    inputId="areaSelUK"
-    bind:readSelection={selectionUK}
-    bind:value={valueUK}
-    placeholder={country==="UK"?"Select a local authority":"Select a county"}
-  ></Svelecte>
-  {:else if country === "US"&& currentStep===13}
-  <Svelecte {options} 
-    inputId="areaSelUS"
-    bind:readSelection={selectionUK}
-    bind:value={valueUS}
-    placeholder={country==="UK"?"Select a local authority":"Select a county"}
-  ></Svelecte>
-  {/if}
-</div>
-<svg viewBox="0 0 800 600" bind:this={svg}>
-{#if currentStep==5||currentStep==6||currentStep==7||currentStep==8||currentStep==9}
-  <!-- y axis -->
-  <g class='axis y-axis'>
-    {#each yTicksMob as tick}
-      <g class='tick tick-{tick}' transform='translate(0, {normScaleYMob(tick)})'>
-        <line x1='{margin.left}' x2='{width-margin.right}'/>
-        <text x='{margin.left - 8}' y='+4' font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>{tick}</text>
-      </g>
-    {/each}
-  </g>
-  <g class='axisTitle' text-anchor=start transform='translate(0, {country==="UK"?normScaleYMob(-12):normScaleYMob(1)})'>
-    <text x={margin.left} y="+0" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>AVERAGE CHANGE IN PEOPLE GOING TO WORKPLACES SINCE FEB. 2020 (%)</text>
-  </g>
-  <!-- x axis -->
-  <g class='axis x-axis'>
-    {#each xTicksIncome as tick}
-      <g class='tick' transform='translate({normScaleXInc(tick)},0)'>
-        <line y1='{normScaleYMob(0)}' y2='{normScaleYMob(d3.min(yTicksMob))}'/>
-        <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>{tick}</text>
-      </g>
-    {/each}
-  </g>
-  <g class='axisTitle' text-anchor=end transform='translate({country==="UK"?normScaleXInc(65000):normScaleXInc(140000)}, {height - margin.bottom})'>
-    <text x={0} y="+35" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>MEDIAN HOUSEHOLD INCOME</text>
-  </g>
-  {:else if currentStep==10}
-  <g class='axis x-axis'>
-    {#each categoriesX as tick, i}
-      <g class='axisTitle' transform='translate({normScaleCatX(tick)+margin.left/4},{0})' text-anchor=middle>
-        {#each categoryLabels[i].split(",") as words, m}
-          <text 
-          y='{height - margin.bottom + 20}' 
-          font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}
-          transform="translate(0, {(m-1)*12})"
-          >{words}</text>
-        {/each}
-      </g>
-    {/each}
-  </g>
-  {:else if currentStep==11}
-  <g class='axis x-axis'>
-    {#each urbCategoryLabels as tick}
-      <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
-        <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{tick}</text>
-      </g>
-    {/each}
-  </g>
-  {:else if currentStep==12 && country==="UK"}
-  <g class='axis x-axis'>
-    {#each leCatX as tick, i}
-      <g class='axisTitle' transform='translate({normScaleCatXLe(tick)+margin.left+10},{0})' text-anchor=middle>
-        <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{leCatLabels[i]}</text>
-      </g>
-    {/each}
-  </g>
-  <!-- {:else if currentStep == 1}
-  <UnivariateLegend {width} country={"UK"} {hexesClean} colorVar={"income"}/> -->
-  {/if}
-</svg>
+<div class="chartElements">
+  <div class="legendContainer">
+  {#if currentStep == 0}
+  <span class="frameTitle"></span>
+  <!-- <span class="frameTitle">A map of the U.S.</span> -->
+  {:else if currentStep == 1}
+    <UnivariateLegend {width} country={country} {hexesClean} colorVar={"income"} numTicks={6}/>
+  {:else if currentStep == 2}
+    <UnivariateLegend {width} country={country} {hexesClean} colorVar={"mobility"} numTicks={6}/>
+  {:else if currentStep == 3}
+    <Legend {colors} {country}></Legend>
+  {:else if country==="UK" && currentStep===14}
+    <div class="searchDropdown">
+      <Svelecte {options} 
+        inputId="areaSelUK"
+        bind:readSelection={selectionUK}
+        bind:value={valueUK}
+        placeholder={country==="UK"?"Select a local authority":"Select a county"}
+      ></Svelecte>
+    </div>
+    {:else if country === "US"&& currentStep===13}
+    <div class="searchDropdown">
+      <Svelecte {options} 
+        inputId="areaSelUS"
+        bind:readSelection={selectionUK}
+        bind:value={valueUS}
+        placeholder={country==="UK"?"Select a local authority":"Select a county"}
+      ></Svelecte>
+    </div>
+    {/if}
+  </div>
+  <svg viewBox="0 0 800 600" bind:this={svg}>
+  {#if currentStep==5||currentStep==6||currentStep==7||currentStep==8||currentStep==9}
+    <!-- y axis -->
+    <g class='axis y-axis'>
+      {#each yTicksMob as tick}
+        <g class='tick tick-{tick}' transform='translate(0, {normScaleYMob(tick)})'>
+          <line x1='{margin.left}' x2='{width-margin.right}'/>
+          <text x='{margin.left - 8}' y='+4' font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>{tick}</text>
+        </g>
+      {/each}
+    </g>
+    <g class='axisTitle' text-anchor=start transform='translate(0, {country==="UK"?normScaleYMob(-12):normScaleYMob(1)})'>
+      <text x={margin.left} y="+0" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>AVERAGE CHANGE IN PEOPLE GOING TO WORKPLACES SINCE FEB. 2020 (%)</text>
+    </g>
+    <!-- x axis -->
+    <g class='axis x-axis'>
+      {#each xTicksIncome as tick}
+        <g class='tick' transform='translate({normScaleXInc(tick)},0)'>
+          <line y1='{normScaleYMob(0)}' y2='{normScaleYMob(d3.min(yTicksMob))}'/>
+          <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>{tick}</text>
+        </g>
+      {/each}
+    </g>
+    <g class='axisTitle' text-anchor=end transform='translate({country==="UK"?normScaleXInc(65000):normScaleXInc(140000)}, {height - margin.bottom})'>
+      <text x={0} y="+35" font-size={innerWidth>650?"12px":innerWidth<550? "18px":innerWidth<500? "22px" :"12px"}>MEDIAN HOUSEHOLD INCOME</text>
+    </g>
+    {:else if currentStep==10}
+    <g class='axis x-axis'>
+      {#each categoriesX as tick, i}
+        <g class='axisTitle' transform='translate({normScaleCatX(tick)+margin.left/4},{0})' text-anchor=middle>
+          {#each categoryLabels[i].split(",") as words, m}
+            <text 
+            y='{height - margin.bottom + 20}' 
+            font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}
+            transform="translate(0, {(m-1)*12})"
+            >{words}</text>
+          {/each}
+        </g>
+      {/each}
+    </g>
+    {:else if currentStep==11}
+    <g class='axis x-axis'>
+      {#each urbCategoryLabels as tick}
+        <g class='axisTitle' transform='translate({normScaleCatXUrb(tick)+margin.left+10},{0})' text-anchor=middle>
+          <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{tick}</text>
+        </g>
+      {/each}
+    </g>
+    {:else if currentStep==12 && country==="UK"}
+    <g class='axis x-axis'>
+      {#each leCatX as tick, i}
+        <g class='axisTitle' transform='translate({normScaleCatXLe(tick)+margin.left+10},{0})' text-anchor=middle>
+          <text y='{height - margin.bottom + 16}' font-size={innerWidth>650?"10px":innerWidth<550? "10px":innerWidth<500? "12px" :"10px"}>{leCatLabels[i]}</text>
+        </g>
+      {/each}
+    </g>
+    <!-- {:else if currentStep == 1}
+    <UnivariateLegend {width} country={"UK"} {hexesClean} colorVar={"income"}/> -->
+    {/if}
+  </svg>
+  </div>
 </div>
 <Scroll bind:value={currentStep}>
   {#each steps as text, i}
@@ -2050,19 +2074,25 @@
 }
 
 .legendContainer {
-    width:400px;
+    /* width:100vw; */
     height:45px;
     margin:auto;
     text-align: center;
+}
+
+.searchDropdown {
+  max-width: 250px;
+  text-align: center;
+  margin:auto;
 }
 
 .spacer {
     height: 40vh;
   }
 
-.sv-control {
+/* .sv-control {
   width:20vw;
-}
+} */
 
 .chart {
     /* background: whitesmoke; */
@@ -2072,9 +2102,17 @@
     position: sticky;
     top: 5vh;
     margin: auto;
+    height:100%
+    /* display:table; */
+    /* position: relative; */
     /* height: 100vh */
     /* bottom: 50%; */
   }
+
+  /* .titleElements {
+    display:table-cell;
+    vertical-align:middle
+  } */
 
   /* Scrollytelling CSS */
   .step {
@@ -2103,6 +2141,10 @@
     background: rgb(255, 255, 255, 0.9);
     color: black;
   }
+
+  /* input {
+    max-width: 100px
+  } */
 
   /* SCROLLY END */
 
