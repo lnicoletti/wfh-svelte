@@ -11,11 +11,11 @@ function revertFrameOne() {
 </script>
 
 <div class="content">
-    <div class="FigSubtitle">
+    <!-- <div class="FigSubtitle">
       All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for X nations.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
     </div>
     <br>
-    <br>
+    <br> -->
     <details>
         <summary class="mapCredit" style="opacity:0.6">Learn more about how these visual was created</summary>
     

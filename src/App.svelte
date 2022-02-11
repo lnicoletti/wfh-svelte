@@ -8,6 +8,9 @@
 	import Chart from "./components/ChartScrolly.svelte";
 	import Footer from "./components/Footer.svelte";
   import Legend from "./components/Legend.svelte";
+  import CountryScatter from "./components/CountryScatter.svelte";
+
+  import {onlyUnique} from "./utils.js"
   // import * as animateScroll from "svelte-scrollto";
   
 
@@ -16,6 +19,8 @@
 	// initialize data variables
 	let data_UK = []
 	let data_US = []
+  let data_sm = []
+  let nations = []
 
 	// color scheme
 	const vizTheme = "theNytimes"
@@ -53,16 +58,20 @@
           // commuter belt
           // csv("https://gist.githubusercontent.com/lnicoletti/8e926944a492e859ce8e2c3fe49b0311/raw/53d81aa1242db88f8e9f5bbf3f0049d6ab292dfc/hexes_clean_UK_le.csv", autoType),
           csv("https://gist.githubusercontent.com/lnicoletti/c40cd3aafeeb56d6429692246650fe0c/raw/c7f118a6830a865c4a356ee256d67ee36548fffe/hexes_clean_UK_luz.csv", autoType),
-          csv("https://gist.githubusercontent.com/lnicoletti/206902d2e08bad7328ece8faee6921a1/raw/0945b85f8360e298bfdb277eb9169e559c6a3957/hexes_clean_US.csv", autoType)
+          csv("https://gist.githubusercontent.com/lnicoletti/206902d2e08bad7328ece8faee6921a1/raw/0945b85f8360e298bfdb277eb9169e559c6a3957/hexes_clean_US.csv", autoType),
+          csv("https://gist.githubusercontent.com/lnicoletti/4d96325e679440d9cb9ab13c5882af59/raw/6ae07d6919b5a42d1f882e1340b9ded21c7e67fa/countries_sm.csv", autoType)
 					])
 					.then((datasets)=>{
 						data_UK = datasets[0]
 						data_US = datasets[1]
+            data_sm = datasets[2]
 					})
 		isLoading = !isLoading;
 	})
+  
+$: nations = data_sm.map(d=>d.country).filter(onlyUnique)
 
-
+$: console.log("small multiple", nations)
 // resize view reactivity
 $: view = "horizontal"
 $: outerWidth = 0
@@ -126,11 +135,34 @@ $: innerHeight = 0
         </section> -->
         <section>
           {#if selectedCountry.value!==null}
+            <br>
+            <br>  
+            <div class="FigSubtitle">
+              All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for X nations.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <Legend {colors}></Legend>
+            <div class="smChart">
+              {#each nations as nation, i}
+                <CountryScatter {data_sm} {nation} {colors}/>
+              {/each}
+            </div>
             <Footer {vizTheme}/>
           {:else}
             <div id="emptySpacer"></div>
           {/if}
         </section>
+        <!-- <section>
+          <Legend {colors}></Legend>
+          <div class="smChart">
+            {#each nations as nation, i}
+              <CountryScatter {data_sm} {nation} {colors}/>
+            {/each}
+          </div>
+        </section> -->
 		</div>
 	</body>
 	<!-- {/if} -->
@@ -182,7 +214,11 @@ body, main {
     background-color: #fafafa;
 }
 
-
+.smChart {
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
 .legendTitle {
   font-family:'Roboto', sans-serif;
   font-size: 10px;
