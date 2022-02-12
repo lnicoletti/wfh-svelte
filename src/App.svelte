@@ -40,6 +40,13 @@
 
   $: selectedCountry = countryOptions[0];
 
+  
+  function revertFrameOne() {
+    animateScroll.scrollTo({element: '#start'})
+    selectAll(".laCircleUK").attr("opacity", 1).attr("fill", "#ccc")
+    selectAll(".laCircleUS").attr("opacity", 1).attr("fill", "#ccc")
+  }
+
 	onMount( async () => {
 		await Promise.all([
 					// uk base data
@@ -191,6 +198,18 @@ $: innerHeight = 0
 			max-width: none;
 		}
 	} */
+
+  .scrollButton {
+      background-color: #fafafa;
+      /* width: 140px; */
+      height:30px;
+      color:black;
+      font-weight:500;
+      font-size: 12px;
+      text-transform: uppercase;
+      border-color: black;
+      cursor: pointer;
+  }
 
 	@font-face {
     font-family: 'Roboto', sans-serif;

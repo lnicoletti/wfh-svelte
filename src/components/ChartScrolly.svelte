@@ -1864,7 +1864,7 @@
         // } else if (innerWidth<550) {
         //   d3.selectAll(".chart").style("top", "200%")
         } else {
-          d3.selectAll(".chart").style("top", "5vh")
+          d3.selectAll(".chart").style("top", "2vh")
         }
 
         // legend interaction
@@ -2210,7 +2210,7 @@
     height: 400px; */
     /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
     position: sticky;
-    top: 5vh;
+    top: 2vh;
     margin: auto;
     height:100%
     /* display:table; */
