@@ -2,6 +2,7 @@
 	import {csv, json, merge, autoType} from "d3"
 	import { onMount } from "svelte";
 	import Title from "./components/Title.svelte";
+  import * as animateScroll from "svelte-scrollto";
   // button
   // import Chart from "./components/Chart.svelte";
   // scrolly
@@ -9,6 +10,7 @@
 	import Footer from "./components/Footer.svelte";
   import Legend from "./components/Legend.svelte";
   import CountryScatter from "./components/CountryScatter.svelte";
+  
 
   import {onlyUnique} from "./utils.js"
   // import * as animateScroll from "svelte-scrollto";
