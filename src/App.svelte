@@ -68,7 +68,8 @@
           // csv("https://gist.githubusercontent.com/lnicoletti/8e926944a492e859ce8e2c3fe49b0311/raw/53d81aa1242db88f8e9f5bbf3f0049d6ab292dfc/hexes_clean_UK_le.csv", autoType),
           csv("https://gist.githubusercontent.com/lnicoletti/c40cd3aafeeb56d6429692246650fe0c/raw/c7f118a6830a865c4a356ee256d67ee36548fffe/hexes_clean_UK_luz.csv", autoType),
           csv("https://gist.githubusercontent.com/lnicoletti/206902d2e08bad7328ece8faee6921a1/raw/0945b85f8360e298bfdb277eb9169e559c6a3957/hexes_clean_US.csv", autoType),
-          csv("https://gist.githubusercontent.com/lnicoletti/4d96325e679440d9cb9ab13c5882af59/raw/6ae07d6919b5a42d1f882e1340b9ded21c7e67fa/countries_sm.csv", autoType)
+          csv("https://gist.githubusercontent.com/lnicoletti/069a1138bf9f4c1953344f017c79c5d4/raw/0ebd8bb5cc45ca8de506adb3b020b4c01a57c9bc/countries_sm_12.csv", autoType)
+          // csv("https://gist.githubusercontent.com/lnicoletti/4d96325e679440d9cb9ab13c5882af59/raw/6ae07d6919b5a42d1f882e1340b9ded21c7e67fa/countries_sm.csv", autoType)
 					])
 					.then((datasets)=>{
 						data_UK = datasets[0]
