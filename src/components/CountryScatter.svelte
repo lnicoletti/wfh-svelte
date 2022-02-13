@@ -99,7 +99,7 @@
         {/each}
       </g>
       <g class='axisTitle' text-anchor=end transform='translate({xScale(extentX[1])}, {height - margin.bottom})'>
-        <text x={0} y="+35" font-size={"12px"}>{nation==="Sweden"?"MED. HOUSEHOLD INCOME (USD)":""}</text>
+        <text x={0} y="+35" font-size={"12px"}>{nation==="Portugal"?"MED. HOUSEHOLD INCOME (USD)":""}</text>
       </g>
     <g>
     {#each data as d, i}
