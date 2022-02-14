@@ -1,6 +1,7 @@
 <script>
     import * as d3 from "d3";
-    import { extent } from "d3";``
+    import { extent } from "d3";
+    import { regressionLinear } from 'd3-regression';
     export let data_sm;
     export let nation;
     export let colors;
@@ -54,6 +55,15 @@
     $: yScale = d3.scaleLinear()
                         .domain(extentY)
                         .range([height - margin.bottom, margin.top]).nice()
+
+
+    let linearRegression = regressionLinear()
+                .x(d => d.income)
+                .y(d => d.mobilityWork)
+                // .domain([-1.7, 16]);
+
+    $: regData = linearRegression(data)
+    $: console.log("reg data", regData)
 
     $: xTicksIncome = d3.range(extentX[0], extentX[1], intervalX);
     $: yTicksMob = d3.range(extentY[0], extentY[1], intervalY);
@@ -110,12 +120,30 @@
     fill={colorBivar([d.mobilityWork, d.income])}
     stroke="#fafafa"
     stroke-width=0.1
+    opacity=0.8
     ></circle>
     {/each}
+    </g>
+    <g>
+        <line
+        class="regression"
+        x1= {xScale(regData[0][0])}
+        x2= {xScale(regData[1][0])}
+        y1= {yScale(regData[0][1])}
+        y2= {yScale(regData[1][1])}
+        >
+        </line>
     </g>
 </svg>
 
 <style>
+
+.regression {
+    stroke:#445312;
+    opacity: 0.5;
+    stroke-width:1.5;
+    stroke-dasharray: 3;
+}
 .smScatterChild {
   flex: 1 0 25%;
   margin: 5px;

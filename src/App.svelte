@@ -1,5 +1,5 @@
 <script>
-	import {csv, json, merge, autoType} from "d3"
+	import {csv, json, merge, autoType, selectAll} from "d3"
 	import { onMount } from "svelte";
 	import Title from "./components/Title.svelte";
   import * as animateScroll from "svelte-scrollto";
@@ -45,8 +45,14 @@
   
   function revertFrameOne() {
     animateScroll.scrollTo({element: '#start'})
-    selectAll(".laCircleUK").attr("opacity", 1).attr("fill", "#ccc")
-    selectAll(".laCircleUS").attr("opacity", 1).attr("fill", "#ccc")
+    // selectAll(".laCircleUK").attr("opacity", 1).attr("fill", "#ccc")
+    // selectAll(".laCircleUS").attr("opacity", 1).attr("fill", "#ccc")
+    // selectAll(".mainChart").remove()
+    setTimeout(() => {
+      selectedCountry = countryOptions[0]
+      document.getElementById('chartCountry').classList.add('animatedButton')
+    }, 1000)
+    
   }
 
 	onMount( async () => {
@@ -148,7 +154,7 @@ $: innerHeight = 0
             <br>
             <br>  
             <div class="FigSubtitle">
-              All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for X nations.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
+              All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for {nations.length-2} other countries.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
             </div>
             <br>
             <br>
