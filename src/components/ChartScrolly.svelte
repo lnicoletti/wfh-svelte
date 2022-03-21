@@ -999,6 +999,18 @@
                 .attr("transform", country==="UK"&&[0,1,2,3,4,13,14].includes(currentStep)?`translate(${margin.left*2},0)`:
                                       country==="US"&&currentStep===0?`translate(${margin.left},0)`:`translate(0,0)`)
 
+                circles
+                .on("mouseover", (event, d)=> {
+                  console.log(d.key)
+                  valueUK = d.key
+                })
+                // .on("mousemove", (event, d)=> {
+                //   valueUK = d.key
+                // })
+                .on("mouseleave", (event, d)=> {
+                  valueUK = null
+                })
+
                 annot
                 .transition()
                 .delay((d, i) => {
@@ -1010,6 +1022,18 @@
                 // .attr("opacity", 1)
                 // .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
                 .attr("transform",[0,1,2,3,4,13,14].includes(currentStep)?`translate(${margin.left*2},0)`:`translate(0,0)`)
+
+                annot
+                .on("mouseover", (event, d)=> {
+                  console.log(d.key)
+                  valueUK = d.key
+                })
+                // .on("mousemove", (event, d)=> {
+                //   valueUK = d.key
+                // })
+                .on("mouseleave", (event, d)=> {
+                  valueUK = null
+                })
 
                 firstStep=false
                 comingFromMap = true
@@ -1657,6 +1681,17 @@
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
                 .attr("transform", [0,1,2,3,12,13].includes(currentStep)?`translate(${margin.left/2},0)`:`translate(0,0)`)
 
+                circles
+                .on("mouseover", (event, d)=> {
+                  console.log(d.fullName.replaceAll(",", "").replaceAll(" ", ""))
+                  valueUS = d.fullName.replaceAll(",", "").replaceAll(" ", "")
+                })
+                // .on("mousemove", (event, d)=> {
+                //   valueUK = d.key
+                // })
+                .on("mouseleave", (event, d)=> {
+                  valueUS = null
+                })
                 // annot
                 // .transition()
                 // .delay((d, i) => {
@@ -2223,6 +2258,11 @@
     display:table-cell;
     vertical-align:middle
   } */
+
+  .chartElements {
+    z-index: -1;
+    position: relative;
+  }
 
   /* Scrollytelling CSS */
   .step {

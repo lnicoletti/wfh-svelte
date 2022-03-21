@@ -154,7 +154,9 @@ $: innerHeight = 0
             <br>
             <br>  
             <div class="FigSubtitle">
-              All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.  But what about your country?  How does it compare?  We also analyzed data for {nations.length-2} other countries.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
+              All in all, regardless of whether you live in the US or UK, one thing seems to be for sure: residing in an economic center of one of these nations has its benefits.<br><br>
+              <i>But what about your country?  How does it compare?</i><br><br>
+              We also analyzed data for {nations.length-2} other countries.  Click <button class="scrollButton" on:click={() => revertFrameOne()}>here</button> to take a dive into another country, or check out the results for all other countries below.
             </div>
             <br>
             <br>
@@ -434,7 +436,8 @@ font-family:'Roboto', sans-serif;
 
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
-    font-size: calc(6px + 0.4vw);
+    /* font-size: calc(7px + 0.4vw); */
+    font-size: calc(14px - 0.15vw);
     text-align: center;
     /* transform: translate(10px,93px) */
     /* transform: translate(10px, calc(35px + 3.5vw)) */
@@ -467,6 +470,9 @@ font-family:'Roboto', sans-serif;
     font-size: calc(18px - 0.2vw);
     font-weight: 400;
     text-transform: None;
+    max-width: 400px;
+    margin-left:auto;
+    margin-right:auto
   }
 
   .richoriginal {

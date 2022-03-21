@@ -49,7 +49,7 @@
 
         setTimeout(() => {
           select(".mapCredit").transition().duration(1500).style("opacity", "1")
-        }, 14000);
+        }, 13000);
         
     });
 
@@ -67,7 +67,10 @@
           </div>
         </div>
         <div class="FigSubtitle" id="opener">
-          The March 11, 2020 <a class="inTextLink" href="https://www.who.int/director-general/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020" target=__blank>official World Health Organization (WHO) announcement</a> declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.  While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.  <i>Who really benefits from this new WFH normal?</i>  In investigating this question, we turned to data provided by <a class="inTextLink" href="https://www.google.com/covid19/mobility/?hl=en" target=__blank>Google</a> and open government portals (see the methods section for a complete list) regarding both mobility patterns and median household income within the administrative units of 12 countries: the United Kingdom, the United States, Italy, Spain, Portugal, France, Denmark, the Netherlands, Sweden, Norway, Canada and Australia.<br><br>
+          <span class="firstcharacter">T</span>he March 11, 2020 <a class="inTextLink" href="https://www.who.int/director-general/speeches/detail/who-director-general-s-opening-remarks-at-the-media-briefing-on-covid-19---11-march-2020" target=__blank>official World Health Organization (WHO) announcement</a> declaring the COVID-19 outbreak as a global pandemic fundamentally changed societies everywhere.  With government implemented mask mandates and social distancing practices, we no longer work nor play the same as before.  In order to comply with government regulations and craft a more pleasant “new normal”, many employers have adopted a “Work from Home” (WFH) lifestyle.<br><br>  
+          While WFH has been touted as the be-all and end-all of office productivity while simultaneously providing employees with more flexible work hours and improved overall wellbeing, not everyone has been able to benefit from the shift in work culture.<br><br>
+           <i>But... who really benefits from this new WFH normal?</i><br><br>
+          In investigating this question, we turned to data provided by <a class="inTextLink" href="https://www.google.com/covid19/mobility/?hl=en" target=__blank>Google</a> and open government portals (see the methods section for a complete list) regarding both mobility patterns and median household income within the administrative units of 12 countries: the United Kingdom, the United States, Italy, Spain, Portugal, France, Denmark, the Netherlands, Sweden, Norway, Canada and Australia.<br><br>
 
           For two of those countries, the United States (US) and United Kingdom (UK), we took a deeper dive into the social and spatial disparities that have emerged over the course of the pandemic. We first asked ourselves, <i>“what constitutes each of these anglophone nations?”</i>
         </div>
@@ -149,6 +152,17 @@ font-family:'Roboto', sans-serif;
   text-transform: capitalize;
 }
 
+.firstcharacter {
+  /* color: #903; */
+  float: left;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
+  font-size: calc(90px - 0.15vw);
+  line-height: 60px;
+  padding-top: calc(10px - 0.05vw);
+  padding-right: 8px;
+  padding-left: 3px;
+}
 .AxisLAN{
   font-family:'Roboto', sans-serif;
   font-size:10px;
@@ -287,8 +301,9 @@ font-family:'Roboto', sans-serif;
 
     /* font-family: 'Roboto', sans-serif; */
     font-family: 'DotGothic16', sans-serif;
-    font-weight: 700;
-    font-size: calc(7px + 0.4vw);
+    font-weight: 500;
+    /* font-size: calc(7px + 0.4vw); */
+    font-size: calc(14px - 0.15vw);
     text-align: center;
     line-height: 1.6em;
     margin-top: 1.5em;
@@ -353,7 +368,7 @@ font-family:'Roboto', sans-serif;
   #FigTitle {
     /* font-family:'Roboto', sans-serif; */
     font-family: 'DotGothic16', sans-serif;
-    font-size: calc(10px + 1.7vw);
+    font-size: calc(13px + 1.7vw);
     font-weight: 500;
     height:53px;
     vertical-align:text-bottom;
@@ -367,10 +382,14 @@ font-family:'Roboto', sans-serif;
   .FigSubtitle {
     font-family:'Roboto', sans-serif;
     /* font-size: 14px; */
-    font-size: calc(18px - 0.2vw);
+    font-size: calc(18px - 0.15vw);
     font-weight: 400;
     text-transform: None;
     margin-top: 80px;
+    max-width: 400px;
+    margin-left:auto;
+    margin-right:auto
+    /* text-align: center; */
   }
 
   .methodSection {

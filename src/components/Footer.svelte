@@ -252,7 +252,8 @@ font-family:'Lato', sans-serif;
     /* font-family: 'Lato', sans-serif; */
     font-family: 'DotGothic16', sans-serif;
     font-weight: 700;
-    font-size: calc(6px + 0.4vw);
+    /* font-size: calc(7px + 0.4vw); */
+    font-size: calc(14px - 0.15vw);
     text-align: center;
     /* transform: translate(10px,93px) */
     /* transform: translate(10px, calc(35px + 3.5vw)) */
