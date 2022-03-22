@@ -24,7 +24,7 @@
     export let hexesClean;
     export let country;
 
-    console.log(hexesClean)
+    // console.log(hexesClean)
 
   //   let countryOptions = [
 	// 	{ id: 1, value: `UK`, text: `United Kingdom`},
@@ -48,10 +48,19 @@
     // responsive margins
     let margin = ({ top: 0.05*height, right: 0.04*width, bottom: 0.1*height, left: 0.1*width})
 
+    // radius values
     let radiusUK = width/80
     let radiusUS = width/220//9.8
     let radiusHoverUK = radiusUK*2
     let radiusHoverUS = radiusUS*2
+
+    // tooltip values
+    let tooltipIncomeColor;
+    let tooltipIncome;
+    let tooltipLocality;
+    let tooltipMobilityValue;
+
+    // console.log("COLOR", tooltipIncomeColor)
     $: boundWidth = 4
     $: fontSize = 6.5
     let yVar = "mobilityWork"
@@ -77,7 +86,7 @@
     let dataBivar = country==="UK"?Object.assign(new Map(hexesClean.map(d=>[d.key, [d[yVar], d[xVar]]])), {title: ["Travel to Work", "Med. Income"]}):
                                    Object.assign(new Map(hexesClean.map(d=>[d.GEOID, [d[yVar], d[xVar]]])), {title: ["Travel to Work", "Med. Income"]})
 
-    console.log("bivar", dataBivar)
+    // console.log("bivar", dataBivar)
                                    
     let n = Math.floor(Math.sqrt(colors.length))
     let yBivar = d3.scaleQuantile(Array.from(dataBivar.values(), d => d[1]), d3.range(n))
@@ -203,7 +212,7 @@
           d3.range(-60, 5, 15) ;
         }
 
-        console.log("clean", hexesClean)    
+        // console.log("clean", hexesClean)    
         
         let firstStep;
         let comingFromMap;
@@ -219,7 +228,7 @@
               d=>d.abbrv).map(d=>{return{abbrv:d[0], x:d[1][0], y:d[1][1]}})
               :null
         
-        $: console.log("centroids", stateCentroids)
+        // $: console.log("centroids", stateCentroids)
 
         onMount(() => {
 
@@ -247,7 +256,7 @@
                 // .style("z-index", 100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left/2},0)`:`translate(0,0)`)
-                .on("mouseover", (event,d)=>console.log(d))//[normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX)
+                // .on("mouseover", (event,d)=>console.log(d))//[normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX)
                 // .on("mouseover", (event, d)=>console.log(normScaleYhex(+d.y)))
 
 
@@ -263,7 +272,7 @@
                 .attr("z-index", 10)
                 .attr("transform",selectedView.value==="map"?`translate(${margin.left*2},0)`:`translate(0,0)`)
                 .text(d=>country==="UK"?d.n.slice(0,3):"")
-                .on("mouseover", (event, d)=>console.log(innerWidth))
+                // .on("mouseover", (event, d)=>console.log(innerWidth))
                 .attr("cursor", "pointer")
 
 
@@ -296,7 +305,7 @@
                 // resize()
         })
 
-        $: console.log("normalized", selectedView.value)
+        // $: console.log("normalized", selectedView.value)
 
         $: if (country==="UK" && hexmap && circles && annot && currentStep===0 && firstStep===false){
 
@@ -1001,14 +1010,22 @@
 
                 circles
                 .on("mouseover", (event, d)=> {
-                  console.log(d.key)
+                  // console.log(d.key)
                   valueUK = d.key
+                  // console.log(event.clientX, event.clientY)
+                  tooltipIncomeColor = d.category
+                  tooltipIncome = (d.income/1000).toFixed()
+                  tooltipLocality = d.n
+                  tooltipMobilityValue = d.mobilityWork
+                  // console.log(tooltipIncomeColor, tooltipLocality, tooltipMobilityValue, tooltipIncome)
+                  d3.select("#tooltip").style("visibility", "visible").style("left", event.pageX-margin.left*2+"px").style("top", event.pageY+"px")
                 })
                 // .on("mousemove", (event, d)=> {
                 //   valueUK = d.key
                 // })
                 .on("mouseleave", (event, d)=> {
                   valueUK = null
+                  d3.select("#tooltip").style("visibility", "hidden")
                 })
 
                 annot
@@ -1025,14 +1042,21 @@
 
                 annot
                 .on("mouseover", (event, d)=> {
-                  console.log(d.key)
+                  // console.log(d.key)
                   valueUK = d.key
+                  tooltipIncomeColor = d.category
+                  tooltipIncome = (d.income/1000).toFixed()
+                  tooltipLocality = d.n
+                  tooltipMobilityValue = d.mobilityWork
+                  // console.log(tooltipIncomeColor, tooltipLocality, tooltipMobilityValue, tooltipIncome)
+                  d3.select("#tooltip").style("visibility", "visible").style("left", event.pageX-margin.left*2+"px").style("top", event.pageY+"px")
                 })
                 // .on("mousemove", (event, d)=> {
                 //   valueUK = d.key
                 // })
                 .on("mouseleave", (event, d)=> {
                   valueUK = null
+                  d3.select("#tooltip").style("visibility", "hidden")
                 })
 
                 firstStep=false
@@ -1675,7 +1699,7 @@
                 .ease(d3.easeLinear)
                 .attr("cx", d=>country==="UK"?d.x:projection([d.x, d.y])[0])
                 .attr("cy", d=>country==="UK"?d.y:projection([d.x, d.y])[1])
-                // .attr("opacity",1)
+                .attr("opacity",1)
                 .attr("fill", d=>d.category)
                 // .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                 //                        country==="US"&&selectedView.value==="map"?`translate(${margin.left},0)`:`translate(0,0)`)
@@ -1683,14 +1707,22 @@
 
                 circles
                 .on("mouseover", (event, d)=> {
-                  console.log(d.fullName.replaceAll(",", "").replaceAll(" ", ""))
+                  // console.log(event.clientX, event.clientY)
+                  // console.log(d.fullName.replaceAll(",", "").replaceAll(" ", ""))
                   valueUS = d.fullName.replaceAll(",", "").replaceAll(" ", "")
+                  tooltipIncomeColor = d.category
+                  tooltipIncome = (d.income/1000).toFixed()
+                  tooltipLocality = d.fullName
+                  tooltipMobilityValue = d.mobilityWork
+                  // console.log(tooltipIncomeColor, tooltipLocality, tooltipMobilityValue, tooltipIncome)
+                  d3.select("#tooltip").style("visibility", "visible").style("left", event.pageX-margin.left*2+"px").style("top", event.pageY+"px")
                 })
                 // .on("mousemove", (event, d)=> {
                 //   valueUK = d.key
                 // })
-                .on("mouseleave", (event, d)=> {
+               circles.on("mouseleave", (event, d)=> {
                   valueUS = null
+                  d3.select("#tooltip").style("visibility", "hidden")
                 })
                 // annot
                 // .transition()
@@ -1714,7 +1746,7 @@
           // ({ width, height } = svg.getBoundingClientRect());
 
           scale = innerWidth/800
-          console.log("scale", scale)
+          // console.log("scale", scale)
           // console.log(width, height)
           // console.log(margin)
           // console.log(normScaleXInc.range())
@@ -1812,7 +1844,7 @@
             }]
 
 
-            const makeAnnotations = annotation()
+         const makeAnnotations = annotation()
             // .editMode(true)
             //also can set and override in the note.padding property
             //of the annotation object
@@ -1857,7 +1889,7 @@
 
 
         $: if (annot && innerWidth<550) {
-          console.log(annot)
+          // console.log(annot)
           d3.selectAll(".LStextUK").attr("visibility", "hidden")
           // d3.select(".tick").attr("font-size", "8")
           // d3.select(".axisTitle").attr("font-size", "8")
@@ -1887,7 +1919,7 @@
         $: widthHeightRatio = innerWidth/innerHeight*100
 
         $: if (innerWidth<innerHeight) {
-          d3.selectAll(".chart").style("top", `30%`)
+          d3.selectAll(".chart").style("top", `20vh`)
         // } else if (innerWidth<820) {
         //   d3.selectAll(".chart").style("top", "30%")
         // } else if (innerWidth<750) {
@@ -1992,19 +2024,19 @@
 
         // raise and lower functions
         d3.selection.prototype.moveToFront = function() {
-        return this.each(function(){
+          return this.each(function(){
           this.parentNode.appendChild(this);
             });
         };
 
-      d3.selection.prototype.moveToBack = function() {
-        return this.each(function() {
-            var firstChild = this.parentNode.firstChild;
-            if (firstChild) {
-                this.parentNode.insertBefore(this, firstChild);
-            }
-          });
-      };
+        d3.selection.prototype.moveToBack = function() {
+          return this.each(function() {
+              var firstChild = this.parentNode.firstChild;
+              if (firstChild) {
+                  this.parentNode.insertBefore(this, firstChild);
+              }
+            });
+        };
 
         // search bar
         let options = country==="UK"?hexesClean.map(d=>{return{value:d.key, text:d.n}}):hexesClean.map(d=>{return{value:d.fullName.replaceAll(",", "").replaceAll(" ", ""), text:d.county+","+d.abbrv}});
@@ -2016,12 +2048,25 @@
         $: GEOID = null
         $: GEOIDs = null
 
-        // setTimeout(() => {
-        //   value = 'de';
-        // }, 4000);
+        // disable pointer events on all steps except for the last one
+        $: if (currentStep===steps.length-1) {
+          d3.selectAll(".laCircleUK").attr("pointer-events", "all")
+          d3.selectAll(".laCircleUS").attr("pointer-events", "all")
+          d3.selectAll(".LStextUK").attr("pointer-events", "all")
+        } else {
+          d3.selectAll(".laCircleUK").attr("pointer-events", "none")
+          d3.selectAll(".laCircleUS").attr("pointer-events", "none")
+          d3.selectAll(".LStextUK").attr("pointer-events", "none")
+        }
 
+        // hide tooltip when user hovers or clicked outside of the data
+        d3.select("body").on("mouseover", (event, d)=> {
+          d3.select("#tooltip").attr("visibility", "hidden")
+        })
+
+        // increase circle size if highlighted
         $: if (valueUK!== null) {
-          console.log(valueUK)
+          // console.log(valueUK)
           d3.selectAll(".laCircleUK").attr("opacity", 0.4).attr("r", radiusUK).attr("stroke", "#fafafa").attr("stroke-width", 0.5).moveToBack()
           // d3.selectAll(".LStextUK").attr("font-size", fontSize).style("font-weight", "500")
           d3.select("#"+valueUK+"Group").raise()//.attr("stroke-width", 1.5).raise()
@@ -2036,14 +2081,19 @@
         }
 
         $: if (valueUS!== null) {
-          console.log(valueUS)
+          // console.log(valueUS)
           // d3.selectAll(".stateAbbrv").attr('opacity', '0.5')
           d3.select("#"+valueUS+"Group").raise()
-          d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radiusUS).attr("stroke", "#fafafa").attr("stroke-width", 0.5).moveToBack()
+          ///// OLD
+          // d3.selectAll(".laCircleUS").attr("opacity", 0.4).attr("r", radiusUS).attr("stroke", "#fafafa").attr("stroke-width", 0.5).moveToBack()
+          d3.selectAll(".laCircleUS").attr("r", radiusUS).moveToBack()
           d3.select("#"+valueUS).attr("opacity", 1).attr("stroke-width", 2).attr("r", radiusHoverUS).moveToFront()//.attr("stroke-width", 1.5).raise()
         } else if (valueUS === null) {
           // d3.selectAll(".stateAbbrv").attr('opacity', '1')
-          d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fafafa").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUS)
+          ///// OLD
+          // d3.selectAll(".laCircleUS").attr("opacity", 1).attr("stroke", "#fafafa").style("font-weight", "500").attr("stroke-width", 0.5).attr("r", radiusUS)
+          d3.selectAll(".laCircleUS").attr("stroke-width", 0.5).attr("r", radiusUS)
+
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
@@ -2182,6 +2232,14 @@
     </div>
   {/each}
 </Scroll>
+{#if tooltipMobilityValue!==null&&tooltipIncomeColor!=="#ccc"&&tooltipIncomeColor!==undefined&&currentStep===steps.length-1}
+  <div id="tooltip">
+    <span style="font-weight:700;text-transform:uppercase">{tooltipLocality}</span><br> 
+    Avg. Household Income: <strong style="background-color:{tooltipIncomeColor};color:#fafafa">{tooltipIncome}K</strong><br>
+    <!-- <strong style="background-color:{tooltipIncomeColor};color:#fafafa">{categoryLabels[categoriesX.indexOf(tooltipIncomeColor)].split(",")[0]}</strong><br> -->
+    <strong style="background-color:{tooltipIncomeColor};color:#fafafa">{tooltipMobilityValue}%</strong> in travel to workplaces since 2019.
+  </div>
+{/if}
 <!-- <div class="spacer" /> -->
 <!-- <div class='spacer'>
   <h1> 
@@ -2694,10 +2752,19 @@ font-family:'Roboto', sans-serif;
     border-color: lightgrey
   }
 
-  #staticTooltip {
-      height: 30px;
+  #tooltip {
+      /* max-height: 50px; */
       margin-top:10px;
+      max-width: 200px;
+      font-size: 11px;
       font-family: 'Roboto', sans-serif;
+      visibility:hidden;
+      background: #fafafa;
+      color: black;
+      /* border-radius: 5px; */
+      border: 1px solid black;
+      padding: 0.3rem 0.3rem;
+      position: absolute
   }
 
   .annotation-group {

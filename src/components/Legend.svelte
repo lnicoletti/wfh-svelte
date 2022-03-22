@@ -2,6 +2,7 @@
 import {cross, range} from "d3";
 export let colors;
 export let country;
+// export let currentStep;
 
 $: outerWidth = 0
 $: innerWidth = 0
@@ -17,7 +18,7 @@ let labels = ["low", "medium", "high"]
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> 
 <div class="legendContainer"> <!-- width={100} height={100} display=flex justify-content=center-->
-    <svg width={100} height={100} display=block margin=auto transform="translate({innerWidth>850&&country==="UK"?innerWidth*0.3:0},{0})"> <!--transform="translate({innerWidth/2-50},{0})" -->
+    <svg width={100} height={100} display=block margin=auto transform="translate({innerWidth>innerHeight&&country==="UK"?innerWidth*0.3:0},{innerWidth<innerHeight&&country==="UK"?-80:0})"> <!--transform="translate({innerWidth/2-50},{0})" -->
       <g class="legend" transform="translate({15},{15})">  <!-- transform="translate({innerWidth/2},{margin.top/2})"-->
           <marker id="arrow" markerHeight=10 markerWidth=10 refX=3 refY=3 orient=auto>
               <path d="M0,0L6,3L0,6Z" fill=#445312/>

@@ -162,7 +162,7 @@ $: innerHeight = 0
             <br>
             <br>
             <br>
-            <Legend {colors}></Legend>
+            <Legend {colors} country="none"></Legend>
             <div class="smChart">
               {#each nations as nation, i}
                 <CountryScatter {data_sm} {nation} {colors}/>
