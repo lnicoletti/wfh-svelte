@@ -1947,7 +1947,7 @@
                        
                       "<p>Also consider the local authority of <span style='background-color:#c17036;font-weight:500;color:#fafafa'>Blaneau Gwent</span>.  Here the median household income is categorized as low at  about £ 25k.  Since February 2020, these residents were not able to reduce their travel to the workplace relative to the pre-pandemic 2019 baseline.</p>", 
                        
-                      "<p>While most UK local authorities are distinguished by the same inverse linear relationship between income and mobility patterns observed in our US example, outliers to such norm do exist.<br><br>For example, <span style='background-color:#e8e8e8;font-weight:500;color:#fafafa'>Glasgow City</span>, a local authority in Scotland, defies this notion.  Here, residents can be categorized as low income, as the median household income is about £27k.  Despite this low income status, Glasgow residents were able to reduce their mobility to the workplace by about 43% relative to the pre-pandemic 2019 baseline.   However with about <a href='https://www.heraldscotland.com/news/13063064.students-boost-glasgows-economy-500m-year/#:~:text=Around%2067%2C000%20people%20%E2%80%93more%20than,average%20%C2%A311%2C000%20a%20year' target=__blank>11% of the Glasgow population enrolled in some form of higher-education</a>, the student status of many residents may help explain this phenomenon.  While many students may be considered low income, their affiliated <a href='https://www.timeshighereducation.com/hub/coursera/p/covid-19-pandemic-forces-uk-universities-reimagine-their-campuses' target=__blank>universities have all made efforts</a> to <a href='https://www.thetimes.co.uk/article/universities-claim-shift-to-online-education-in-pandemic-has-benefited-students-s97m63m07' target=__blank>switch to online learning</a> during the pandemic.  As such, many students have continued to learn from home, and they no longer commute to campuses.</p>", 
+                      "<p>While most UK local authorities are distinguished by the same inverse linear relationship between income and mobility patterns observed in our US example, outliers to such norm do exist.<br><br>For example, <span style='background-color:#e8e8e8;font-weight:500;color:black'>Glasgow City</span>, a local authority in Scotland, defies this notion.  Here, residents can be categorized as low income, as the median household income is about £27k.  Despite this low income status, Glasgow residents were able to reduce their mobility to the workplace by about 43% relative to the pre-pandemic 2019 baseline.   However with about <a href='https://www.heraldscotland.com/news/13063064.students-boost-glasgows-economy-500m-year/#:~:text=Around%2067%2C000%20people%20%E2%80%93more%20than,average%20%C2%A311%2C000%20a%20year' target=__blank>11% of the Glasgow population enrolled in some form of higher-education</a>, the student status of many residents may help explain this phenomenon.  While many students may be considered low income, their affiliated <a href='https://www.timeshighereducation.com/hub/coursera/p/covid-19-pandemic-forces-uk-universities-reimagine-their-campuses' target=__blank>universities have all made efforts</a> to <a href='https://www.thetimes.co.uk/article/universities-claim-shift-to-online-education-in-pandemic-has-benefited-students-s97m63m07' target=__blank>switch to online learning</a> during the pandemic.  As such, many students have continued to learn from home, and they no longer commute to campuses.</p>", 
                        
                       "<p>The local authority of <span style='background-color:#445312;font-weight:500;color:#fafafa'>East Hampshire</span> also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about £54k.  Regardless of this high income status, however, these residents only experienced a slight 25% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>", 
                        
@@ -1977,7 +1977,7 @@
 
                        "<p>On the other hand, consider <span style='background-color:#c17036;font-weight:500;color:#fafafa'>Douglas County</span> (Missouri).  Here the median household income is categorized as low at about $34k.  Since February 2020, these residents were only able to reduce their travel to the workplace by a meager 5% relative to the pre-pandemic 2019 baseline.</p>", 
 
-                       "<p>While most US counties are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist.<br><br>For example, the county of <span style='background-color:#e8e8e8;font-weight:500;color:#fafafa'>Lafayette</span> (Arkansas) defies this notion.  Here, residents can be categorized as low income, as the median household income is about $32k.  Despite this low income status, Lafayette County (Arkansas) residents were able to reduce their mobility to the workplace by a staggering 56% relative to the pre-pandemic 2019 baseline.</p>", 
+                       "<p>While most US counties are distinguished by this inverse linear relationship between income and mobility patterns, outliers to such norm do exist.<br><br>For example, the county of <span style='background-color:#e8e8e8;font-weight:500;color:black'>Lafayette</span> (Arkansas) defies this notion.  Here, residents can be categorized as low income, as the median household income is about $32k.  Despite this low income status, Lafayette County (Arkansas) residents were able to reduce their mobility to the workplace by a staggering 56% relative to the pre-pandemic 2019 baseline.</p>", 
 
                        "<p><span style='background-color:#445312;font-weight:500;color:#fafafa'>Nantucket County</span> (Massachusetts) also defies this typical notion of the income and mobility pattern relationship.  Here, residents are categorized as high income with a median household income of about $105k.  Regardless of this high income status, however, these residents only experienced a scant 3% reduction in their mobility to the workplace.  Here, residents have not greatly benefited from WFH policies.</p>",
 
@@ -2270,25 +2270,29 @@
     display: flex;
     place-items: center;
     justify-content: center;
+    max-width: 450px;
+    margin-left:auto;
+    margin-right:auto
   }
 
   .step-content {
     background: #eeeeee;
     color: #ccc;
-    border-radius: 5px;
+    /* border-radius: 5px; */
+    border: 2px solid black;
     padding: 0.5rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     /* transition: background 500ms ease; */
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
     z-index: 10;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
   }
 
   .step.active .step-content {
-    background: rgb(255, 255, 255, 0.9);
+    background: rgb(255, 255, 255, 0.85);
     color: black;
   }
 
