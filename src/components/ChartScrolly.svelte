@@ -253,7 +253,7 @@
                 .attr("class", "laCircle"+country)
                 .attr("id", d=> country==="UK"?d.key:d.fullName.replaceAll(",", "").replaceAll(" ", ""))
                 .attr("cursor", "pointer")
-                .style("z-index", -1)
+                .style("z-index", -100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left/2},0)`:`translate(0,0)`)
                 // .on("mouseover", (event,d)=>console.log(d))//[normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX)
