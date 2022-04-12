@@ -253,7 +253,7 @@
                 .attr("class", "laCircle"+country)
                 .attr("id", d=> country==="UK"?d.key:d.fullName.replaceAll(",", "").replaceAll(" ", ""))
                 .attr("cursor", "pointer")
-                .style("z-index", -100)
+                // .style("z-index", 100)
                 .attr("transform", country==="UK"&&selectedView.value==="map"?`translate(${margin.left*2},0)`:
                                    country==="US"&&selectedView.value==="map"?`translate(${margin.left/2},0)`:`translate(0,0)`)
                 // .on("mouseover", (event,d)=>console.log(d))//[normScaleXInc(d[xVar]), normScaleYMob(d[yVar])], event.clientX)
@@ -292,7 +292,6 @@
                 .attr('fill', 'black')
                 .attr("font-weight", "bold")
                 .attr('font-size', 12)
-                .style("z-index", -1)
                 .text(d=>d.abbrv)
                 .attr("transform",`translate(${margin.left/2},0)`)
 
@@ -2263,6 +2262,10 @@
     src: url('https://fonts.googleapis.com/css2?family=Texturina:ital,wght@1,300&display=swap');
     font-weight: normal;
     font-style: normal;
+}
+
+.laCircleUS, .laCircleUK {
+  z-index:-1;
 }
 
 .legendContainer {
