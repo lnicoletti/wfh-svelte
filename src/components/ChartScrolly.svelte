@@ -2264,10 +2264,6 @@
     font-style: normal;
 }
 
-.laCircleUS, .laCircleUK {
-  z-index:-1;
-}
-
 .legendContainer {
     /* width:100vw; */
     height:45px;
@@ -2334,7 +2330,8 @@
     justify-content: center;
     max-width: 450px;
     margin-left:auto;
-    margin-right:auto
+    margin-right:auto;
+    z-index: 1000;
   }
 
   .step-content {
