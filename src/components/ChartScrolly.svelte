@@ -2097,7 +2097,7 @@
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
-        d3.selectAll(".step-content").moveToFront()
+        // d3.selectAll(".step-content").moveToFront()
 
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
