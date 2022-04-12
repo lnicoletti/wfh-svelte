@@ -2298,7 +2298,7 @@
 } */
 
 .chart {
-    /* background: whitesmoke; */
+    background: whitesmoke;
     /* width: 400px;
     height: 400px; */
     /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
