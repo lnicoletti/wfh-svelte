@@ -2395,9 +2395,9 @@
   max-width:400px;
 } */
 
-body, main {
+/* body, main {
     background-color: #fafafa;
-}
+} */
 
 .tick line {
 		stroke: #445312;

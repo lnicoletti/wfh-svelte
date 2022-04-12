@@ -46,9 +46,9 @@ function revertFrameOne() {
     font-style: normal;
 }
 
-body, main {
+/* body, main {
     background-color: #fffae7;
-}
+} */
 
 .scrollButton {
       background-color: #fafafa;

@@ -239,10 +239,9 @@ $: innerHeight = 0
     font-style: normal;
 }
 
-body, main {
-    /* background-color: #fffae7; */
+/* body, main {
     background-color: #fafafa;
-}
+} */
 
 .smChart {
   display:flex;
