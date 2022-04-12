@@ -2305,7 +2305,8 @@
     position: sticky;
     top: 2vh;
     margin: auto;
-    height:100%
+    height:100%;
+    z-index: -1;
     /* display:table; */
     /* position: relative; */
     /* height: 100vh */
