@@ -2330,7 +2330,8 @@
     justify-content: center;
     max-width: 450px;
     margin-left:auto;
-    margin-right:auto
+    margin-right:auto;
+    position:relative
   }
 
   .step-content {
@@ -2344,7 +2345,7 @@
     justify-content: center;
     /* transition: background 500ms ease; */
     /* box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2); */
-    z-index: 10;
+    z-index: 100;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
   }
