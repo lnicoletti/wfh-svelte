@@ -2097,7 +2097,7 @@
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
-        d3.selectAll(".step").raise()
+        d3.selectAll(".step-content").moveToFront()
 
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
@@ -2337,8 +2337,10 @@
   }
 
   .step-content {
-    background: #eeeeee;
-    color: #ccc;
+    /* background: #eeeeee;
+    color: #ccc; */
+    background: rgb(255, 255, 255, 0.85);
+    color: black;
     /* border-radius: 5px; */
     border: 2px solid black;
     padding: 0.5rem 1rem;
