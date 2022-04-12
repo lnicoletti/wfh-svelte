@@ -2097,6 +2097,8 @@
           // d3.select("#"+value).attr("opacity", 1)//.attr("stroke-width", 0.5).lower()
         }
 
+        d3.selectAll(".step").raise()
+
 </script>
 <svelte:window bind:innerWidth bind:outerWidth bind:innerHeight bind:outerHeight /> <!--on:resize='{resize}' -->
 <!-- <div id="staticTooltip"></div> -->
@@ -2331,7 +2333,7 @@
     max-width: 450px;
     margin-left:auto;
     margin-right:auto;
-    z-index: 1000;
+    /* z-index: 1000; */
   }
 
   .step-content {
